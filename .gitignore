@@ -2,3 +2,5 @@
 NOTES_ja.md
 dist/
 .vercel/
+node_modules/
+package-lock.json

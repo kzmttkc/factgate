@@ -1,5 +1,19 @@
 # FactGate
 
+On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded 3 of 3 paid calls delivered. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. Five contest-listed sites were **CAUTION** (identity unknown): unchecked, not safe.
+
+FactGate runs before a partner network loads, measures live answers, on-chain identity, and delivery, then returns **ALLOW**, **CAUTION**, or **BLOCK** in page code; Agent Atlas, NandaSeal, Agent Customs, Agent Crash Test, and Three Numbers each check one slice and do not stop the link. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
+
+**Screenshots** (deployed sites, captured 2026-11-22):
+
+| What | 1440 px | 390 px |
+| --- | --- | --- |
+| FactGate ALLOW — agent402.tools (first line: Link / pay: OK) | [screenshots/allow-agent402-1440.png](screenshots/allow-agent402-1440.png) | [screenshots/allow-agent402-390.png](screenshots/allow-agent402-390.png) |
+| FactGate BLOCK — Glossy Stay demo (first line: Do not pay) | [screenshots/block-glossy-stay-1440.png](screenshots/block-glossy-stay-1440.png) | [screenshots/block-glossy-stay-390.png](screenshots/block-glossy-stay-390.png) |
+| Consent card — two destinations on separate rows | [screenshots/consent-two-destinations-1440.png](screenshots/consent-two-destinations-1440.png) | [screenshots/consent-two-destinations-390.png](screenshots/consent-two-destinations-390.png) |
+| Stay Steward — Verified Stay booked (VS-0001) after FactGate ALLOW | [factgate-peers/screenshots/steward-booked-vs0001-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-1440.png) | [factgate-peers/screenshots/steward-booked-vs0001-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-390.png) |
+| Stay Steward — stopped on Glossy Stay BLOCK (reasons shown) | [factgate-peers/screenshots/steward-stopped-glossy-block-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-1440.png) | [factgate-peers/screenshots/steward-stopped-glossy-block-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-390.png) |
+
 **Check a counterparty before your agent links to it or pays it.**
 
 For a site with no ERC-8004 registration, FactGate still tells you before you connect whether it answers the way it declares, whether its agent instructions are safe to load, and whether it can be reached at all.
@@ -18,7 +32,7 @@ The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that c
 
 **Only validators in `site/validators.json` are counted, and today that list holds one: the Delivery Court judge, which is the author's own validator** (its scores can be recomputed from public records; others' scores are shown, never counted). Nothing is paid or signed, and **nothing is contacted before the visitor approves a card that lists each destination origin and what it gets** (spec 3.2 Consent, section 5).
 
-**How FactGate breaks self-declaration:** a site's own manifest, AgentFacts and signature only say who wrote the claims, so FactGate compares every claim with something the site does not control — what its endpoints actually answer, what the chain says its registered wallet is, and what came back when someone paid it.
+**How FactGate breaks self-declaration:** a site's own manifest, AgentFacts and signature only say who wrote the claims, so FactGate compares every claim with what its endpoints actually answer, what the chain says its registered wallet is, and what **vet402**, the author's own service, recorded when someone paid it — not with numbers the site printed about itself.
 
 ## Try it (deployed)
 
