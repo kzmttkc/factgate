@@ -2,13 +2,11 @@
 
 My agent was about to book the nicer hotel. I had built that hotel to fail. FactGate caught it.
 
+FactGate runs before a partner network loads and returns ALLOW, CAUTION, or BLOCK in page code; ScopeGate Studio watches the call as it leaves, Agent Customs scans the prompt, and Agent Atlas checks the manifest format, and none of them stops the link.
+
 Before your agent links to or pays a site, FactGate checks three facts:
 **Live** (does it answer as declared?) · **Identity** (does the ERC-8004 wallet match the x402 payee?) · **Delivery** (did paid calls really return content?).
 Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
-
-**Agents:** `gate_coordinator` turns a visitor request into a check and an explanation · `manifest_inspector` reads the counterparty manifest and NANDA listing · `capability_prober` probes live answers and MCP tools · `evidence_verifier` reads ERC-8004 on chain and vet402's delivery record.
-
-FactGate is **not** a runtime egress firewall like ScopeGate Studio: it checks **before** the call, from measured facts, not from a self-declared listing.
 
 **Built new for this challenge:** first commit 2026-11-22. vet402 and the Delivery Court validator are the author's earlier services, read here as external read-only sources.
 
@@ -18,15 +16,13 @@ FactGate is **not** a runtime egress firewall like ScopeGate Studio: it checks *
 
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
 |---|---|---|
-| ALLOW → booked VS-0001 | BLOCK → never loaded | ALLOW, 3/3 paid calls delivered* |
-
-*vet402 record, checked 2026-11-22. vet402 is the author's own service; disclosed below.
+| ALLOW → booked VS-0001 | BLOCK → never loaded | ALLOW on 2026-11-22 only (3 of 3). Last vet402 delivery 2026-11-07; the 30-day window closes 2026-12-07, so on 2027-01-12..18 this button reads Unchecked. |
 
 ### Measured on 2026-11-22
 
 On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded 3 of 3 paid calls delivered. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
 
-FactGate runs before a partner network loads, measures live answers, on-chain identity, and delivery, then returns **ALLOW**, **CAUTION**, or **BLOCK** in page code; Agent Atlas, NandaSeal, Agent Customs, Agent Crash Test, and Three Numbers each check one slice and do not stop the link. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
+The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. agent402.tools will not repeat ALLOW after 2026-12-07: vet402's last delivery is 2026-11-07, a delivery older than 30 days is WARN (`l1_stale`), and FactGate shows that as **CAUTION**, **Unchecked — do not treat as safe**. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
 
 **Screenshots** (deployed sites, captured 2026-11-22):
 
@@ -37,6 +33,9 @@ FactGate runs before a partner network loads, measures live answers, on-chain id
 | Consent card — two destinations on separate rows | [screenshots/consent-two-destinations-1440.png](screenshots/consent-two-destinations-1440.png) | [screenshots/consent-two-destinations-390.png](screenshots/consent-two-destinations-390.png) |
 | Stay Steward — Verified Stay booked (VS-0001) after FactGate ALLOW | [factgate-peers/screenshots/steward-booked-vs0001-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-1440.png) | [factgate-peers/screenshots/steward-booked-vs0001-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-390.png) |
 | Stay Steward — stopped on Glossy Stay BLOCK (reasons shown) | [factgate-peers/screenshots/steward-stopped-glossy-block-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-1440.png) | [factgate-peers/screenshots/steward-stopped-glossy-block-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-390.png) |
+| FactGate CAUTION — Stay Steward demo (first line: Unchecked — do not treat as safe) | [screenshots/caution-stay-steward-1440.png](screenshots/caution-stay-steward-1440.png) | [screenshots/caution-stay-steward-390.png](screenshots/caution-stay-steward-390.png) |
+
+**Agents:** `gate_coordinator` turns a visitor request into a check and an explanation · `manifest_inspector` reads the counterparty manifest and NANDA listing · `capability_prober` probes live answers and MCP tools · `evidence_verifier` reads ERC-8004 on chain and vet402's delivery record.
 
 **Check a counterparty before your agent links to it or pays it.**
 

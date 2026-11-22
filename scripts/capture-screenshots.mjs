@@ -12,6 +12,7 @@ const PEERS_OUT = path.join(ROOT, "..", "factgate-peers", "screenshots");
 
 const FACTGATE = "https://factgate.vercel.app/";
 const STEWARD = "https://stay-steward-demo.vercel.app/";
+const STEWARD_NETWORK = `${STEWARD}stay_steward`;
 
 async function screenshotPair(page, baseName, dir) {
   for (const [w, suffix] of [[1440, "1440"], [390, "390"]]) {
@@ -48,12 +49,15 @@ async function drainFgConsent(page, max = 14) {
   return best;
 }
 
-async function factgateCheck(page, { tryButton = null, captureTwoRow, captureName }) {
+async function factgateCheck(page, { tryButton = null, captureTwoRow, captureName, targetUrl = null }) {
   await page.goto(FACTGATE, { waitUntil: "domcontentloaded", timeout: 120_000 });
   await page.waitForFunction(() => {
     const b = document.querySelector("#run-check");
     return b && !b.disabled;
   }, { timeout: 120_000 });
+  if (targetUrl) {
+    await page.locator("#target-url").fill(targetUrl);
+  }
   if (tryButton) {
     await page.getByRole("button", { name: tryButton }).click();
   } else {
@@ -186,6 +190,10 @@ async function main() {
     const blockText = await factgateCheck(page, { tryButton: /Glossy Stay/, captureName: "block-glossy-stay" });
     if (!blockText || !blockText.includes("Do not pay")) {
       throw new Error(`BLOCK screenshot missing Do not pay: ${blockText}`);
+    }
+    const cautionText = await factgateCheck(page, { targetUrl: STEWARD_NETWORK, captureName: "caution-stay-steward" });
+    if (!cautionText || !cautionText.includes("Unchecked")) {
+      throw new Error(`CAUTION screenshot missing Unchecked line: ${cautionText}`);
     }
     await stewardFlow(context, "verified_stay", "steward-booked-vs0001", /VS-0001/);
     await stewardFlow(context, "glossy_stay", "steward-stopped-glossy-block", /Do not pay|BLOCK|was not loaded/);

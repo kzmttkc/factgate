@@ -9,9 +9,9 @@ Submission Requirements (contest rules, as read 2026-11-21/22; re-read before su
 | Requirement | Status |
 | --- | --- |
 | A public open agentic website: spec-conforming `.json` files, the browser `runtime`, a working interface | Deployed: https://factgate.vercel.app/ (source: https://github.com/kzmttkc/factgate) |
-| Text description of the features | README.md (English); submission text not written yet |
+| Text description of the features | README.md (English); short Devpost paste in docs/devpost.md |
 | Video under 2 minutes, on YouTube, "must include the Entrant explaining the Project (not AI generated)" | Not recorded yet (author's own voice) |
-| Screenshots | Taken 2026-11-22 on deployed Vercel sites at 1440 px and 390 px: `~/factgate/screenshots/` (FactGate ALLOW, BLOCK, consent) and `~/factgate-peers/screenshots/` (Stay Steward booked VS-0001, stopped on Glossy BLOCK); linked at the top of README.md |
+| Screenshots | Taken 2026-11-22–23 on deployed Vercel sites at 1440 px and 390 px: `~/factgate/screenshots/` (FactGate ALLOW, BLOCK, consent, Stay Steward CAUTION) and `~/factgate-peers/screenshots/` (Stay Steward booked VS-0001, stopped on Glossy BLOCK); linked at the top of README.md |
 | Free access to the working demo through judging | Deployed on Vercel, no sign-in: FactGate https://factgate.vercel.app/, Stay Steward https://stay-steward-demo.vercel.app/, Verified Stay https://verified-stay-demo.vercel.app/, Glossy Stay https://glossy-stay-demo.vercel.app/ |
 | A project that existed before the period "must have been significantly updated after the start of the Hackathon Submission Period" (2026-11-11) | FactGate was started 2026-11-22 |
 
@@ -46,7 +46,7 @@ Deployed results (2026-11-22 07:12 UTC, page origin https://factgate.vercel.app,
 
 Local results (2026-11-22 06:57 UTC, `evidence/live/SUMMARY.json`): agent402.tools = ALLOW; vet402.com (author's own) = ALLOW via the mutual-binding rule; Verified Stay = ALLOW (validations passed 79 / below 70 0); Glossy Stay = BLOCK (passed 1 / below 70 1); Stay Steward = CAUTION (identity_unknown); five contest-listed sites = CAUTION (identity_unknown); organizer's widget = CAUTION (unreachable: manifest not CORS-readable). None of them is in the NANDA Index (138 records searched 2026-11-22T22:04:45Z; 102 card not validated, 36 with cardValidation set).
 
-Tests: FactGate 160 (153 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions. Demo sites 55 (55 pass), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button).
+Tests: FactGate 169 (162 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions and README/script round-6 checks. Demo sites 55 (55 pass), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button).
 
 Competitors already listed: Agent Atlas (manifest format check), NandaSeal (browser self-signed facts), Agent Customs (static prompt-injection scan), Agent Crash Test (own-site confirm dialogs), Three Numbers (XRPL escrow counts).
 
