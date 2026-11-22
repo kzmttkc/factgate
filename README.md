@@ -16,7 +16,7 @@ Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
 |---|---|---|
-| ALLOW → booked VS-0001 | BLOCK → never loaded | ALLOW on 2026-11-22 only (3 of 3). Last vet402 delivery 2026-11-07; the 30-day window closes 2026-12-07, so on 2027-01-12..18 this button reads Unchecked. |
+| ALLOW → booked VS-0001 — [Stay Steward](https://stay-steward-demo.vercel.app/) | BLOCK → never loaded | ALLOW on 2026-11-22 only (3 of 3). Last vet402 delivery 2026-11-07; the 30-day window closes 2026-12-07, so on 2027-01-12..18 this button reads Unchecked. |
 
 ### Measured on 2026-11-22
 
