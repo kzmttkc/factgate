@@ -1,4 +1,20 @@
-# FactGate
+# FactGate — checks a stranger before your agent pays it
+
+My agent was about to book the nicer hotel. I had built that hotel to fail. FactGate caught it.
+
+Before your agent links to or pays a site, FactGate checks three facts:
+**Live** (does it answer as declared?) · **Identity** (does the ERC-8004 wallet match the x402 payee?) · **Delivery** (did paid calls really return content?).
+Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
+
+▶ Try it: https://factgate.vercel.app/ — no key needed.  ▶ 2-min video: link added on submission
+
+| Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
+|---|---|---|
+| ALLOW → booked VS-0001 | BLOCK → never loaded | ALLOW, 3/3 paid calls delivered* |
+
+*vet402 record, checked 2026-11-22. vet402 is the author's own service; disclosed below.
+
+### Measured on 2026-11-22
 
 On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded 3 of 3 paid calls delivered. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
 
@@ -79,7 +95,7 @@ Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`
 | Five agentic websites from the contest's list | CAUTION: identity_unknown | Answer as declared; none declares an ERC-8004 registration, so identity is not measured |
 | The contest organizer's widget | CAUTION: unreachable, identity_unknown, no_delivery_record | Its manifest answers without `Access-Control-Allow-Origin`, so a browser cannot read it |
 
-None of these is in the NANDA Index (138 records searched). A listed example: `Heron A2A Checker` (`urn:air:heron.ing:catalog:root`) shows "NANDA: listed, card not validated" on the card; its own site did not answer the browser, so it is CAUTION (unreachable, identity_unknown, no_delivery_record).
+None of these is in the NANDA Index (138 records searched on 2026-11-22T22:04:45Z via `api.nandaindex.org/api/v1/index`, limit 200, offset paging; 102 with `cardValidation` null or missing, 36 with a non-null `cardValidation`). A listed example: `Heron A2A Checker` (`urn:air:heron.ing:catalog:root`) shows "NANDA: listed, card not validated" on the card; its own site did not answer the browser, so it is CAUTION (unreachable, identity_unknown, no_delivery_record).
 
 ## Run it
 
