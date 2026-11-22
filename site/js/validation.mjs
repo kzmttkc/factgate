@@ -13,7 +13,6 @@
 // agentWallet) is shown but not counted. Only validators on the trusted list (js/validators.mjs,
 // site/validators.json, changeable by the visitor) are counted; any other validator's scores are
 // shown with the reason, never counted.
-import { chainRpcUrls, postChainRpc } from "./chain.mjs";
 import { DEFAULT_TIMEOUT_MS, timedFetch } from "./net.mjs";
 import { DEFAULT_VALIDATORS, trustedRow } from "./validators.mjs";
 
@@ -23,9 +22,9 @@ export const VALIDATION_REGISTRY = Object.freeze({
 });
 
 export const VALIDATION_CHAINS = Object.freeze({
-  8453: Object.freeze({ rpc: "https://mainnet.base.org", rpcFallback: "https://base-rpc.publicnode.com", registry: VALIDATION_REGISTRY.mainnet }),
-  84532: Object.freeze({ rpc: "https://sepolia.base.org", rpcFallback: "https://base-sepolia-rpc.publicnode.com", registry: VALIDATION_REGISTRY.testnet }),
-  42220: Object.freeze({ rpc: "https://forno.celo.org", rpcFallback: "https://celo-rpc.publicnode.com", registry: VALIDATION_REGISTRY.mainnet }),
+  8453: Object.freeze({ rpc: "https://mainnet.base.org", registry: VALIDATION_REGISTRY.mainnet }),
+  84532: Object.freeze({ rpc: "https://sepolia.base.org", registry: VALIDATION_REGISTRY.testnet }),
+  42220: Object.freeze({ rpc: "https://forno.celo.org", registry: VALIDATION_REGISTRY.mainnet }),
 });
 
 export const VALIDATION_SELECTORS = Object.freeze({
@@ -147,66 +146,75 @@ export function validationSummary(c, { trusted = DEFAULT_VALIDATORS, chainId = n
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function rpc(fetchImpl, chain, method, params, timeoutMs) {
-  const r = await postChainRpc(fetchImpl, chain, { jsonrpc: "2.0", id: 1, method, params }, timeoutMs);
+// Public RPCs answer 429 when a page asks too fast. Wait and ask again, a few times.
+async function postRpc(fetchImpl, url, payload, timeoutMs) {
+  let last = "no answer";
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    if (attempt > 0) {
+      await sleep(500 * 2 ** attempt);
+    }
+    const got = await timedFetch(fetchImpl, url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }, timeoutMs);
+    if (!got.ok) {
+      return { ok: false, error: got.error };
+    }
+    if (got.response.status === 429) {
+      last = "HTTP 429 (rate limited)";
+      continue;
+    }
+    try {
+      return { ok: true, json: await got.response.json() };
+    } catch {
+      return { ok: false, error: `RPC answer is not JSON (HTTP ${got.response.status})` };
+    }
+  }
+  return { ok: false, error: last };
+}
+
+async function rpc(fetchImpl, url, method, params, timeoutMs) {
+  const r = await postRpc(fetchImpl, url, { jsonrpc: "2.0", id: 1, method, params }, timeoutMs);
   if (!r.ok) {
-    return { ok: false, error: r.error, attempts: r.attempts };
+    return r;
   }
   const j = r.json;
-  return j && j.error ? { ok: false, error: `${j.error.code}: ${j.error.message}`, attempts: r.attempts, url: r.url } : { ok: true, result: j && j.result, attempts: r.attempts, url: r.url };
+  return j && j.error ? { ok: false, error: `${j.error.code}: ${j.error.message}` } : { ok: true, result: j && j.result };
 }
 
 /** Several eth_calls in one JSON-RPC batch, so a page stays under the RPC's rate limit. */
-async function batchCalls(fetchImpl, chain, to, datas, timeoutMs) {
+async function batchCalls(fetchImpl, url, to, datas, timeoutMs) {
   const out = new Array(datas.length).fill(null);
   let todo = datas.map((_, i) => i);
-  const urls = chainRpcUrls(chain);
-  for (const url of urls) {
-    if (!todo.length) {
-      break;
+  for (let round = 0; round < 4 && todo.length; round += 1) {
+    if (round > 0) {
+      await sleep(500 * 2 ** round);
     }
-    for (let round = 0; round < 2 && todo.length; round += 1) {
-      if (round > 0) {
-        await sleep(500 * 2 ** round);
-      }
-      const got = await timedFetch(fetchImpl, url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(todo.map((i) => ({ jsonrpc: "2.0", id: i, method: "eth_call", params: [{ to, data: datas[i] }, "latest"] }))) }, timeoutMs);
-      if (!got.ok || got.response.status === 429) {
-        break;
-      }
-      if (got.response.status !== 200) {
-        break;
-      }
-      let json;
-      try {
-        json = await got.response.json();
-      } catch {
-        break;
-      }
-      const answers = Array.isArray(json) ? json : [json];
-      for (const a of answers) {
-        if (a && typeof a.id === "number" && typeof a.result === "string") {
-          out[a.id] = a.result;
-        }
-      }
-      todo = todo.filter((i) => out[i] === null);
+    const r = await postRpc(fetchImpl, url, todo.map((i) => ({ jsonrpc: "2.0", id: i, method: "eth_call", params: [{ to, data: datas[i] }, "latest"] })), timeoutMs);
+    if (!r.ok) {
+      return { ok: false, error: r.error };
     }
+    const answers = Array.isArray(r.json) ? r.json : [r.json];
+    for (const a of answers) {
+      if (a && typeof a.id === "number" && typeof a.result === "string") {
+        out[a.id] = a.result;
+      }
+    }
+    todo = todo.filter((i) => out[i] === null);
   }
   return todo.length ? { ok: false, error: `${todo.length} call(s) got no answer` } : { ok: true, results: out };
 }
 
-async function blockTs(fetchImpl, chain, n, timeoutMs) {
-  const r = await rpc(fetchImpl, chain, "eth_getBlockByNumber", [`0x${n.toString(16)}`, false], timeoutMs);
+async function blockTs(fetchImpl, url, n, timeoutMs) {
+  const r = await rpc(fetchImpl, url, "eth_getBlockByNumber", [`0x${n.toString(16)}`, false], timeoutMs);
   return r.ok && r.result ? parseInt(r.result.timestamp, 16) : null;
 }
 
 /** First block whose timestamp is >= ts, by interpolation search. Null on failure. */
-export async function firstBlockAtOrAfter(fetchImpl, chain, ts, timeoutMs = DEFAULT_TIMEOUT_MS) {
-  const head = await rpc(fetchImpl, chain, "eth_blockNumber", [], timeoutMs);
+export async function firstBlockAtOrAfter(fetchImpl, url, ts, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const head = await rpc(fetchImpl, url, "eth_blockNumber", [], timeoutMs);
   if (!head.ok) {
     return null;
   }
   let hi = parseInt(head.result, 16);
-  let hiT = await blockTs(fetchImpl, chain, hi, timeoutMs);
+  let hiT = await blockTs(fetchImpl, url, hi, timeoutMs);
   if (hiT === null || hiT < ts) {
     return null;
   }
@@ -218,7 +226,7 @@ export async function firstBlockAtOrAfter(fetchImpl, chain, ts, timeoutMs = DEFA
     hi = lo;
     hiT = loT;
     lo = Math.max(0, lo - step);
-    loT = await blockTs(fetchImpl, chain, lo, timeoutMs);
+    loT = await blockTs(fetchImpl, url, lo, timeoutMs);
     if (loT === null) {
       return null;
     }
@@ -236,7 +244,7 @@ export async function firstBlockAtOrAfter(fetchImpl, chain, ts, timeoutMs = DEFA
       mid = Math.floor((lo + hi) / 2); // guard against slow interpolation
     }
     mid = Math.min(hi - 1, Math.max(lo + 1, mid));
-    const t = await blockTs(fetchImpl, chain, mid, timeoutMs);
+    const t = await blockTs(fetchImpl, url, mid, timeoutMs);
     if (t === null) {
       return null;
     }
@@ -260,13 +268,13 @@ function topicUint(n) {
  * lastUpdate. Returns { kind, block, tx, logIndex, response? } or { kind: null, error? }.
  */
 export async function locateValidationLog(fetchImpl, chain, status, requestHash, timeoutMs = DEFAULT_TIMEOUT_MS) {
-  const block = await firstBlockAtOrAfter(fetchImpl, chain, status.lastUpdate, timeoutMs);
+  const block = await firstBlockAtOrAfter(fetchImpl, chain.rpc, status.lastUpdate, timeoutMs);
   if (block === null) {
     return { kind: null, error: "block for lastUpdate not found" };
   }
   const range = { address: chain.registry, fromBlock: `0x${block.toString(16)}`, toBlock: `0x${(block + MAX_LOG_RANGE).toString(16)}` };
   for (const [kind, topic0] of [["response", VALIDATION_TOPICS.response], ["request", VALIDATION_TOPICS.request]]) {
-    const r = await rpc(fetchImpl, chain, "eth_getLogs", [{ ...range, topics: [topic0, null, topicUint(status.agentId), requestHash] }], timeoutMs);
+    const r = await rpc(fetchImpl, chain.rpc, "eth_getLogs", [{ ...range, topics: [topic0, null, topicUint(status.agentId), requestHash] }], timeoutMs);
     if (!r.ok) {
       return { kind: null, error: `eth_getLogs: ${r.error}` };
     }
@@ -292,7 +300,7 @@ export async function readValidations({ chainId, agentId, selfAddresses = [], tr
   if (!chain) {
     return { status: "unavailable", error: `no ValidationRegistry known on chain ${chainId}` };
   }
-  const call = (data) => rpc(fetchImpl, chain, "eth_call", [{ to: chain.registry, data }, "latest"], timeoutMs);
+  const call = (data) => rpc(fetchImpl, chain.rpc, "eth_call", [{ to: chain.registry, data }, "latest"], timeoutMs);
   const list = await call(`${VALIDATION_SELECTORS.getAgentValidations}${BigInt(agentId).toString(16).padStart(64, "0")}`);
   if (!list.ok) {
     return { status: "unavailable", error: `getAgentValidations: ${list.error}` };
@@ -312,7 +320,7 @@ export async function readValidations({ chainId, agentId, selfAddresses = [], tr
   const statuses = [];
   for (let i = 0; i < used.length; i += 20) {
     const chunk = used.slice(i, i + 20);
-    const r = await batchCalls(fetchImpl, chain, chain.registry, chunk.map((h) => `${VALIDATION_SELECTORS.getValidationStatus}${h.slice(2)}`), timeoutMs);
+    const r = await batchCalls(fetchImpl, chain.rpc, chain.registry, chunk.map((h) => `${VALIDATION_SELECTORS.getValidationStatus}${h.slice(2)}`), timeoutMs);
     if (!r.ok) {
       return { status: "unavailable", error: `getValidationStatus: ${r.error}` };
     }

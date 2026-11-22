@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { CHAINS, IDENTITY_REGISTRY, SELECTORS } from "../site/js/chain.mjs";
+import { IDENTITY_REGISTRY, SELECTORS } from "../site/js/chain.mjs";
 import { gateCheck, summarizeCheck } from "../site/js/gatecheck.mjs";
 import { VALIDATION_REGISTRY, VALIDATION_SELECTORS, VALIDATION_TOPICS } from "../site/js/validation.mjs";
 
@@ -18,18 +18,6 @@ const STR = (s) => {
 };
 const json = (obj, status = 200, headers = {}) => new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json", ...headers } });
 const READ_ONLY = new Set(["eth_call", "eth_blockNumber", "eth_getBlockByNumber", "eth_getLogs"]);
-
-/** Register the same fake handler on each chain's primary and fallback RPC URLs. */
-function withRpcFallbacks(rpcMap) {
-  const out = { ...rpcMap };
-  for (const [url, handler] of Object.entries(rpcMap)) {
-    const chain = Object.values(CHAINS).find((c) => c.rpc === url);
-    if (chain?.rpcFallback && out[chain.rpcFallback] === undefined) {
-      out[chain.rpcFallback] = handler;
-    }
-  }
-  return out;
-}
 
 /**
  * A fake chain: the IdentityRegistry answers owner/agentWallet/tokenURI; the ValidationRegistry
@@ -124,7 +112,7 @@ async function sellerNet({ owner = PAYEE, wallet = PAYEE, validations = [] } = {
       },
       "https://vet402.com/mcp": json(vet),
     },
-    withRpcFallbacks({ "https://mainnet.base.org": fakeChain({ owner, wallet, uri: "https://seller.example/.well-known/agent-registration.json", validations }) }),
+    { "https://mainnet.base.org": fakeChain({ owner, wallet, uri: "https://seller.example/.well-known/agent-registration.json", validations }) },
   );
 }
 
@@ -212,7 +200,7 @@ const SELLER_EMPTY = "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f";
 test("Glossy Stay shape: payTo differs from its own wallet and from agent 10799's owner, empty booking, low scores: BLOCK", async () => {
   const { fetchImpl } = fakeNet(
     staySite(8791, { name: "glossy_stay", payTo: "0x2222222222222222222222222222222222222222", wallet: "0x1111111111111111111111111111111111111111", bookBody: "", mcp: "https://mcp.glossy-stay.invalid/mcp", agentId: 10799 }),
-    withRpcFallbacks({ "https://sepolia.base.org": fakeChain({ owner: SELLER_EMPTY, uri: "https://raw.githubusercontent.com/x/seller-empty.json", validations: [{ response: 0, answered: true }, { response: 99, answered: true }] }) }),
+    { "https://sepolia.base.org": fakeChain({ owner: SELLER_EMPTY, uri: "https://raw.githubusercontent.com/x/seller-empty.json", validations: [{ response: 0, answered: true }, { response: 99, answered: true }] }) },
   );
   const r = await gateCheck({ url: "http://127.0.0.1:8791/glossy_stay" }, { fetch: fetchImpl });
   assert.equal(r.verdict, "BLOCK");
@@ -231,7 +219,7 @@ test("Glossy Stay shape: payTo differs from its own wallet and from agent 10799'
 test("Verified Stay shape: agent 10798 on chain, payTo = its owner, passing scores, booking confirmed: ALLOW", async () => {
   const { fetchImpl, seen } = fakeNet(
     staySite(8792, { name: "verified_stay", payTo: SELLER_DELIVER, wallet: SELLER_DELIVER, bookBody: '{"status":"confirmed"}', agentId: 10798 }),
-    withRpcFallbacks({ "https://sepolia.base.org": fakeChain({ owner: SELLER_DELIVER, uri: "https://raw.githubusercontent.com/x/seller-deliver.json", validations: [{ response: 99, answered: true }, { response: 0, answered: false }] }) }),
+    { "https://sepolia.base.org": fakeChain({ owner: SELLER_DELIVER, uri: "https://raw.githubusercontent.com/x/seller-deliver.json", validations: [{ response: 99, answered: true }, { response: 0, answered: false }] }) },
   );
   const r = await gateCheck({ url: "http://127.0.0.1:8792/verified_stay" }, { fetch: fetchImpl });
   assert.equal(r.verdict, "ALLOW", JSON.stringify(r.reasons));
@@ -244,7 +232,7 @@ test("Verified Stay shape: agent 10798 on chain, payTo = its owner, passing scor
 test("a registration that is not on chain (agentId missing) is CAUTION 'declared only'", async () => {
   const { fetchImpl } = fakeNet(
     staySite(8792, { name: "verified_stay", payTo: SELLER_DELIVER, wallet: SELLER_DELIVER, bookBody: '{"status":"confirmed"}', agentId: 99999999 }),
-    withRpcFallbacks({ "https://sepolia.base.org": fakeChain({ owner: SELLER_DELIVER, exists: false }) }),
+    { "https://sepolia.base.org": fakeChain({ owner: SELLER_DELIVER, exists: false }) },
   );
   const r = await gateCheck({ url: "http://127.0.0.1:8792/verified_stay" }, { fetch: fetchImpl });
   assert.equal(r.reasons[1].code, "identity_declared_only");
@@ -303,7 +291,7 @@ function freeSite({ siteNamesAgent = true, agentNamesSite = true, network = { to
   if (siteNamesAgent) {
     routes["https://free.example/.well-known/agent-registration.json"] = json({ name: "Free archive", registrations: [{ agentId: 7, agentRegistry: OFFICIAL_MAIN }] });
   }
-  return fakeNet(routes, withRpcFallbacks({ "https://mainnet.base.org": fakeChain({ owner: PAYEE, uri: "https://registry-files.example/agent-7.json" }) }));
+  return fakeNet(routes, { "https://mainnet.base.org": fakeChain({ owner: PAYEE, uri: "https://registry-files.example/agent-7.json" }) });
 }
 
 test("C-1: a free site and its ERC-8004 registration that point at each other pass pillar 2: ALLOW", async () => {
@@ -358,8 +346,7 @@ test("consent rounds: the first card names only the counterparty's origin; the s
   assert.equal(r.verdict, "ALLOW");
   assert.deepEqual(cards[0].hosts, ["free.example", "api.nandaindex.org"]);
   assert.deepEqual(cards[0].sent, []);
-  assert.ok(cards[1].hosts.includes("mainnet.base.org"));
-  assert.ok(cards[1].hosts.includes(new URL(CHAINS[8453].rpcFallback).host));
+  assert.deepEqual(cards[1].hosts, ["mainnet.base.org"]);
   assert.ok(cards[1].sent.every((h) => h === "free.example" || h === "api.nandaindex.org"), JSON.stringify(cards[1].sent));
   assert.deepEqual(cards[2].hosts, ["registry-files.example"]);
   assert.equal(cards.length, 3);
@@ -371,10 +358,10 @@ test("consent rounds: declining the chain RPC leaves pillar 2 unmeasured (CAUTIO
   const { fetchImpl, seen } = freeSite();
   const r = await gateCheck({ url: "https://free.example/free" }, {
     fetch: fetchImpl,
-    ask: async (request) => (request.rows.some((x) => x.host === "mainnet.base.org" || x.host === new URL(CHAINS[8453].rpcFallback).host) ? "decline" : "once"),
+    ask: async (request) => (request.rows.some((x) => x.host === "mainnet.base.org") ? "decline" : "once"),
   });
-  assert.ok(!seen.some((x) => x.url === CHAINS[8453].rpc || x.url === CHAINS[8453].rpcFallback));
+  assert.ok(!seen.some((x) => x.url === "https://mainnet.base.org"));
   assert.equal(r.reasons[1].code, "identity_unavailable");
-  assert.match(r.reasons[1].text, /declined (mainnet\.base\.org|base-rpc\.publicnode\.com)/);
+  assert.match(r.reasons[1].text, /declined mainnet\.base\.org/);
   assert.equal(r.verdict, "CAUTION");
 });

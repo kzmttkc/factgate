@@ -206,9 +206,9 @@ test("readAgent reads owner, agentWallet and tokenURI with eth_call only", async
   assert.equal(r.owner, PAYEE);
   assert.equal(r.tokenURI, uri);
   assert.ok(calls.every((c) => c.url === "https://mainnet.base.org" && c.to === IDENTITY_REGISTRY.mainnet));
-  assert.ok(r.rpc.length >= 3);
+  assert.equal(r.rpc.length, 3);
   assert.equal(r.block, 0x3b2e1a0);
-  assert.ok(r.rpc.filter((x) => x.method.startsWith("eth_call")).every((x) => x.block === "0x3b2e1a0"));
+  assert.ok(r.rpc.every((x) => x.block === "0x3b2e1a0"));
 });
 
 test("readAgent: a revert on ownerOf means the agent does not exist", async () => {
@@ -227,63 +227,6 @@ test("readAgent: an empty 0x result (no contract there) is unavailable, not unre
   const r = await readAgent({ chainId: 8453, agentId: "1" }, fetchImpl);
   assert.equal(r.ok, false);
   assert.match(r.error, /empty/);
-});
-
-test("readAgent: first RPC HTTP 429 uses the chain fallback RPC", async () => {
-  const primary = CHAINS[8453].rpc;
-  const fallback = CHAINS[8453].rpcFallback;
-  assert.ok(fallback && fallback !== primary);
-  const calls = [];
-  const fetchImpl = async (url, init) => {
-    calls.push(url);
-    if (url === primary) {
-      return new Response("rate limited", { status: 429 });
-    }
-    if (url === fallback) {
-      const body = JSON.parse(init.body);
-      if (body.method === "eth_blockNumber") {
-        return new Response(JSON.stringify({ jsonrpc: "2.0", id: 1, result: "0x3b2e1a0" }), { status: 200, headers: { "content-type": "application/json" } });
-      }
-      const sel = body.params && body.params[0] && body.params[0].data ? body.params[0].data.slice(0, 10) : "";
-      const answers = {
-        [SELECTORS.ownerOf]: WORD("0x1111111111111111111111111111111111111111"),
-        [SELECTORS.getAgentWallet]: WORD("0x1111111111111111111111111111111111111111"),
-        [SELECTORS.tokenURI]: "0x",
-      };
-      return new Response(JSON.stringify({ jsonrpc: "2.0", id: 1, result: answers[sel] || "0x" }), { status: 200, headers: { "content-type": "application/json" } });
-    }
-    return new Response("unexpected url", { status: 500 });
-  };
-  const r = await readAgent({ chainId: 8453, agentId: "1" }, fetchImpl);
-  assert.equal(r.ok, true);
-  assert.ok(calls.includes(primary));
-  assert.ok(calls.includes(fallback));
-  assert.ok(r.rpc.some((x) => x.url === fallback && x.ok));
-  assert.ok(r.rpc.some((x) => x.url === primary && x.error && /429/.test(x.error)));
-});
-
-test("readAgent: when every RPC fails, identity is unavailable (never BLOCK)", async () => {
-  const urls = [CHAINS[84532].rpc, CHAINS[84532].rpcFallback];
-  const fetchImpl = async (url) => {
-    if (urls.includes(url)) {
-      return new Response("down", { status: 503 });
-    }
-    return new Response("unexpected", { status: 500 });
-  };
-  const chainRead = await readAgent({ chainId: 84532, agentId: "1" }, fetchImpl);
-  const identity = identityPillar({ payTos: null, chainRead, binding: null, noAgentReason: null, declaredOnlyReason: null });
-  assert.equal(identity.status, "unavailable");
-  const { evaluateGate } = await import("../site/js/gate.mjs");
-  const verdict = evaluateGate({
-    live: { status: "ok", data: { passed: true } },
-    identity,
-    delivery: { status: "unavailable", error: "not applicable" },
-    validation: undefined,
-    paid: false,
-  });
-  assert.equal(verdict.verdict, "CAUTION");
-  assert.notEqual(verdict.verdict, "BLOCK");
-  assert.ok(verdict.reasons.some((r) => r.effect === "CAUTION" && r.code === "identity_unavailable"));
 });
 
 test("readAgent: an unsupported chain or a network error is unavailable", async () => {

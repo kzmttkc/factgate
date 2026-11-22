@@ -16,53 +16,10 @@ export const IDENTITY_REGISTRY = Object.freeze({
 });
 
 export const CHAINS = Object.freeze({
-  8453: Object.freeze({ name: "Base", rpc: "https://mainnet.base.org", rpcFallback: "https://base-rpc.publicnode.com", registry: IDENTITY_REGISTRY.mainnet }),
-  84532: Object.freeze({ name: "Base Sepolia", rpc: "https://sepolia.base.org", rpcFallback: "https://base-sepolia-rpc.publicnode.com", registry: IDENTITY_REGISTRY.testnet }),
-  42220: Object.freeze({ name: "Celo", rpc: "https://forno.celo.org", rpcFallback: "https://celo-rpc.publicnode.com", registry: IDENTITY_REGISTRY.mainnet }),
+  8453: Object.freeze({ name: "Base", rpc: "https://mainnet.base.org", registry: IDENTITY_REGISTRY.mainnet }),
+  84532: Object.freeze({ name: "Base Sepolia", rpc: "https://sepolia.base.org", registry: IDENTITY_REGISTRY.testnet }),
+  42220: Object.freeze({ name: "Celo", rpc: "https://forno.celo.org", registry: IDENTITY_REGISTRY.mainnet }),
 });
-
-/** Public JSON-RPC URLs for one chain: primary, then fallback when the first fails or rate-limits. */
-export function chainRpcUrls(chain) {
-  const urls = [chain.rpc];
-  if (chain.rpcFallback && chain.rpcFallback !== chain.rpc) {
-    urls.push(chain.rpcFallback);
-  }
-  return urls;
-}
-
-/**
- * POST one JSON-RPC payload to the chain's RPC URLs in order.
- * Returns { ok, url?, json?, error?, attempts: [{ url, ok, error? }] }.
- */
-export async function postChainRpc(fetchImpl, chain, payload, timeoutMs = DEFAULT_TIMEOUT_MS) {
-  const attempts = [];
-  for (const url of chainRpcUrls(chain)) {
-    const got = await timedFetch(fetchImpl, url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }, timeoutMs);
-    if (!got.ok) {
-      attempts.push({ url, ok: false, error: got.error });
-      continue;
-    }
-    if (got.response.status === 429) {
-      attempts.push({ url, ok: false, error: "RPC HTTP 429 (rate limited)" });
-      continue;
-    }
-    if (got.response.status !== 200) {
-      attempts.push({ url, ok: false, error: `RPC HTTP ${got.response.status}` });
-      continue;
-    }
-    let json;
-    try {
-      json = await got.response.json();
-    } catch {
-      attempts.push({ url, ok: false, error: "RPC answer is not JSON" });
-      continue;
-    }
-    attempts.push({ url, ok: true });
-    return { ok: true, url, json, attempts };
-  }
-  const last = attempts[attempts.length - 1];
-  return { ok: false, error: (last && last.error) || "no RPC answered", attempts };
-}
 
 export const SELECTORS = Object.freeze({
   ownerOf: "0x6352211e",
@@ -361,43 +318,29 @@ export function identityPillar({ payTos, chainRead, binding, noAgentReason, decl
   };
 }
 
-async function ethCall(fetchImpl, chain, data, timeoutMs, blockTag = "latest", rpcOrder = null) {
-  const urls = rpcOrder && rpcOrder.length ? rpcOrder : chainRpcUrls(chain);
-  const attempts = [];
-  for (const url of urls) {
-    const got = await timedFetch(fetchImpl, url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: chain.registry, data }, blockTag] }) }, timeoutMs);
-    if (!got.ok) {
-      attempts.push({ url, ok: false, error: got.error });
-      continue;
-    }
-    if (got.response.status === 429) {
-      attempts.push({ url, ok: false, error: "RPC HTTP 429 (rate limited)" });
-      continue;
-    }
-    if (got.response.status !== 200) {
-      attempts.push({ url, ok: false, error: `RPC HTTP ${got.response.status}` });
-      continue;
-    }
-    let json;
-    try {
-      json = await got.response.json();
-    } catch {
-      attempts.push({ url, ok: false, error: "RPC answer is not JSON" });
-      continue;
-    }
-  if (json && json.error) {
-      const reverted = json.error.code === 3 || /revert/i.test(String(json.error.message));
-      attempts.push({ url, ok: true });
-      return { ok: true, reverted, error: `${json.error.code}: ${json.error.message}`, rpcUrl: url, attempts };
-    }
-    if (!json || typeof json.result !== "string") {
-      attempts.push({ url, ok: false, error: "RPC answer has no result" });
-      continue;
-    }
-    attempts.push({ url, ok: true });
-    return { ok: true, result: json.result, rpcUrl: url, attempts };
+async function ethCall(fetchImpl, chain, data, timeoutMs, blockTag = "latest") {
+  const body = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: chain.registry, data }, blockTag] });
+  const got = await timedFetch(fetchImpl, chain.rpc, { method: "POST", headers: { "Content-Type": "application/json" }, body }, timeoutMs);
+  if (!got.ok) {
+    return { ok: false, error: got.error };
   }
-  return { ok: false, error: (attempts[attempts.length - 1] && attempts[attempts.length - 1].error) || "no RPC answered", attempts };
+  if (got.response.status !== 200) {
+    return { ok: false, error: `RPC HTTP ${got.response.status}` };
+  }
+  let json;
+  try {
+    json = await got.response.json();
+  } catch {
+    return { ok: false, error: "RPC answer is not JSON" };
+  }
+  if (json && json.error) {
+    const reverted = json.error.code === 3 || /revert/i.test(String(json.error.message));
+    return { ok: true, reverted, error: `${json.error.code}: ${json.error.message}` };
+  }
+  if (!json || typeof json.result !== "string") {
+    return { ok: false, error: "RPC answer has no result" };
+  }
+  return { ok: true, result: json.result };
 }
 
 /**
@@ -417,32 +360,20 @@ export async function readAgent({ chainId, agentId }, fetchImpl, timeoutMs = DEF
   }
   // Pin every read to one block, so the evidence names where it was read.
   let blockTag = "latest";
-  const head = await postChainRpc(fetchImpl, chain, { jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }, timeoutMs);
-  const rpcLog = (head.attempts || []).map((a) => ({ url: a.url, method: "eth_blockNumber", ok: a.ok, error: a.ok ? undefined : a.error }));
-  let rpcOrder = chainRpcUrls(chain);
-  if (head.ok && head.url) {
-    rpcOrder = [head.url, ...rpcOrder.filter((u) => u !== head.url)];
-    if (typeof head.json.result === "string" && /^0x[0-9a-f]+$/i.test(head.json.result)) {
-      blockTag = head.json.result;
+  const head = await timedFetch(fetchImpl, chain.rpc, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }) }, timeoutMs);
+  if (head.ok && head.response.status === 200) {
+    try {
+      const j = await head.response.json();
+      if (typeof j.result === "string" && /^0x[0-9a-f]+$/i.test(j.result)) {
+        blockTag = j.result;
+      }
+    } catch {
+      // keep "latest"
     }
   }
   const block = blockTag === "latest" ? null : parseInt(blockTag, 16);
-  const answers = [];
-  for (const [, data] of calls) {
-    answers.push(await ethCall(fetchImpl, chain, data, timeoutMs, blockTag, rpcOrder));
-  }
-  const rpc = [...rpcLog];
-  for (let i = 0; i < calls.length; i += 1) {
-    const [fn, data] = calls[i];
-    const answer = answers[i];
-    const url = answer.rpcUrl || (answer.attempts && answer.attempts.find((a) => a.ok)?.url) || rpcOrder[0];
-    rpc.push({ url, method: `eth_call ${fn}`, to: chain.registry, data, block: blockTag, ok: answer.ok, error: answer.ok ? undefined : answer.error, reverted: answer.reverted });
-    for (const a of answer.attempts || []) {
-      if (a.url !== url && !rpc.some((x) => x.url === a.url && x.method === `eth_call ${fn}`)) {
-        rpc.push({ url: a.url, method: `eth_call ${fn}`, to: chain.registry, data, block: blockTag, ok: false, error: a.error });
-      }
-    }
-  }
+  const answers = await Promise.all(calls.map(([, data]) => ethCall(fetchImpl, chain, data, timeoutMs, blockTag)));
+  const rpc = calls.map(([fn, data], i) => ({ url: chain.rpc, method: `eth_call ${fn}`, to: chain.registry, data, block: blockTag, ...answers[i] }));
   const byFn = Object.fromEntries(calls.map(([fn], i) => [fn, answers[i]]));
   const owner = byFn.ownerOf;
   if (!owner.ok) {

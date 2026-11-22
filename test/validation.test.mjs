@@ -4,7 +4,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { evaluateGate, judgeDeliveryPillar } from "../site/js/gate.mjs";
 import {
-  VALIDATION_CHAINS,
   VALIDATION_REGISTRY,
   VALIDATION_SELECTORS,
   VALIDATION_TOPICS,
@@ -191,11 +190,12 @@ test("readValidations: an unknown chain or an empty registry answer is unavailab
   assert.equal((await readValidations({ chainId: 84532, agentId: "1" }, empty)).status, "unavailable");
 });
 
-test("readValidations uses the fallback RPC when the first answers 429", async () => {
+test("readValidations waits and asks again when the RPC answers 429", async () => {
   const inner = fakeChain({ zeroAnswered: false });
-  const primary = VALIDATION_CHAINS[84532].rpc;
+  let limited = 2;
   const flaky = (url, init) => {
-    if (url === primary) {
+    if (JSON.parse(init.body).length && limited > 0) {
+      limited -= 1;
       return Promise.resolve(new Response("rate limited", { status: 429 }));
     }
     return inner(url, init);
