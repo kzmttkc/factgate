@@ -1,6 +1,6 @@
 {
   "url": "https://shutdown-clerk.pages.dev/shutdown_clerk",
-  "checkedAt": "2026-11-22T04:51:46.349Z",
+  "checkedAt": "2026-11-22T05:40:27.224Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -31,7 +31,8 @@
           "corsReachable": true,
           "answersAsDeclared": true,
           "detail": "as declared: manifest, network",
-          "unreachable": []
+          "unreachable": [],
+          "instructionFindings": []
         }
       },
       "checks": {
@@ -51,6 +52,12 @@
           "url": "https://shutdown-clerk.pages.dev/shutdown_clerk.network.json",
           "problems": [],
           "warnings": []
+        },
+        "instructions": {
+          "state": "scanned",
+          "url": "https://shutdown-clerk.pages.dev/shutdown_clerk.network.json",
+          "scanned": 8,
+          "findings": []
         },
         "registration": {
           "state": "absent",
@@ -101,18 +108,18 @@
       },
       "http": [
         {
-          "url": "https://shutdown-clerk.pages.dev/.well-known/agent-registration.json",
-          "method": "GET",
-          "status": 200,
-          "contentType": "text/html; charset=utf-8",
-          "bytes": 5105
-        },
-        {
           "url": "https://shutdown-clerk.pages.dev/agent-manifest.json",
           "method": "GET",
           "status": 200,
           "contentType": "application/json",
           "bytes": 2438
+        },
+        {
+          "url": "https://shutdown-clerk.pages.dev/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 5105
         },
         {
           "url": "https://shutdown-clerk.pages.dev/shutdown_clerk",
@@ -184,7 +191,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:51:46.349Z",
+      "lastAudited": "2026-11-22T05:40:27.224Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -216,7 +223,7 @@
     },
     "x_factgate_evidence": {
       "target": "https://shutdown-clerk.pages.dev/shutdown_clerk",
-      "checkedAt": "2026-11-22T04:51:46.349Z",
+      "checkedAt": "2026-11-22T05:40:27.224Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -224,7 +231,8 @@
             "corsReachable": true,
             "answersAsDeclared": true,
             "detail": "as declared: manifest, network",
-            "unreachable": []
+            "unreachable": [],
+            "instructionFindings": []
           }
         },
         "checks": {
@@ -244,6 +252,12 @@
             "url": "https://shutdown-clerk.pages.dev/shutdown_clerk.network.json",
             "problems": [],
             "warnings": []
+          },
+          "instructions": {
+            "state": "scanned",
+            "url": "https://shutdown-clerk.pages.dev/shutdown_clerk.network.json",
+            "scanned": 8,
+            "findings": []
           },
           "registration": {
             "state": "absent",
@@ -294,18 +308,18 @@
         },
         "http": [
           {
-            "url": "https://shutdown-clerk.pages.dev/.well-known/agent-registration.json",
-            "method": "GET",
-            "status": 200,
-            "contentType": "text/html; charset=utf-8",
-            "bytes": 5105
-          },
-          {
             "url": "https://shutdown-clerk.pages.dev/agent-manifest.json",
             "method": "GET",
             "status": 200,
             "contentType": "application/json",
             "bytes": 2438
+          },
+          {
+            "url": "https://shutdown-clerk.pages.dev/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "text/html; charset=utf-8",
+            "bytes": 5105
           },
           {
             "url": "https://shutdown-clerk.pages.dev/shutdown_clerk",
@@ -365,6 +379,11 @@
       "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
     }
   },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": null
+  },
   "pageOrigin": "http://localhost:8790",
-  "ms": 225
+  "ms": 164
 }

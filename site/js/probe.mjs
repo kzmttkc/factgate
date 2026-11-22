@@ -5,6 +5,7 @@
 //
 // The functions above probeLive() are pure and tested in test/probe.test.mjs.
 import { evmPayTos } from "./chain.mjs";
+import { scanInstructions } from "./instructions.mjs";
 import { DEFAULT_TIMEOUT_MS, parseJson, readText, timedFetch } from "./net.mjs";
 
 const MAX_MCP = 5;
@@ -93,7 +94,7 @@ export function inspectManifest(manifest, name) {
  * it will call: MCP servers with their tool names, and peer networks.
  */
 export function inspectNetwork(network, frontMan) {
-  const out = { ok: false, problems: [], warnings: [], agents: 0, mcp: [], peers: [], sampleQueries: 0 };
+  const out = { ok: false, problems: [], warnings: [], agents: 0, mcp: [], peers: [], links: [], sampleQueries: 0 };
   const agents = network && Array.isArray(network.tools) ? network.tools : null;
   if (!agents || agents.length === 0) {
     out.problems.push("network definition has no agents (tools)");
@@ -114,11 +115,19 @@ export function inspectNetwork(network, frontMan) {
   if (frontMan && !names.has(frontMan)) {
     out.problems.push(`front agent "${frontMan}" is not in the network`);
   }
+  // A name in link_slots is a named peer-network reference that the site's links.json binds to
+  // a URL (spec 3.3, "peer-network link map"); the runtime resolves it, so it is not an error.
+  const slots = network.link_slots && typeof network.link_slots === "object" ? Object.keys(network.link_slots) : [];
+  out.links = slots;
   for (const a of agents) {
     for (const t of Array.isArray(a && a.tools) ? a.tools : []) {
       if (typeof t === "string") {
         if (/^https?:\/\//.test(t)) {
           out.peers.push(t);
+        } else if (slots.includes(t) && !names.has(t)) {
+          if (!out.peers.includes(`link:${t}`)) {
+            out.peers.push(`link:${t}`);
+          }
         } else if (!names.has(t)) {
           out.problems.push(`agent "${a.name}" calls "${t}", which is not an agent in the network`);
         }
@@ -325,6 +334,14 @@ export function resourceCheck({ status, bodyText }) {
  */
 export function liveFromChecks(checks) {
   const c = checks && typeof checks === "object" ? checks : {};
+  const pillar = liveFromChecksBase(c);
+  if (pillar.data && c.instructions && Array.isArray(c.instructions.findings)) {
+    pillar.data.instructionFindings = c.instructions.findings;
+  }
+  return pillar;
+}
+
+function liveFromChecksBase(c) {
   const readable = (x) => x && (x.state === "found" || x.state === "absent");
   const reachable = Boolean((c.target && c.target.reachable) || readable(c.manifest) || readable(c.registration));
   if (!reachable) {
@@ -553,6 +570,8 @@ export async function probeLive(url, { fetch: fetchImpl, timeoutMs = DEFAULT_TIM
           const ni = inspectNetwork(n.json, m.entry.front_man);
           checks.network = { state: "found", url: netUrl, problems: ni.problems, warnings: ni.warnings };
           declared.network = { agents: ni.agents, mcp: ni.mcp, peers: ni.peers, sampleQueries: ni.sampleQueries };
+          const scan = scanInstructions(n.json, { siteUrl: url, declaredUrls: [...ni.peers.filter((x) => /^https?:/.test(x)), ...ni.mcp.map((x) => x.url)] });
+          checks.instructions = { state: "scanned", url: netUrl, scanned: scan.scanned, findings: scan.findings };
           ni.mcp.forEach((x) => mcpDeclared.push({ ...x, from: "network definition" }));
         } else if (n.state === "unreachable") {
           checks.network = { state: "unreachable", url: netUrl, error: n.error };

@@ -12,65 +12,76 @@
 </head>
 <body>
   <main>
-    <header>
-      <h1>FactGate</h1>
-      <p>Before your agent connects to another agent or pays an x402 seller, check three things: does it answer as it declares, is the payee the one registered on ERC-8004, and did content come back when vet402 paid it. The verdict comes from code, not from a model.</p>
+    <header class="masthead">
+      <p class="wordmark">FactGate</p>
+      <h1>Check a counterparty before your agent links to it or pays it.</h1>
+      <p class="lede">Three checks, measured from your browser: does it answer as it declares, is it the ERC-8004 identity it claims, and did content come back when someone paid it. The verdict comes from code, not from a model. Nothing is paid or signed, and nothing is contacted before you approve it.</p>
     </header>
 
-    <section id="full" aria-labelledby="full-heading">
-      <h2 id="full-heading">Check a counterparty</h2>
-      <p>Paste an agent network URL, an x402 endpoint or a site address. This page reads it from your browser, reads the ERC-8004 registration it declares on chain, and asks vet402 for its delivery record. Nothing is paid or signed.</p>
+    <section id="full" class="check" aria-labelledby="full-heading">
+      <h2 id="full-heading" class="visually-hidden">Check a counterparty</h2>
       <form id="full-form">
-        <label for="target-url">Counterparty URL</label>
-        <input id="target-url" type="url" required placeholder="https://agent402.tools/api/weather-forecast" value="https://agent402.tools/api/weather-forecast">
-        <details>
+        <label for="target-url">Agent network URL, x402 endpoint or site address</label>
+        <div class="row">
+          <input id="target-url" type="url" required placeholder="https://agent402.tools/api/weather-forecast" value="https://agent402.tools/api/weather-forecast">
+          <button id="run-check" type="submit">Check</button>
+        </div>
+        <details class="inline">
           <summary>Name an ERC-8004 agent yourself (optional)</summary>
-          <label for="agent-id">agentId</label>
-          <input id="agent-id" inputmode="numeric" pattern="[0-9]*" placeholder="read from the site's declared registration">
-          <label for="chain-id">Chain</label>
-          <select id="chain-id">
-            <option value="8453">Base mainnet (8453)</option>
-            <option value="84532">Base Sepolia (84532)</option>
-            <option value="42220">Celo (42220)</option>
-          </select>
+          <div class="pair">
+            <label for="agent-id">agentId</label>
+            <input id="agent-id" inputmode="numeric" pattern="[0-9]*" placeholder="read from the site's declared registration">
+            <label for="chain-id">Chain</label>
+            <select id="chain-id">
+              <option value="8453">Base mainnet (8453)</option>
+              <option value="84532">Base Sepolia (84532)</option>
+              <option value="42220">Celo (42220)</option>
+            </select>
+          </div>
         </details>
-        <button id="run-check" type="submit">Check</button>
       </form>
-      <p id="full-status" role="status"></p>
-      <div id="full-result" hidden>
-        <p>Verdict: <strong id="full-verdict"></strong></p>
-        <ul id="full-reasons"></ul>
-        <p id="full-unofficial" class="note" hidden></p>
-        <details>
-          <summary>Every request this check made</summary>
-          <div class="table-wrap"><table><thead><tr><th>Request</th><th>URL</th><th>HTTP / error</th></tr></thead><tbody id="full-http"></tbody></table></div>
-        </details>
-        <h3>AgentFacts</h3>
-        <p class="note">Field names from the AgentFacts paper (arXiv:2507.14263, appendix, V0.3 draft). Fields starting with <code>x_factgate_</code> are FactGate's extensions and carry the evidence. Unsigned.</p>
-        <button id="download-facts" type="button">Download AgentFacts</button>
-        <pre id="agentfacts" tabindex="0"></pre>
+      <div class="try-row">
+        <span class="try-label">Try these</span>
+        <div id="try-these" class="try-list"></div>
       </div>
+      <p id="full-status" role="status"></p>
     </section>
 
-    <section id="gate" aria-labelledby="gate-heading">
-      <h2 id="gate-heading">Judge pillar results by hand</h2>
-      <form id="gate-form">
-        <label for="seller-url">Counterparty x402 URL</label>
-        <input id="seller-url" type="url" placeholder="https://agent402.tools/api/weather-forecast">
-        <button id="fetch-delivery" type="button">Read the vet402 delivery record</button>
-        <label for="pillars">Pillar results (JSON: live, identity, delivery)</label>
-        <textarea id="pillars" rows="12">{}</textarea>
-        <button id="judge" type="submit">Judge and save</button>
-      </form>
-      <p id="gate-out" role="status"></p>
-      <h3>Saved checks</h3>
-      <ul id="checks"></ul>
+    <section id="full-result" class="result" hidden aria-labelledby="full-verdict">
+      <div class="verdict-head">
+        <strong id="full-verdict" class="badge"></strong>
+        <div class="verdict-meta">
+          <p id="full-target" class="target"></p>
+          <p id="full-time" class="note"></p>
+        </div>
+      </div>
+      <dl class="counts">
+        <div><dt>paid calls (vet402)</dt><dd id="count-paid">—</dd></div>
+        <div><dt>came back with content</dt><dd id="count-delivered">—</dd></div>
+        <div><dt>validations passed (trusted)</dt><dd id="count-validationsPassed">—</dd></div>
+      </dl>
+      <div id="full-pillars" class="pillars"></div>
+      <p id="full-unofficial" class="note" hidden></p>
+      <details>
+        <summary>Every request this check made</summary>
+        <div class="table-wrap"><table><thead><tr><th>Request</th><th>URL</th><th>HTTP / error</th></tr></thead><tbody id="full-http"></tbody></table></div>
+      </details>
+      <details>
+        <summary>Origins you approved for this check</summary>
+        <ul id="full-consent"></ul>
+      </details>
+      <details>
+        <summary>AgentFacts (JSON)</summary>
+        <p class="note">Field names from the AgentFacts paper (arXiv:2507.14263, appendix, V0.3 draft). Fields starting with <code>x_factgate_</code> are FactGate's extensions and carry the evidence. Unsigned.</p>
+        <button id="download-facts" type="button" class="secondary">Download AgentFacts</button>
+        <pre id="agentfacts" tabindex="0"></pre>
+      </details>
     </section>
 
     <section id="assistant" class="assistant" aria-labelledby="assistant-heading">
       <h2 id="assistant-heading">Ask FactGate</h2>
-      <p>The assistant reads vet402's delivery record through its MCP server and runs the same verdict engine as the form above.</p>
-      <p class="assistant-note">Your messages and this page's data go to the LLM provider you choose in the settings below. You confirm anything that cannot be undone before it happens.</p>
+      <p>The assistant runs the same check and reads vet402's delivery record through its MCP server. Every site it contacts asks you first.</p>
+      <p class="assistant-note">Your messages and this page's data go to the LLM provider you choose in the settings below.</p>
       <p id="assistant-status" role="status">Connecting the assistant… If this message stays, the assistant could not load. You can still use the page directly.</p>
       <div id="agent-app">
         <div data-ns-slot="header"></div>
@@ -81,6 +92,46 @@
         <div data-ns-slot="settings"></div>
       </div>
     </section>
+
+    <section id="settings" aria-labelledby="settings-heading">
+      <h2 id="settings-heading" class="visually-hidden">Settings and developer tools</h2>
+      <details id="validators">
+        <summary>Trusted validators</summary>
+        <p class="note">A validation score counts only when its validator is on this list. Scores from any other validator are shown, never counted. The default (<a href="validators.json">validators.json</a>) lists only validators whose scores anyone can re-compute from public records; the Delivery Court judge is the author's own. Your changes stay in this browser.</p>
+        <ul id="validator-list"></ul>
+        <form id="validator-form" class="pair">
+          <label for="validator-address">Validator address</label>
+          <input id="validator-address" placeholder="0x…" autocomplete="off">
+          <label for="validator-chain">Chain</label>
+          <select id="validator-chain">
+            <option value="84532">Base Sepolia (84532)</option>
+            <option value="8453">Base mainnet (8453)</option>
+            <option value="42220">Celo (42220)</option>
+            <option value="0">Any chain</option>
+          </select>
+          <div class="buttons"><button type="submit" class="secondary">Add</button> <button id="validator-reset" type="button" class="secondary">Reset to the published list</button></div>
+        </form>
+        <p id="validator-out" class="note" role="status"></p>
+      </details>
+      <details id="gate">
+        <summary>Developer: judge pillar results by hand</summary>
+        <form id="gate-form">
+          <label for="seller-url">Counterparty x402 URL</label>
+          <input id="seller-url" type="url" placeholder="https://agent402.tools/api/weather-forecast">
+          <button id="fetch-delivery" type="button" class="secondary">Read the vet402 delivery record</button>
+          <label for="pillars">Pillar results (JSON: live, identity, delivery)</label>
+          <textarea id="pillars" rows="10">{}</textarea>
+          <button id="judge" type="submit" class="secondary">Judge and save</button>
+        </form>
+        <p id="gate-out" role="status"></p>
+        <h3>Saved checks</h3>
+        <ul id="checks"></ul>
+      </details>
+    </section>
+
+    <footer>
+      <p>FactGate reads public answers only: GET requests, MCP <code>initialize</code> and <code>tools/list</code>, <code>eth_call</code>, and vet402's read tool. It runs in your browser with no server of its own.</p>
+    </footer>
   </main>
 </body>
 </html>

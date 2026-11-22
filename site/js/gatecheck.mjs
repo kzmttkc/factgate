@@ -4,8 +4,12 @@
 // MCP initialize/tools/list, eth_call and vet402's read tool. It never pays or signs.
 //
 // The same function runs on the page, in the action bridge and in scripts/probe-live.mjs; only
-// the fetch function differs.
+// the fetch function differs. On the page and in the bridge window every contact goes through
+// the visitor's consent card first (options.ask, js/consent.mjs); scripts/probe-live.mjs is run
+// by the operator from a terminal and passes no ask.
 import { buildAgentFacts } from "./agentfacts.mjs";
+import { withConsent } from "./consent.mjs";
+import { DEFAULT_VALIDATORS } from "./validators.mjs";
 import { CHAINS, bindingOf, decodeDataUriJson, evmPayTos, identityPillar, pickRegistration, readAgent } from "./chain.mjs";
 import { deliveryFromMcp, evaluateGate } from "./gate.mjs";
 import { DEFAULT_TIMEOUT_MS, parseJson, readText, timedFetch } from "./net.mjs";
@@ -68,10 +72,23 @@ async function registrationFromUri(fetchImpl, tokenURI, live, timeoutMs) {
 
 /**
  * :param target: { url, agentId?, chainId? }. agentId/chainId override the declared registration.
- * :param options: { fetch, timeoutMs?, now?, skipDelivery? }
+ * :param options: { fetch, ask?, remembered?, trustedValidators?, timeoutMs?, now?, skipDelivery? }
+ *   ask: the consent card (js/consent.mjs). With it, nothing is sent to an origin the visitor has
+ *   not approved; the result then carries consent: { cards, approved, declined }.
  */
 export async function gateCheck(target, options) {
+  if (typeof options.ask !== "function") {
+    return gateCheckOnce(target, options);
+  }
+  const { result, consent } = await withConsent((gated) => gateCheckOnce(target, { ...options, fetch: gated }), { fetch: options.fetch, ask: options.ask, remembered: options.remembered });
+  result.consent = consent;
+  result.agentFacts.x_factgate_evidence.consent = consent;
+  return result;
+}
+
+async function gateCheckOnce(target, options) {
   const fetchImpl = options.fetch;
+  const trusted = Array.isArray(options.trustedValidators) ? options.trustedValidators : DEFAULT_VALIDATORS;
   const timeoutMs = options.timeoutMs || DEFAULT_TIMEOUT_MS;
   const checkedAt = options.now ? options.now() : new Date().toISOString();
   const url = String(target.url || "").trim();
@@ -112,9 +129,17 @@ export async function gateCheck(target, options) {
     chainRead = await readAgent(agent, fetchImpl, timeoutMs);
     idEvidence.chainRead = chainRead;
     if (chainRead.ok && chainRead.exists) {
-      const fromChain = await registrationFromUri(fetchImpl, chainRead.tokenURI, live, timeoutMs);
+      // The file the agentURI points to is read only when it can change the outcome: a paid
+      // counterparty whose own registration file already names this agent is judged by its
+      // payee, so one fewer origin is contacted (and one fewer consent card shown).
+      const quick = bindingOf({ targetUrl: url, chainId: agent.chainId, agentId: agent.agentId, wellKnown: live.declared.registrationFile, tokenURI: chainRead.tokenURI, registrationFile: null });
+      const paidTerms = Boolean(live.declared && live.declared.terms);
+      let fromChain = { file: null, how: "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee" };
+      if (!(paidTerms && quick.siteToAgent) && !quick.mutual) {
+        fromChain = await registrationFromUri(fetchImpl, chainRead.tokenURI, live, timeoutMs);
+      }
       idEvidence.registrationFromChain = { how: fromChain.how, name: fromChain.file && fromChain.file.name };
-      binding = bindingOf({ targetUrl: url, chainId: agent.chainId, agentId: agent.agentId, wellKnown: live.declared.registrationFile, tokenURI: chainRead.tokenURI, registrationFile: fromChain.file });
+      binding = fromChain.file ? bindingOf({ targetUrl: url, chainId: agent.chainId, agentId: agent.agentId, wellKnown: live.declared.registrationFile, tokenURI: chainRead.tokenURI, registrationFile: fromChain.file }) : quick;
       idEvidence.binding = binding;
     }
   }
@@ -151,7 +176,7 @@ export async function gateCheck(target, options) {
   } else if (!binding || !binding.bound) {
     validation = { status: "unavailable", error: "the agent does not claim this URL, so its validations do not speak for it" };
   } else {
-    validation = await readValidations({ chainId: agent.chainId, agentId: agent.agentId, selfAddresses: [chainRead.owner, chainRead.agentWallet] }, fetchImpl, { timeoutMs });
+    validation = await readValidations({ chainId: agent.chainId, agentId: agent.agentId, selfAddresses: [chainRead.owner, chainRead.agentWallet], trusted }, fetchImpl, { timeoutMs });
   }
   delEvidence.validation = validation || null;
 
@@ -161,8 +186,24 @@ export async function gateCheck(target, options) {
     identity: { pillar: identity, ...idEvidence },
     delivery: { pillar: delivery, ...delEvidence },
   };
-  const agentFacts = buildAgentFacts({ url, checkedAt, verdict, live: evidence.live, identity: evidence.identity, delivery: evidence.delivery });
-  return { url, checkedAt, verdict: verdict.verdict, reasons: verdict.reasons, evidence, agentFacts };
+  const agentFacts = buildAgentFacts({ url, checkedAt, verdict, live: evidence.live, identity: evidence.identity, delivery: evidence.delivery, trustedValidators: trusted });
+  return { url, checkedAt, verdict: verdict.verdict, reasons: verdict.reasons, evidence, agentFacts, counts: countsOf(evidence) };
+}
+
+/**
+ * The three numbers the page shows large: paid calls and delivered calls in vet402's record, and
+ * passing validation scores from trusted validators. null when not measured (shown as "—").
+ */
+export function countsOf(evidence) {
+  const d = evidence.delivery.pillar && evidence.delivery.pillar.status === "ok" ? evidence.delivery.pillar.data : null;
+  const stats = d && d.delivery && typeof d.delivery === "object" ? d.delivery : null;
+  const v = evidence.delivery.validation && evidence.delivery.validation.status === "ok" ? evidence.delivery.validation.data : null;
+  const num = (x) => (x === undefined || x === null || Number.isNaN(Number(x)) ? null : Number(x));
+  return {
+    paid: stats ? num(stats.paid_attempts) : null,
+    delivered: stats ? num(stats.delivered) : null,
+    validationsPassed: v ? num(v.passed) : null,
+  };
 }
 
 /** The few values a model or a partner site needs, without the full HTTP log. */
@@ -201,9 +242,11 @@ export function summarizeCheck(result) {
       error: e.delivery.pillar.error,
       applicable: e.delivery.paid !== false,
       validation: e.delivery.validation && e.delivery.validation.data
-        ? (({ passed, failed, pending, unresolved, validators, evidence }) => ({ passed, failed, pending, unresolved, validators, evidence: (evidence || []).map((x) => ({ role: x.role, response: x.response, tx: x.log && x.log.tx, block: x.log && x.log.block, logIndex: x.log && x.log.logIndex })) }))(e.delivery.validation.data)
+        ? (({ passed, failed, pending, unresolved, validators, counted, notCounted, evidence }) => ({ passed, failed, pending, unresolved, validators, counted, notCounted, evidence: (evidence || []).map((x) => ({ role: x.role, response: x.response, tx: x.log && x.log.tx, block: x.log && x.log.block, logIndex: x.log && x.log.logIndex })) }))(e.delivery.validation.data)
         : e.delivery.validation,
     },
+    counts: result.counts,
+    consent: result.consent ? { approved: result.consent.approved.map((o) => new URL(o).host), declined: result.consent.declined.map((o) => new URL(o).host) } : undefined,
     agentFacts: "The full AgentFacts JSON with every source URL is on the FactGate page (Download AgentFacts).",
   };
 }

@@ -259,3 +259,10 @@ test("liveFromChecks: a declared wallet that the 402 does not pay, or an empty p
   assert.equal(u.data.answersAsDeclared, true);
   assert.equal(u.data.unreachable.length, 1);
 });
+
+test("a name in link_slots is a named peer reference (spec 3.3 links.json), not a missing agent", async () => {
+  const { inspectNetwork } = await import("../site/js/probe.mjs");
+  const r = inspectNetwork({ link_slots: { factgate: { callers: ["desk"] } }, tools: [{ name: "desk", tools: ["factgate", "ghost"] }] }, "desk");
+  assert.deepEqual(r.peers, ["link:factgate"]);
+  assert.deepEqual(r.problems, ['agent "desk" calls "ghost", which is not an agent in the network']);
+});

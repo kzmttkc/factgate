@@ -54,11 +54,27 @@ test("classify: >= 70 is a pass, 1..69 an answered low, 0 needs the logs, self-v
       { validator: OWNER, response: 100 },
     ],
     [OWNER],
+    { chainId: 84532 },
   );
   assert.equal(c.high.length, 1);
   assert.equal(c.low.length, 1);
   assert.equal(c.zero.length, 1);
   assert.equal(c.self.length, 1);
+});
+
+test("classify: a validator not on the trusted list is set aside, whatever it scored", () => {
+  const STRANGER = "0x7777777777777777777777777777777777777777";
+  const c = classifyValidations([{ validator: STRANGER, response: 3 }, { validator: STRANGER, response: 100 }, { validator: JUDGE, response: 99 }], [], { chainId: 84532 });
+  assert.equal(c.untrusted.length, 2);
+  assert.equal(c.low.length, 0);
+  assert.equal(c.high.length, 1);
+  // The judge is trusted on Base Sepolia only.
+  const mainnet = classifyValidations([{ validator: JUDGE, response: 99 }], [], { chainId: 8453 });
+  assert.equal(mainnet.untrusted.length, 1);
+  const s = validationSummary(c, { chainId: 84532 });
+  assert.equal(s.untrusted, 2);
+  assert.deepEqual(s.counted.map((x) => x.validator), [JUDGE]);
+  assert.match(s.notCounted[0].reason, /not on the trusted validator list/);
 });
 
 test("summary: a pending 0 is not counted, an answered 0 is a failure, an unknown 0 is unresolved", () => {

@@ -47,6 +47,24 @@ function urnPart(s) {
 }
 
 /**
+ * Which ERC-8004 validators' scores were counted and which were not, with the reason, and the
+ * trusted list used. Undefined when no validation record was read.
+ */
+function validatorsBlock(input) {
+  const v = input.delivery && input.delivery.validation;
+  const data = v && v.status === "ok" ? v.data : null;
+  if (!data) {
+    return undefined;
+  }
+  return {
+    rule: "A score counts only when its validator is on the trusted list for that chain; self-scores never count.",
+    trustedList: clone((input.trustedValidators || []).map((t) => ({ address: t.address, chains: t.chains, name: t.name }))),
+    counted: clone(data.counted || []),
+    notCounted: clone(data.notCounted || []),
+  };
+}
+
+/**
  * :param input: { url, checkedAt, verdict: {verdict, reasons}, live: {pillar, declared, http, checks?},
  *   identity: {pillar, agent?, rpc?, binding?, ...}, delivery: {pillar, ...} }
  * :return: a plain JSON object.
@@ -60,9 +78,15 @@ export function buildAgentFacts(input) {
   const entry = declared.manifestEntry || null;
   let host = url;
   let origin = url;
+  let hostname = url;
+  let port = "";
   try {
-    host = new URL(url).host;
-    origin = new URL(url).origin;
+    const u = new URL(url);
+    host = u.host;
+    origin = u.origin;
+    // hostname and port apart, so "127.0.0.1:8792" keeps its ":" (urnPart drops other punctuation).
+    hostname = u.hostname;
+    port = u.port;
   } catch {
     // keep the raw value
   }
@@ -100,7 +124,7 @@ export function buildAgentFacts(input) {
   const verdict = input.verdict || {};
   return dropUndefined({
     id,
-    agent_name: `urn:agent:${urnPart(host)}:${urnPart(label)}`,
+    agent_name: `urn:agent:${urnPart(hostname)}${port ? `:${port}` : ""}:${urnPart(label)}`,
     label,
     description: (reg && reg.description) || (entry && entry.description) || undefined,
     provider: { url: origin },
@@ -117,6 +141,7 @@ export function buildAgentFacts(input) {
       notApplicable: (verdict.reasons || []).filter((r) => r.applicable === false).map((r) => `${r.pillar}: not applicable (not a pass)`),
     },
     x_factgate_unofficial_registries: identity.unofficial && identity.unofficial.length ? clone(identity.unofficial) : undefined,
+    x_factgate_validators: validatorsBlock(input),
     x_factgate_evidence: {
       target: url,
       checkedAt: input.checkedAt,

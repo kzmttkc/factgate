@@ -10,8 +10,11 @@
 //   ValidationResponse event there means "answered 0", a ValidationRequest event means "pending".
 // Rule (executive decision 2026-11-22): at least one answered score >= 70 and none below 70 is a
 // pass; any answered score below 70 is BLOCK. Self-validation (validator = the agent's owner or
-// agentWallet) is shown but not counted.
+// agentWallet) is shown but not counted. Only validators on the trusted list (js/validators.mjs,
+// site/validators.json, changeable by the visitor) are counted; any other validator's scores are
+// shown with the reason, never counted.
 import { DEFAULT_TIMEOUT_MS, timedFetch } from "./net.mjs";
+import { DEFAULT_VALIDATORS, trustedRow } from "./validators.mjs";
 
 export const VALIDATION_REGISTRY = Object.freeze({
   mainnet: "0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58",
@@ -78,17 +81,20 @@ export function decodeValidationStatus(hex) {
 
 /**
  * Sort the statuses: scores >= 70 are answered for certain (a pending request reads 0); 1..69 are
- * answered lows; 0 needs the logs. Self-validations are set aside.
+ * answered lows; 0 needs the logs. Self-validations and validators not on the trusted list are set
+ * aside (shown, not counted).
  */
-export function classifyValidations(statuses, selfAddresses = []) {
+export function classifyValidations(statuses, selfAddresses = [], { trusted = DEFAULT_VALIDATORS, chainId = null } = {}) {
   const self = new Set(selfAddresses.filter(Boolean).map((a) => a.toLowerCase()));
-  const out = { high: [], low: [], zero: [], self: [] };
+  const out = { high: [], low: [], zero: [], self: [], untrusted: [] };
   for (const s of statuses) {
     if (!s) {
       continue;
     }
     if (self.has(s.validator.toLowerCase())) {
       out.self.push(s);
+    } else if (!trustedRow(trusted, s.validator, chainId ?? s.chainId)) {
+      out.untrusted.push(s);
     } else if (s.response >= PASS_SCORE) {
       out.high.push(s);
     } else if (s.response > 0) {
@@ -100,23 +106,41 @@ export function classifyValidations(statuses, selfAddresses = []) {
   return out;
 }
 
+function group(list, reason, trusted, chainId) {
+  const by = new Map();
+  for (const s of list) {
+    const k = s.validator.toLowerCase();
+    by.set(k, (by.get(k) || 0) + 1);
+  }
+  return [...by.entries()].map(([validator, count]) => ({ validator, count, reason, name: (trustedRow(trusted, validator, chainId) || {}).name }));
+}
+
 /**
  * The second source as data for the engine.
  * :param c: classifyValidations() result, with zero[] entries carrying .resolved =
  *   "answered" | "pending" | "unknown" after the log lookup.
+ * :param context: { trusted, chainId } for the counted / not-counted lists.
  */
-export function validationSummary(c) {
+export function validationSummary(c, { trusted = DEFAULT_VALIDATORS, chainId = null } = {}) {
   const answeredZero = c.zero.filter((z) => z.resolved === "answered");
   const unknown = c.zero.filter((z) => z.resolved !== "answered" && z.resolved !== "pending");
   const pending = c.zero.filter((z) => z.resolved === "pending");
+  const countedList = [...c.high, ...c.low, ...answeredZero];
   return {
     passed: c.high.length,
     failed: c.low.length + answeredZero.length,
     pending: pending.length,
     unresolved: unknown.length,
     selfExcluded: c.self.length,
-    validators: [...new Set([...c.high, ...c.low, ...answeredZero].map((s) => s.validator))],
+    untrusted: (c.untrusted || []).length,
+    validators: [...new Set(countedList.map((s) => s.validator))],
     lowest: [...c.low, ...answeredZero].reduce((m, s) => (m === null || s.response < m ? s.response : m), null),
+    counted: group(countedList, "on the trusted validator list", trusted, chainId),
+    notCounted: [
+      ...group(c.self, "self-score: the validator is the agent's own owner or agentWallet", trusted, chainId),
+      ...group(c.untrusted || [], "not on the trusted validator list: shown, not counted", trusted, chainId),
+      ...group(pending, "request never answered", trusted, chainId),
+    ],
   };
 }
 
@@ -271,7 +295,7 @@ export async function locateValidationLog(fetchImpl, chain, status, requestHash,
  * { status: "ok", data } or { status: "unavailable", error }, with evidence locations.
  *
  */
-export async function readValidations({ chainId, agentId, selfAddresses = [] }, fetchImpl, { timeoutMs = DEFAULT_TIMEOUT_MS, maxItems = 200, maxZeroLookups = 6 } = {}) {
+export async function readValidations({ chainId, agentId, selfAddresses = [], trusted = DEFAULT_VALIDATORS }, fetchImpl, { timeoutMs = DEFAULT_TIMEOUT_MS, maxItems = 200, maxZeroLookups = 6 } = {}) {
   const chain = VALIDATION_CHAINS[Number(chainId)];
   if (!chain) {
     return { status: "unavailable", error: `no ValidationRegistry known on chain ${chainId}` };
@@ -290,7 +314,7 @@ export async function readValidations({ chainId, agentId, selfAddresses = [] }, 
   }
   const base = { registry: chain.registry, chainId: Number(chainId), agentId: String(agentId), total: hashes.length };
   if (hashes.length === 0) {
-    return { status: "ok", data: { ...base, passed: 0, failed: 0, pending: 0, unresolved: 0, selfExcluded: 0, validators: [], lowest: null, evidence: [] } };
+    return { status: "ok", data: { ...base, passed: 0, failed: 0, pending: 0, unresolved: 0, selfExcluded: 0, untrusted: 0, validators: [], lowest: null, counted: [], notCounted: [], evidence: [] } };
   }
   const used = hashes.slice(-maxItems);
   const statuses = [];
@@ -311,7 +335,7 @@ export async function readValidations({ chainId, agentId, selfAddresses = [] }, 
   if (statuses.some((st) => st === null)) {
     return { status: "unavailable", error: "a getValidationStatus answer could not be decoded" };
   }
-  const c = classifyValidations(statuses, selfAddresses);
+  const c = classifyValidations(statuses, selfAddresses, { trusted, chainId: Number(chainId) });
   const evidence = [];
   // A certain low already decides BLOCK: locate one for the record and skip resolving the zeros.
   if (c.low.length > 0) {
@@ -329,5 +353,5 @@ export async function readValidations({ chainId, agentId, selfAddresses = [] }, 
     const s = c.high.reduce((a, b) => (b.lastUpdate > a.lastUpdate ? b : a));
     evidence.push({ role: "latest passing score", response: s.response, requestHash: s.requestHash, validator: s.validator, log: await locateValidationLog(fetchImpl, chain, s, s.requestHash, timeoutMs) });
   }
-  return { status: "ok", data: { ...base, ...validationSummary(c), evidence } };
+  return { status: "ok", data: { ...base, ...validationSummary(c, { trusted, chainId: Number(chainId) }), evidence } };
 }

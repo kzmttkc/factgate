@@ -1,13 +1,27 @@
 // FactGate page object. The page's own buttons and the assistant's website_* tools call the
 // same methods, so there is one set of rules (the pure engine in gate.mjs).
+import { DASH, verdictCard } from "./card.mjs";
+import { withConsent } from "./consent.mjs";
+import { TRY_THESE } from "./examples.mjs";
 import { evaluateGate, gateRules } from "./gate.mjs";
 import { fetchVet402Delivery } from "./gatecheck.mjs";
 import { gateCheckRead, inspectManifestRead, probeCapabilitiesRead, readIdentityRead } from "./reads.mjs";
+import { DEFAULT_VALIDATORS, normalizeTrusted } from "./validators.mjs";
 
 export { VET402_MCP } from "./gatecheck.mjs";
 
+const VALIDATORS_KEY = "factgate.trustedValidators.v1";
+
 function pageFetch(url, init) {
   return globalThis.fetch(url, init);
+}
+
+function storage() {
+  try {
+    return typeof localStorage === "undefined" ? null : localStorage;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -19,6 +33,72 @@ class GatePage {
     this.checks = [];
     this.nextId = 1;
     this.lastResult = null;
+    // Origins the visitor allowed "for this visit" on a consent card. Lost when the page closes.
+    this.remembered = new Set();
+    // Every consent card shown, with the answer, for the page and the tests.
+    this.cards = [];
+    // Who answers a consent card: the page's card in a browser, a test in Node. Without one,
+    // nothing is contacted (fail closed).
+    this.consentHandler = null;
+    this.trustedValidators = GatePage.loadTrusted();
+  }
+
+  /**
+   * The visitor's trusted-validator list: their saved one, else the published default.
+   */
+  static loadTrusted() {
+    try {
+      const saved = storage()?.getItem(VALIDATORS_KEY);
+      const list = saved ? normalizeTrusted(JSON.parse(saved)) : null;
+      return list && list.length ? list : normalizeTrusted(DEFAULT_VALIDATORS);
+    } catch {
+      return normalizeTrusted(DEFAULT_VALIDATORS);
+    }
+  }
+
+  /**
+   * Replace the trusted-validator list (kept in this browser only). An empty list counts no
+   * validation score at all.
+   */
+  setTrustedValidators(list) {
+    this.trustedValidators = normalizeTrusted(list);
+    try {
+      storage()?.setItem(VALIDATORS_KEY, JSON.stringify(this.trustedValidators));
+    } catch {
+      // Private window: the list still holds for this page.
+    }
+    return { ok: true, trustedValidators: this.trustedValidators };
+  }
+
+  resetTrustedValidators() {
+    try {
+      storage()?.removeItem(VALIDATORS_KEY);
+    } catch {
+      // nothing saved
+    }
+    this.trustedValidators = normalizeTrusted(DEFAULT_VALIDATORS);
+    return { ok: true, trustedValidators: this.trustedValidators };
+  }
+
+  /**
+   * Ask the visitor before a check contacts new origins (js/consent.mjs calls this).
+   *
+   * :return: "once", "visit" or "decline".
+   */
+  async ask(request) {
+    let answer = "decline";
+    if (typeof this.consentHandler === "function") {
+      answer = await this.consentHandler(request);
+    } else if (typeof document !== "undefined") {
+      const { askInPage } = await import("./consent-card.mjs");
+      answer = await askInPage(request);
+    }
+    this.cards.push({ rows: request.rows.map((r) => ({ host: r.host, purposes: r.purposes })), answer });
+    return answer;
+  }
+
+  consentOptions() {
+    return { ask: this.ask.bind(this), remembered: this.remembered, trustedValidators: this.trustedValidators };
   }
 
   /**
@@ -79,7 +159,8 @@ class GatePage {
    * Returns pillar 3. A failed call is "unavailable".
    */
   async fetchDelivery(url) {
-    return (await fetchVet402Delivery(pageFetch, url)).pillar;
+    const { result } = await withConsent((gated) => fetchVet402Delivery(gated, url), { fetch: pageFetch, ask: this.ask.bind(this), remembered: this.remembered });
+    return result.pillar;
   }
 
   /**
@@ -87,7 +168,7 @@ class GatePage {
    * verdict and AgentFacts. Keeps the last result for the page's preview and download.
    */
   async gateCheck(args) {
-    const r = await gateCheckRead(args || {}, pageFetch);
+    const r = await gateCheckRead(args || {}, pageFetch, this.consentOptions());
     if (r.ok === false) {
       return r;
     }
@@ -97,20 +178,20 @@ class GatePage {
   }
 
   inspectManifest(args) {
-    return inspectManifestRead(args || {}, pageFetch);
+    return inspectManifestRead(args || {}, pageFetch, this.consentOptions());
   }
 
   probeCapabilities(args) {
-    return probeCapabilitiesRead(args || {}, pageFetch);
+    return probeCapabilitiesRead(args || {}, pageFetch, this.consentOptions());
   }
 
   readIdentity(args) {
-    return readIdentityRead(args || {}, pageFetch);
+    return readIdentityRead(args || {}, pageFetch, this.consentOptions());
   }
 
   /**
-   * Show a full check: verdict, reasons, the values read, and the AgentFacts preview.
-   * Does nothing outside a browser.
+   * Show a full check: the verdict card (three pillars side by side, three counts), the values
+   * read, the consent given, and the AgentFacts preview. Does nothing outside a browser.
    */
   static renderResult(result) {
     if (typeof window === "undefined" || typeof document === "undefined") {
@@ -120,16 +201,45 @@ class GatePage {
     if (!box) {
       return;
     }
+    const card = verdictCard(result);
     box.hidden = false;
+    box.className = `result result-${card.verdict.toLowerCase()}`;
     const verdict = document.querySelector("#full-verdict");
-    verdict.textContent = result.verdict;
-    verdict.className = `verdict verdict-${result.verdict.toLowerCase()}`;
-    const reasons = document.querySelector("#full-reasons");
-    reasons.replaceChildren();
-    for (const r of result.reasons) {
-      const li = document.createElement("li");
-      li.textContent = `[${r.effect === "NOT_APPLICABLE" ? "NOT APPLICABLE" : r.effect}] ${r.pillar}: ${r.text}`;
-      reasons.append(li);
+    verdict.textContent = card.verdict;
+    verdict.className = `badge badge-${card.verdict.toLowerCase()}`;
+    document.querySelector("#full-target").textContent = card.target;
+    document.querySelector("#full-time").textContent = `checked ${card.checkedAt.replace("T", " ").slice(0, 19)} UTC`;
+    for (const c of card.counts) {
+      const el = document.querySelector(`#count-${c.key}`);
+      el.textContent = c.value;
+      el.classList.toggle("is-empty", c.value === DASH);
+    }
+    const pillars = document.querySelector("#full-pillars");
+    pillars.replaceChildren();
+    for (const p of card.pillars) {
+      const article = document.createElement("article");
+      article.className = `pillar pillar-${p.effect.toLowerCase().replace("_", "-")}`;
+      const hint = document.createElement("p");
+      hint.className = "pillar-hint";
+      hint.textContent = p.hint;
+      const title = document.createElement("h3");
+      title.textContent = p.title;
+      const state = document.createElement("p");
+      state.className = "pillar-state";
+      state.textContent = p.label;
+      const line = document.createElement("p");
+      line.className = "pillar-line";
+      line.textContent = p.line;
+      const more = document.createElement("details");
+      const summary = document.createElement("summary");
+      summary.textContent = "Details";
+      const full = document.createElement("p");
+      full.textContent = p.detail;
+      const code = document.createElement("code");
+      code.textContent = p.code;
+      more.append(summary, full, code);
+      article.append(hint, title, state, line, more);
+      pillars.append(article);
     }
     const unofficial = document.querySelector("#full-unofficial");
     const others = result.evidence.identity.unofficial || [];
@@ -140,7 +250,7 @@ class GatePage {
     const rows = [...result.evidence.live.http, ...((result.evidence.identity.chainRead && result.evidence.identity.chainRead.rpc) || []).map((x) => ({ method: `${x.method} @${x.block}`, url: x.url, status: x.ok ? (x.reverted ? "reverted" : "200") : undefined, error: x.ok ? undefined : x.error }))];
     const val = result.evidence.delivery.validation;
     if (val && val.data) {
-      rows.push({ method: `ValidationRegistry ${val.data.registry}`, url: `agent ${val.data.agentId}: ${val.data.total} requests, ${val.data.passed} >= 70, ${val.data.failed} < 70, ${val.data.pending} unanswered`, status: "eth_call" });
+      rows.push({ method: `ValidationRegistry ${val.data.registry}`, url: `agent ${val.data.agentId}: ${val.data.total} requests, ${val.data.passed} >= 70, ${val.data.failed} < 70, ${val.data.pending} unanswered, ${val.data.untrusted || 0} from untrusted validators`, status: "eth_call" });
       for (const e of val.data.evidence || []) {
         rows.push({ method: e.role, url: e.log && e.log.tx ? `tx ${e.log.tx} (block ${e.log.block}, log ${e.log.logIndex})` : `request ${e.requestHash}`, status: `score ${e.response}` });
       }
@@ -156,6 +266,19 @@ class GatePage {
         tr.append(td);
       }
       http.append(tr);
+    }
+    const consent = document.querySelector("#full-consent");
+    consent.replaceChildren();
+    const given = result.consent;
+    for (const o of given ? given.approved : []) {
+      const li = document.createElement("li");
+      li.textContent = `${new URL(o).host}: allowed`;
+      consent.append(li);
+    }
+    for (const o of given ? given.declined : []) {
+      const li = document.createElement("li");
+      li.textContent = `${new URL(o).host}: declined, not contacted`;
+      consent.append(li);
     }
     document.querySelector("#agentfacts").textContent = JSON.stringify(result.agentFacts, null, 2);
   }
@@ -221,7 +344,7 @@ class GatePage {
     list.replaceChildren();
     for (const c of page.checks) {
       const li = document.createElement("li");
-      li.className = `check verdict-${c.verdict.toLowerCase()}`;
+      li.className = `check-item verdict-${c.verdict.toLowerCase()}`;
       const head = document.createElement("strong");
       head.textContent = `${c.verdict} — ${c.label} (${c.id})`;
       const reasons = document.createElement("ul");
@@ -248,6 +371,8 @@ export class App {
    */
   static wire() {
     App.wireFullCheck();
+    App.wireTryThese();
+    App.wireValidators();
     const form = document.querySelector("#gate-form");
     const out = document.querySelector("#gate-out");
     const fetchButton = document.querySelector("#fetch-delivery");
@@ -288,9 +413,14 @@ export class App {
       const url = document.querySelector("#target-url").value.trim();
       const agentId = document.querySelector("#agent-id").value.trim();
       const chainId = Number(document.querySelector("#chain-id").value);
-      status.textContent = "Checking from this browser: manifest, MCP, x402 terms, ERC-8004 on chain, vet402…";
-      const out = await App.page.gateCheck(agentId ? { url, agentId, chainId } : { url });
-      status.textContent = out.ok === false ? out.reason : `Done: ${out.verdict}`;
+      status.textContent = "Waiting for your approval before anything is contacted…";
+      document.querySelector("#run-check").disabled = true;
+      try {
+        const out = await App.page.gateCheck(agentId ? { url, agentId, chainId } : { url });
+        status.textContent = out.ok === false ? out.reason : `Done: ${out.verdict}.`;
+      } finally {
+        document.querySelector("#run-check").disabled = false;
+      }
     });
     document.querySelector("#download-facts").addEventListener("click", () => {
       const file = App.page.agentFactsFile();
@@ -305,6 +435,83 @@ export class App {
       a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     });
+  }
+
+  /**
+   * The "Try these" buttons: fill the URL and run the same check.
+   */
+  static wireTryThese() {
+    const box = document.querySelector("#try-these");
+    if (!box) {
+      return;
+    }
+    for (const t of TRY_THESE) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "try";
+      b.dataset.url = t.url;
+      const name = document.createElement("span");
+      name.textContent = t.label;
+      const note = document.createElement("small");
+      note.textContent = t.note;
+      b.append(name, note);
+      b.addEventListener("click", () => {
+        document.querySelector("#target-url").value = t.url;
+        document.querySelector("#full-form").requestSubmit();
+      });
+      box.append(b);
+    }
+  }
+
+  /**
+   * The trusted-validator list: shown, editable, kept in this browser.
+   */
+  static wireValidators() {
+    const list = document.querySelector("#validator-list");
+    const form = document.querySelector("#validator-form");
+    if (!list || !form) {
+      return;
+    }
+    const draw = () => {
+      list.replaceChildren();
+      if (!App.page.trustedValidators.length) {
+        const li = document.createElement("li");
+        li.textContent = "No validator is trusted: no validation score counts.";
+        list.append(li);
+      }
+      for (const v of App.page.trustedValidators) {
+        const li = document.createElement("li");
+        const code = document.createElement("code");
+        code.textContent = v.address;
+        const text = document.createElement("span");
+        text.textContent = ` ${v.name}${v.chains.length ? ` (chain ${v.chains.join(", ")})` : " (any chain)"} `;
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "link";
+        remove.textContent = "Remove";
+        remove.addEventListener("click", () => {
+          App.page.setTrustedValidators(App.page.trustedValidators.filter((x) => x !== v));
+          draw();
+        });
+        li.append(code, text, remove);
+        list.append(li);
+      }
+    };
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const address = document.querySelector("#validator-address").value.trim();
+      const chain = Number(document.querySelector("#validator-chain").value);
+      const next = [...App.page.trustedValidators, { address, chains: chain ? [chain] : [], name: "added by you" }];
+      const cleaned = App.page.setTrustedValidators(next).trustedValidators;
+      document.querySelector("#validator-out").textContent = cleaned.length === next.length ? "Added. It counts from the next check." : "That is not an 0x address with 40 hex digits.";
+      draw();
+    });
+    document.querySelector("#validator-reset").addEventListener("click", () => {
+      App.page.resetTrustedValidators();
+      document.querySelector("#validator-out").textContent = "Back to the published list (validators.json).";
+      draw();
+    });
+    draw();
   }
 
   static safeParse(text) {

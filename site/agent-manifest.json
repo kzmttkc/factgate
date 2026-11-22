@@ -32,7 +32,7 @@
   "peer_policy": {
     "mode": "closed",
     "deny_origins": [],
-    "note": "Local agents, page-local actions and the vet402.com MCP server only."
+    "note": "The assistant's agents call only the vet402.com MCP server, after the runtime's card. FactGate's checks (website_gate_check and the other reads, on this page or in FactGate's window for another site) contact the counterparty, a public chain RPC, vet402.com and any MCP server the counterparty declares, each only after the visitor approves a card that lists those origins and what each gets."
   },
   "agent_mcp": {
     "protocol": "nsdeploy-agent-mcp/v1",
@@ -84,5 +84,9 @@
       "evaluate_gate",
       "save_check"
     ]
+  },
+  "factgate": {
+    "trusted_validators": "./validators.json",
+    "note": "Whose ERC-8004 validation scores count. Visitors can change the list on the page."
   }
 }

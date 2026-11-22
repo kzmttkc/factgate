@@ -1,7 +1,7 @@
 {
   "url": "https://vet402.com/",
-  "checkedAt": "2026-11-22T04:51:46.775Z",
-  "verdict": "CAUTION",
+  "checkedAt": "2026-11-22T05:40:29.775Z",
+  "verdict": "ALLOW",
   "reasons": [
     {
       "pillar": "live",
@@ -11,9 +11,9 @@
     },
     {
       "pillar": "identity",
-      "code": "identity_no_declared_payee",
-      "effect": "CAUTION",
-      "text": "The counterparty declares no valid payee address to compare."
+      "code": "identity_bound_no_payment",
+      "effect": "ALLOW",
+      "text": "No payment is asked, so there is no payee to compare. The site declares this ERC-8004 agent and the agent's registration points back to the site (the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin) [eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907]."
     },
     {
       "pillar": "delivery",
@@ -166,7 +166,7 @@
           "method": "POST tools/list",
           "status": 200,
           "contentType": "text/event-stream",
-          "bytes": 25422
+          "bytes": 26337
         }
       ]
     },
@@ -181,7 +181,9 @@
             "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
             "payTo": null,
             "bound": true,
-            "readAt": "eth_call at Celo block 83422348, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
+            "mutual": true,
+            "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin",
+            "readAt": "eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
           }
         }
       },
@@ -226,7 +228,7 @@
         "chain": "Celo",
         "agentId": "9907",
         "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
-        "block": 83422348,
+        "block": 83425271,
         "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
         "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
         "tokenURI": "https://vet402.com/.well-known/agent-registration.json",
@@ -236,7 +238,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000026b3",
-            "block": "0x4f8ec8c",
+            "block": "0x4f8f7f7",
             "ok": true,
             "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
           },
@@ -245,7 +247,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x0033950900000000000000000000000000000000000000000000000000000000000026b3",
-            "block": "0x4f8ec8c",
+            "block": "0x4f8f7f7",
             "ok": true,
             "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
           },
@@ -254,19 +256,22 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000026b3",
-            "block": "0x4f8ec8c",
+            "block": "0x4f8f7f7",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003668747470733a2f2f7665743430322e636f6d2f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e00000000000000000000"
           }
         ]
       },
       "registrationFromChain": {
-        "how": "same file as the declared registration",
-        "name": "vet402"
+        "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+        "name": null
       },
       "binding": {
         "bound": true,
-        "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+        "mutual": true,
+        "siteToAgent": true,
+        "agentToSite": true,
+        "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin"
       }
     },
     "delivery": {
@@ -316,11 +321,11 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:51:46.775Z",
+      "lastAudited": "2026-11-22T05:40:29.775Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
-      "verdict": "CAUTION",
+      "verdict": "ALLOW",
       "reasons": [
         {
           "pillar": "live",
@@ -330,9 +335,9 @@
         },
         {
           "pillar": "identity",
-          "code": "identity_no_declared_payee",
-          "effect": "CAUTION",
-          "text": "The counterparty declares no valid payee address to compare."
+          "code": "identity_bound_no_payment",
+          "effect": "ALLOW",
+          "text": "No payment is asked, so there is no payee to compare. The site declares this ERC-8004 agent and the agent's registration points back to the site (the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin) [eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907]."
         },
         {
           "pillar": "delivery",
@@ -355,7 +360,7 @@
     ],
     "x_factgate_evidence": {
       "target": "https://vet402.com/",
-      "checkedAt": "2026-11-22T04:51:46.775Z",
+      "checkedAt": "2026-11-22T05:40:29.775Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -498,7 +503,7 @@
             "method": "POST tools/list",
             "status": 200,
             "contentType": "text/event-stream",
-            "bytes": 25422
+            "bytes": 26337
           }
         ]
       },
@@ -513,7 +518,9 @@
               "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
               "payTo": null,
               "bound": true,
-              "readAt": "eth_call at Celo block 83422348, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
+              "mutual": true,
+              "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin",
+              "readAt": "eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
             }
           }
         },
@@ -558,7 +565,7 @@
           "chain": "Celo",
           "agentId": "9907",
           "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
-          "block": 83422348,
+          "block": 83425271,
           "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
           "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
           "tokenURI": "https://vet402.com/.well-known/agent-registration.json",
@@ -568,7 +575,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000026b3",
-              "block": "0x4f8ec8c",
+              "block": "0x4f8f7f7",
               "ok": true,
               "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
             },
@@ -577,7 +584,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x0033950900000000000000000000000000000000000000000000000000000000000026b3",
-              "block": "0x4f8ec8c",
+              "block": "0x4f8f7f7",
               "ok": true,
               "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
             },
@@ -586,19 +593,22 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000026b3",
-              "block": "0x4f8ec8c",
+              "block": "0x4f8f7f7",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003668747470733a2f2f7665743430322e636f6d2f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e00000000000000000000"
             }
           ]
         },
         "registrationFromChain": {
-          "how": "same file as the declared registration",
-          "name": "vet402"
+          "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+          "name": null
         },
         "binding": {
           "bound": true,
-          "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+          "mutual": true,
+          "siteToAgent": true,
+          "agentToSite": true,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin"
         }
       },
       "delivery": {
@@ -621,6 +631,11 @@
       "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
     }
   },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": null
+  },
   "pageOrigin": "http://localhost:8790",
-  "ms": 2251
+  "ms": 2078
 }

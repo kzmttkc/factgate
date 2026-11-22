@@ -1,6 +1,6 @@
 {
   "url": "http://127.0.0.1:8791/glossy_stay",
-  "checkedAt": "2026-11-22T04:51:49.028Z",
+  "checkedAt": "2026-11-22T05:40:31.854Z",
   "verdict": "BLOCK",
   "reasons": [
     {
@@ -13,7 +13,7 @@
       "pillar": "identity",
       "code": "identity_payee_mismatch",
       "effect": "BLOCK",
-      "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62006203, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f]."
+      "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f]."
     },
     {
       "pillar": "delivery",
@@ -46,7 +46,8 @@
           "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource http://127.0.0.1:8791/api/book.json answers with an empty body",
           "unreachable": [
             "MCP https://mcp.glossy-stay.invalid/mcp: TypeError: fetch failed"
-          ]
+          ],
+          "instructionFindings": []
         }
       },
       "checks": {
@@ -66,6 +67,12 @@
           "url": "http://127.0.0.1:8791/glossy_stay.network.json",
           "problems": [],
           "warnings": []
+        },
+        "instructions": {
+          "state": "scanned",
+          "url": "http://127.0.0.1:8791/glossy_stay.network.json",
+          "scanned": 4,
+          "findings": []
         },
         "registration": {
           "state": "found",
@@ -269,7 +276,9 @@
             "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
             "payTo": null,
             "bound": true,
-            "readAt": "eth_call at Base Sepolia block 62006203, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+            "mutual": false,
+            "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
+            "readAt": "eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
           }
         }
       },
@@ -308,7 +317,7 @@
         "chain": "Base Sepolia",
         "agentId": "10799",
         "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-        "block": 62006203,
+        "block": 62020817,
         "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
         "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
         "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-empty.json",
@@ -318,7 +327,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2f",
-            "block": "0x3b223bb",
+            "block": "0x3b25cd1",
             "ok": true,
             "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
           },
@@ -327,7 +336,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2f",
-            "block": "0x3b223bb",
+            "block": "0x3b25cd1",
             "ok": true,
             "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
           },
@@ -336,19 +345,22 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2f",
-            "block": "0x3b223bb",
+            "block": "0x3b25cd1",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005f68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d656d7074792e6a736f6e00"
           }
         ]
       },
       "registrationFromChain": {
-        "how": "agentURI HTTP 200",
-        "name": "Delivery Court demo seller that sends an empty answer"
+        "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+        "name": null
       },
       "binding": {
         "bound": true,
-        "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+        "mutual": false,
+        "siteToAgent": true,
+        "agentToSite": false,
+        "how": "the site's /.well-known/agent-registration.json lists this agentId and registry"
       }
     },
     "delivery": {
@@ -371,10 +383,20 @@
           "pending": 0,
           "unresolved": 6,
           "selfExcluded": 0,
+          "untrusted": 0,
           "validators": [
             "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc"
           ],
           "lowest": 3,
+          "counted": [
+            {
+              "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+              "count": 2,
+              "reason": "on the trusted validator list",
+              "name": "Delivery Court judge"
+            }
+          ],
+          "notCounted": [],
           "evidence": [
             {
               "role": "lowest answered score",
@@ -409,7 +431,7 @@
   },
   "agentFacts": {
     "id": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e:10799",
-    "agent_name": "urn:agent:127.0.0.18791:Glossy_Stay_Assistant",
+    "agent_name": "urn:agent:127.0.0.1:8791:Glossy_Stay_Assistant",
     "label": "Glossy Stay Assistant",
     "description": "Booking assistant for Glossy Stay, a fictional guesthouse. Demo run by the author: points to the author's test seller agent 10799 on Base Sepolia (official ERC-8004 IdentityRegistry).",
     "provider": {
@@ -434,7 +456,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:51:49.028Z",
+      "lastAudited": "2026-11-22T05:40:31.854Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -450,7 +472,7 @@
           "pillar": "identity",
           "code": "identity_payee_mismatch",
           "effect": "BLOCK",
-          "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62006203, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f]."
+          "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f]."
         },
         {
           "pillar": "delivery",
@@ -475,9 +497,30 @@
       ],
       "notApplicable": []
     },
+    "x_factgate_validators": {
+      "rule": "A score counts only when its validator is on the trusted list for that chain; self-scores never count.",
+      "trustedList": [
+        {
+          "address": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+          "chains": [
+            84532
+          ],
+          "name": "Delivery Court judge"
+        }
+      ],
+      "counted": [
+        {
+          "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+          "count": 2,
+          "reason": "on the trusted validator list",
+          "name": "Delivery Court judge"
+        }
+      ],
+      "notCounted": []
+    },
     "x_factgate_evidence": {
       "target": "http://127.0.0.1:8791/glossy_stay",
-      "checkedAt": "2026-11-22T04:51:49.028Z",
+      "checkedAt": "2026-11-22T05:40:31.854Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -487,7 +530,8 @@
             "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource http://127.0.0.1:8791/api/book.json answers with an empty body",
             "unreachable": [
               "MCP https://mcp.glossy-stay.invalid/mcp: TypeError: fetch failed"
-            ]
+            ],
+            "instructionFindings": []
           }
         },
         "checks": {
@@ -507,6 +551,12 @@
             "url": "http://127.0.0.1:8791/glossy_stay.network.json",
             "problems": [],
             "warnings": []
+          },
+          "instructions": {
+            "state": "scanned",
+            "url": "http://127.0.0.1:8791/glossy_stay.network.json",
+            "scanned": 4,
+            "findings": []
           },
           "registration": {
             "state": "found",
@@ -710,7 +760,9 @@
               "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
               "payTo": null,
               "bound": true,
-              "readAt": "eth_call at Base Sepolia block 62006203, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+              "mutual": false,
+              "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
+              "readAt": "eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
             }
           }
         },
@@ -749,7 +801,7 @@
           "chain": "Base Sepolia",
           "agentId": "10799",
           "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-          "block": 62006203,
+          "block": 62020817,
           "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
           "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
           "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-empty.json",
@@ -759,7 +811,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2f",
-              "block": "0x3b223bb",
+              "block": "0x3b25cd1",
               "ok": true,
               "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
             },
@@ -768,7 +820,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2f",
-              "block": "0x3b223bb",
+              "block": "0x3b25cd1",
               "ok": true,
               "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
             },
@@ -777,19 +829,22 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2f",
-              "block": "0x3b223bb",
+              "block": "0x3b25cd1",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005f68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d656d7074792e6a736f6e00"
             }
           ]
         },
         "registrationFromChain": {
-          "how": "agentURI HTTP 200",
-          "name": "Delivery Court demo seller that sends an empty answer"
+          "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+          "name": null
         },
         "binding": {
           "bound": true,
-          "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+          "mutual": false,
+          "siteToAgent": true,
+          "agentToSite": false,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry"
         }
       },
       "delivery": {
@@ -812,10 +867,20 @@
             "pending": 0,
             "unresolved": 6,
             "selfExcluded": 0,
+            "untrusted": 0,
             "validators": [
               "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc"
             ],
             "lowest": 3,
+            "counted": [
+              {
+                "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+                "count": 2,
+                "reason": "on the trusted validator list",
+                "name": "Delivery Court judge"
+              }
+            ],
+            "notCounted": [],
             "evidence": [
               {
                 "role": "lowest answered score",
@@ -857,6 +922,11 @@
       "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
     }
   },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": 1
+  },
   "pageOrigin": "http://localhost:8790",
-  "ms": 6662
+  "ms": 7891
 }

@@ -1,6 +1,6 @@
 {
   "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
-  "checkedAt": "2026-11-22T04:51:46.703Z",
+  "checkedAt": "2026-11-22T05:40:27.525Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -81,14 +81,14 @@
       },
       "http": [
         {
-          "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
-          "method": "GET",
-          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
-        },
-        {
           "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
           "method": "GET",
           "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        {
+          "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
         },
         {
           "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
@@ -147,7 +147,7 @@
     "capabilities": {},
     "skills": [],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:51:46.703Z",
+      "lastAudited": "2026-11-22T05:40:27.525Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -190,7 +190,7 @@
     },
     "x_factgate_evidence": {
       "target": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
-      "checkedAt": "2026-11-22T04:51:46.703Z",
+      "checkedAt": "2026-11-22T05:40:27.525Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -235,14 +235,14 @@
         },
         "http": [
           {
-            "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
-            "method": "GET",
-            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
-          },
-          {
             "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
             "method": "GET",
             "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          {
+            "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
           },
           {
             "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
@@ -295,6 +295,11 @@
       "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
     }
   },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": null
+  },
   "pageOrigin": "http://localhost:8790",
-  "ms": 70
+  "ms": 2242
 }

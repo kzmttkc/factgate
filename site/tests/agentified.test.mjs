@@ -974,20 +974,43 @@ test("evidence_verifier reaches vet402.com/mcp as an MCP tool, and its origin is
   assert.ok((front.tools || []).includes("evidence_verifier"));
 });
 
-test("the bridge shares only reads, with every site, including gate_check(target)", async () => {
+test("the bridge shares two pure reads, and gate_check, which runs in FactGate's own window after its consent card", async () => {
   const shared = await AgentifiedSiteTest.bridgeActions();
-  // Stage 2: gate_check and its three parts read the network (GET, MCP tools/list, eth_call,
-  // vet402's read tool) but change nothing; save_check and check_seller stay on the page.
-  assert.deepEqual([...shared.keys()].sort(), ["evaluate_gate", "gate_check", "get_gate_state", "inspect_manifest", "probe_capabilities", "read_identity"]);
+  // get_gate_state and evaluate_gate contact nothing (hidden frame). gate_check contacts the
+  // counterparty, a chain RPC and vet402.com: it is marked write with confirmsInWindow so the
+  // runtime opens FactGate's window, where the consent card asks first. It changes nothing.
+  assert.deepEqual([...shared.keys()].sort(), ["evaluate_gate", "gate_check", "get_gate_state"]);
+  for (const def of shared.values()) {
+    assert.deepEqual(def.callerOrigins, ["*"]);
+    assert.equal(def.availability, "bridge");
+  }
+  assert.equal(shared.get("get_gate_state").effect, "read");
+  assert.equal(shared.get("evaluate_gate").effect, "read");
+  assert.equal(shared.get("gate_check").effect, "write");
+  assert.equal(shared.get("gate_check").confirmsInWindow, true);
   const refused = await shared.get("gate_check").execute({ url: "ftp://x.example/" });
   assert.equal(refused.ok, false);
   assert.equal(refused.field, "url");
-  for (const def of shared.values()) {
-    assert.equal(def.effect, "read");
-    assert.deepEqual(def.callerOrigins, ["*"]);
-  }
   const r = await shared.get("evaluate_gate").execute({});
   assert.equal(r.verdict, "CAUTION");
+  // Declined in FactGate's window: nothing is sent.
+  const { BridgeActions } = await import("../bridge/bridge-actions.js");
+  const realConsent = BridgeActions.consent;
+  const realFetch = globalThis.fetch;
+  const sent = [];
+  const cards = [];
+  BridgeActions.consent = async (request) => { cards.push(request.rows.map((x) => x.host)); return "decline"; };
+  globalThis.fetch = async (url) => { sent.push(String(url)); throw new TypeError("must not be called"); };
+  try {
+    const out = await shared.get("gate_check").execute({ url: SELLER });
+    assert.deepEqual(sent, []);
+    assert.deepEqual(cards, [["agent402.tools"]]);
+    assert.equal(out.verdict, "CAUTION");
+    assert.deepEqual(out.consent.declined, ["agent402.tools"]);
+  } finally {
+    BridgeActions.consent = realConsent;
+    globalThis.fetch = realFetch;
+  }
 });
 
 test("website_check_seller reads vet402 in page code and judges (fetch stubbed with the 2026-11-22 answer)", async () => {
@@ -999,6 +1022,13 @@ test("website_check_seller reads vet402 in page code and judges (fetch stubbed w
   const recorded = await readFile(new URL("../../test/fixtures/vet402_check_x402_seller_allow.json", import.meta.url), "utf8");
   const realFetch = globalThis.fetch;
   const sent = [];
+  const cards = [];
+  const { App } = await import("../js/app.js");
+  App.page.remembered.clear();
+  App.page.consentHandler = async (request) => {
+    cards.push({ hosts: request.rows.map((r) => r.host), sentBefore: sent.length });
+    return "once";
+  };
   globalThis.fetch = async (url, init) => {
     sent.push({url: String(url), body: JSON.parse(init.body)});
     return new Response(`event: message\ndata: ${recorded.trim()}\n\n`, {status: 200, headers: {"content-type": "text/event-stream"}});
@@ -1006,6 +1036,8 @@ test("website_check_seller reads vet402 in page code and judges (fetch stubbed w
   try {
     const receipt = await dispatchToolCall(ctx, entry, {url: SELLER}, null, []);
     assert.equal(receipt.status, "succeeded");
+    // The card named vet402.com before anything was sent there.
+    assert.deepEqual(cards, [{ hosts: ["vet402.com"], sentBefore: 0 }]);
     assert.equal(sent[0].url, "https://vet402.com/mcp");
     assert.equal(sent[0].body.params.name, "check_x402_seller");
     assert.equal(sent[0].body.params.arguments.url, SELLER);
@@ -1015,8 +1047,17 @@ test("website_check_seller reads vet402 in page code and judges (fetch stubbed w
     globalThis.fetch = async () => { throw new TypeError("Failed to fetch"); };
     const down = await dispatchToolCall(ctx, entry, {url: SELLER}, null, []);
     assert.equal(down.result.reasons[2].code, "delivery_unavailable");
+    // Declined: nothing is sent, and the pillar is unavailable, never good.
+    App.page.consentHandler = async () => "decline";
+    const before = sent.length;
+    globalThis.fetch = async (url, init) => { sent.push({url: String(url)}); throw new TypeError("must not be called"); };
+    const declined = await dispatchToolCall(ctx, entry, {url: SELLER}, null, []);
+    assert.equal(sent.length, before);
+    assert.equal(declined.result.reasons[2].code, "delivery_unavailable");
+    assert.match(declined.result.reasons[2].text, /declined vet402\.com/);
   } finally {
     globalThis.fetch = realFetch;
+    App.page.consentHandler = null;
   }
 });
 
@@ -1028,6 +1069,13 @@ test("website_gate_check measures in page code: a counterparty the browser canno
   assert.ok(entry, "website_gate_check is not offered.");
   const realFetch = globalThis.fetch;
   const sent = [];
+  const cards = [];
+  const { App } = await import("../js/app.js");
+  App.page.remembered.clear();
+  App.page.consentHandler = async (request) => {
+    cards.push({ hosts: request.rows.map((r) => r.host), purposes: request.rows.map((r) => r.purposes.join("; ")), sentBefore: sent.length });
+    return "once";
+  };
   globalThis.fetch = async (url) => {
     sent.push(String(url));
     throw new TypeError("Failed to fetch");
@@ -1037,6 +1085,12 @@ test("website_gate_check measures in page code: a counterparty the browser canno
     assert.equal(receipt.status, "succeeded");
     assert.equal(receipt.result.verdict, "CAUTION");
     assert.equal(receipt.result.reasons[0].code, "live_cors_unreachable");
+    // One card, for the counterparty's own origin, before any request; it says what is read.
+    assert.equal(cards.length, 1);
+    assert.deepEqual(cards[0].hosts, ["agent402.tools"]);
+    assert.equal(cards[0].sentBefore, 0);
+    assert.match(cards[0].purposes[0], /read public files \(GET \/api\/weather-forecast/);
+    assert.deepEqual(receipt.result.consent.approved, ["agent402.tools"]);
     assert.ok(sent.includes(SELLER));
     assert.ok(sent.includes("https://agent402.tools/.well-known/agent-registration.json"));
     const bad = await dispatchToolCall(ctx, entry, {url: SELLER, agentId: "12x"}, null, []);
@@ -1044,5 +1098,28 @@ test("website_gate_check measures in page code: a counterparty the browser canno
     assert.equal(bad.result.field, "agentId");
   } finally {
     globalThis.fetch = realFetch;
+    App.page.consentHandler = null;
+  }
+});
+
+test("website_gate_check sends nothing when the visitor declines the card", async () => {
+  const loaded = await AgentifiedSiteTest.load();
+  const registry = await AgentifiedSiteTest.registry();
+  const ctx = AgentifiedSiteTest.context(loaded, registry, new ScriptedModel([]), AgentifiedSiteTest.approve);
+  const entry = await AgentifiedSiteTest.tool(loaded, ctx, "gate_check");
+  const { App } = await import("../js/app.js");
+  App.page.remembered.clear();
+  App.page.consentHandler = async () => "decline";
+  const realFetch = globalThis.fetch;
+  const sent = [];
+  globalThis.fetch = async (url) => { sent.push(String(url)); throw new TypeError("must not be called"); };
+  try {
+    const receipt = await dispatchToolCall(ctx, entry, {url: SELLER}, null, []);
+    assert.deepEqual(sent, []);
+    assert.equal(receipt.result.verdict, "CAUTION");
+    assert.deepEqual(receipt.result.consent.declined, ["agent402.tools"]);
+  } finally {
+    globalThis.fetch = realFetch;
+    App.page.consentHandler = null;
   }
 });

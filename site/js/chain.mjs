@@ -219,29 +219,60 @@ export function evmPayTos(terms) {
 
 /**
  * Does this ERC-8004 agent claim the target URL? (ERC8004SPEC "Endpoint Domain Verification".)
- * Bound when the target origin's /.well-known/agent-registration.json lists the same agentId
- * and registry, when the agentURI is on the target's origin, or when the registration file
- * names a service endpoint on the target's origin.
+ * Two directions are read separately:
+ * - siteToAgent: the target origin's /.well-known/agent-registration.json lists the same agentId
+ *   and registry (the site names the agent);
+ * - agentToSite: the on-chain agentURI is on the target's origin or contains the target's URL, or
+ *   the registration file the agentURI points to names a service endpoint on the target's origin
+ *   (the agent names the site).
+ * bound is either direction (used to decide whether the agent's records speak for this URL).
+ * mutual is both directions (used for a counterparty that asks for no payment).
  */
 export function bindingOf({ targetUrl, chainId, agentId, wellKnown, tokenURI, registrationFile }) {
   const chain = CHAINS[chainId];
+  const how = [];
+  let siteToAgent = false;
+  let agentToSite = false;
   const regs = wellKnown && Array.isArray(wellKnown.registrations) ? wellKnown.registrations : [];
   for (const r of regs) {
     const reg = parseAgentRegistry(r && r.agentRegistry);
     if (reg && chain && reg.chainId === Number(chainId) && reg.address === chain.registry.toLowerCase() && String(r.agentId) === String(agentId)) {
-      return { bound: true, how: "the target origin's /.well-known/agent-registration.json lists this agentId and registry" };
+      siteToAgent = true;
+      how.push("the site's /.well-known/agent-registration.json lists this agentId and registry");
+      break;
     }
+  }
+  let targetOrigin = null;
+  try {
+    targetOrigin = new URL(targetUrl).origin;
+  } catch {
+    targetOrigin = null;
   }
   if (typeof tokenURI === "string" && /^https?:/.test(tokenURI) && sameOrigin(tokenURI, targetUrl)) {
-    return { bound: true, how: "the on-chain agentURI is on the target's origin" };
+    agentToSite = true;
+    how.push("the on-chain agentURI is on the site's origin");
+  } else if (typeof tokenURI === "string" && targetOrigin && !tokenURI.startsWith("data:") && tokenURI.includes(targetOrigin)) {
+    agentToSite = true;
+    how.push("the on-chain agentURI contains the site's URL");
   }
-  const services = registrationFile && Array.isArray(registrationFile.services) ? registrationFile.services : [];
-  for (const s of services) {
-    if (s && typeof s.endpoint === "string" && /^https?:/.test(s.endpoint) && sameOrigin(s.endpoint, targetUrl)) {
-      return { bound: true, how: `the registration file names a ${s.name || "service"} endpoint on the target's origin` };
+  if (!agentToSite) {
+    const services = registrationFile && Array.isArray(registrationFile.services) ? registrationFile.services : [];
+    for (const s of services) {
+      if (s && typeof s.endpoint === "string" && /^https?:/.test(s.endpoint) && sameOrigin(s.endpoint, targetUrl)) {
+        agentToSite = true;
+        how.push(`the registration file the agentURI points to names a ${s.name || "service"} endpoint on the site's origin`);
+        break;
+      }
     }
   }
-  return { bound: false, how: "nothing ties this agent to the target's origin" };
+  const bound = siteToAgent || agentToSite;
+  return {
+    bound,
+    mutual: siteToAgent && agentToSite,
+    siteToAgent,
+    agentToSite,
+    how: how.length ? how.join("; and ") : "nothing ties this agent to the target's origin",
+  };
 }
 
 /**
@@ -279,6 +310,8 @@ export function identityPillar({ payTos, chainRead, binding, noAgentReason, decl
         agentWallet: wallet,
         payTo: null,
         bound: binding ? binding.bound : false,
+        mutual: binding ? binding.mutual === true : false,
+        how: binding ? binding.how : undefined,
         readAt: `eth_call at ${chainRead.chain || `chain ${chainRead.chainId}`} block ${chainRead.block ?? "latest"}, IdentityRegistry ${chainRead.registry}, agentId ${chainRead.agentId}`,
       },
     },

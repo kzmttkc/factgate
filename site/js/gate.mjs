@@ -24,10 +24,11 @@ export function gateRules() {
   return {
     engine: "deterministic, no LLM: the verdict is the worst effect among the three pillars",
     pillars: [
-      "live: does the counterparty answer as declared, and can a browser reach it over CORS",
-      "identity: the site's declared ERC-8004 registration is read on chain (eth_call), then its owner and agentWallet are compared with the 402 payTo. A declaration that is not on chain is never ALLOW",
-      "delivery: for a paid counterparty, vet402's production record or ERC-8004 validation scores (>= 70, none below 70) show content came back; any record of an empty paid answer or a score below 70 is BLOCK; a counterparty with no 402 is not applicable (not a pass)",
+      "live: does the counterparty answer as declared, and can a browser reach it over CORS. The instructions of the network a caller would load are scanned: text that overrides the caller's rules, pulls out its context or points it to other sites is CAUTION; text that asks for a key, password or seed phrase is BLOCK",
+      "identity: the site's declared ERC-8004 registration is read on chain (eth_call), then its owner and agentWallet are compared with the 402 payTo. A declaration that is not on chain is never ALLOW. A site that asks for no payment passes when pillar 1 passes and the site and its ERC-8004 registration point at each other (the site declares the agentId; the registration's services or agentURI name the site)",
+      "delivery: for a paid counterparty, vet402's production record or ERC-8004 validation scores (>= 70, none below 70) show content came back; any record of an empty paid answer or a score below 70 is BLOCK; a counterparty with no 402 is not applicable (not a pass). Only validators on the trusted list count; others are shown, not counted",
     ],
+    trustedValidators: "site/validators.json (the visitor can change it on the page)",
     unavailableRule: "A pillar whose data could not be fetched is CAUTION, never zero and never good.",
   };
 }
@@ -54,24 +55,44 @@ function normAddress(value) {
   return /^0x[0-9a-f]{40}$/.test(v) && !/^0x0{40}$/.test(v) ? v : null;
 }
 
+function findingText(findings) {
+  return findings.slice(0, 3).map((f) => `${f.agent}: "${f.excerpt}" (${f.rule})`).join("; ");
+}
+
 /**
- * Judge pillar 1: does the counterparty answer as it declares, and can a browser reach it.
+ * Judge pillar 1: does the counterparty answer as it declares, can a browser reach it, and do the
+ * instructions a caller would load try to steer the caller's model.
  */
 export function judgeLive(live) {
   if (!isOk(live)) {
     return unavailable(live, "live", "live probe");
   }
   const d = live.data;
+  const findings = Array.isArray(d.instructionFindings) ? d.instructionFindings : [];
+  const blocking = findings.filter((f) => f.severity === "block");
+  const cautions = findings.filter((f) => f.severity !== "block");
+  if (d.answersAsDeclared === false || blocking.length) {
+    const parts = [];
+    let code = "live_not_as_declared";
+    if (d.answersAsDeclared === false) {
+      parts.push(`The live answer does not match what the counterparty declares${d.detail ? ` (${d.detail})` : ""}.`);
+    }
+    if (blocking.length) {
+      code = d.answersAsDeclared === false ? code : "live_instructions_ask_for_secrets";
+      parts.push(`Its agent instructions ask the caller for a key, password or seed phrase: ${findingText(blocking)}.`);
+    }
+    return reason("live", code, "BLOCK", parts.join(" "));
+  }
   if (d.corsReachable === false) {
     return reason("live", "live_cors_unreachable", "CAUTION", "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it.");
   }
-  if (d.answersAsDeclared === false) {
-    const detail = d.detail ? ` (${d.detail})` : "";
-    return reason("live", "live_not_as_declared", "BLOCK", `The live answer does not match what the counterparty declares${detail}.`);
-  }
   const unreachable = Array.isArray(d.unreachable) ? d.unreachable : [];
   if (unreachable.length > 0) {
-    return reason("live", "live_capability_unreachable", "CAUTION", `A declared capability did not answer the browser: ${unreachable.join("; ")}. Not measured, not counted as a mismatch.`);
+    const extra = cautions.length ? ` Its instructions also try to steer the caller: ${findingText(cautions)}.` : "";
+    return reason("live", "live_capability_unreachable", "CAUTION", `A declared capability did not answer the browser: ${unreachable.join("; ")}. Not measured, not counted as a mismatch.${extra}`);
+  }
+  if (cautions.length) {
+    return reason("live", "live_instructions_suspicious", "CAUTION", `Its agent instructions try to steer the caller's model: ${findingText(cautions)}. A caller would load these instructions as untrusted input (spec section 5).`);
   }
   if (d.answersAsDeclared === true) {
     return reason("live", "live_as_declared", "ALLOW", "The live answer matches the declaration.");
@@ -80,9 +101,14 @@ export function judgeLive(live) {
 }
 
 /**
- * Judge pillar 2: does the declared payee match the ERC-8004 owner, agentWallet or payTo.
+ * Judge pillar 2: does the declared payee match the ERC-8004 owner, agentWallet or payTo. A
+ * counterparty that asks for no payment has no payee: it passes when pillar 1 passed and the
+ * site and its on-chain registration point at each other.
+ *
+ * :param identity: The pillar.
+ * :param context: { paid, liveOk } from the other pillars.
  */
-export function judgeIdentity(identity) {
+export function judgeIdentity(identity, context = {}) {
   if (!isOk(identity)) {
     return unavailable(identity, "identity", "identity registration");
   }
@@ -90,6 +116,17 @@ export function judgeIdentity(identity) {
   const rawDeclared = Array.isArray(d.declaredPayTos) && d.declaredPayTos.length ? d.declaredPayTos : [d.declaredPayTo];
   const declared = [...new Set(rawDeclared.map(normAddress).filter(Boolean))];
   if (declared.length === 0) {
+    const reg = d.registered;
+    if (context.paid === false && reg) {
+      const at = reg.readAt ? ` [${reg.readAt}]` : "";
+      if (reg.mutual === true && context.liveOk === true) {
+        return reason("identity", "identity_bound_no_payment", "ALLOW", `No payment is asked, so there is no payee to compare. The site declares this ERC-8004 agent and the agent's registration points back to the site (${reg.how || "both directions"})${at}.`);
+      }
+      if (reg.mutual === true) {
+        return reason("identity", "identity_bound_live_not_passed", "CAUTION", `The site and its ERC-8004 registration point at each other${at}, but pillar 1 did not pass, so the binding alone is not enough.`);
+      }
+      return reason("identity", "identity_not_mutual", "CAUTION", `No payment is asked. The ERC-8004 registration and the site do not point at each other (${reg.how || "one direction only"})${at}, so the registration does not speak for this site.`);
+    }
     return reason("identity", "identity_no_declared_payee", "CAUTION", "The counterparty declares no valid payee address to compare.");
   }
   if (!d.registered) {
@@ -162,10 +199,11 @@ export function judgeValidation(validation) {
   if (Number(d.unresolved) > 0) {
     return reason("validation", "validation_inconclusive", "CAUTION", `${d.unresolved} score(s) of 0 for ${agent} could not be told apart from unanswered requests, so the record cannot pass.`);
   }
+  const shownOnly = Number(d.untrusted) > 0 ? ` ${d.untrusted} score(s) from validators not on the trusted list are shown, not counted.` : "";
   if (Number(d.passed) > 0) {
-    return reason("validation", "validation_passed", "ALLOW", `ERC-8004 validators (${(d.validators || []).join(", ")}) scored ${agent} 70 or more ${d.passed} time(s) and never below 70${where("latest passing score")}.`);
+    return reason("validation", "validation_passed", "ALLOW", `Trusted ERC-8004 validators (${(d.validators || []).join(", ")}) scored ${agent} 70 or more ${d.passed} time(s) and never below 70${where("latest passing score")}.${shownOnly}`);
   }
-  return reason("validation", "validation_no_record", "CAUTION", `No answered ERC-8004 validation for ${agent}.`);
+  return reason("validation", "validation_no_record", "CAUTION", `No answered ERC-8004 validation from a trusted validator for ${agent}.${shownOnly}`);
 }
 
 /**
@@ -212,9 +250,10 @@ export function judgeDeliveryPillar({ delivery, validation, paid }) {
  */
 export function evaluateGate(input) {
   const pillars = input && typeof input === "object" ? input : {};
+  const live = judgeLive(pillars.live);
   const reasons = [
-    judgeLive(pillars.live),
-    judgeIdentity(pillars.identity),
+    live,
+    judgeIdentity(pillars.identity, { paid: pillars.paid, liveOk: live.effect === "ALLOW" }),
     judgeDeliveryPillar({ delivery: pillars.delivery, validation: pillars.validation, paid: pillars.paid }),
   ];
   let verdict = "ALLOW";

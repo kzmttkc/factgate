@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "rule": "FactGate counts an ERC-8004 validation score only when its validator is listed here for that chain. A score from any other validator is shown, never counted. Self-scores (validator = the agent's owner or agentWallet) never count. This default lists only validators whose every score anyone can re-compute from public records. Visitors can change the list on the page.",
+  "validators": [
+    {
+      "address": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+      "chains": [84532],
+      "name": "Delivery Court judge",
+      "operator": "the FactGate author (this is the author's own validator)",
+      "reproduce": "Every score names its record (responseURI) and the exact body it judged (sha256 = responseHash). offchain/src/rejudge.mjs in the public Delivery Court repository (github.com/kzmttkc/reactive-delivery-court) re-reads the validationResponse call, checks the body hash and re-runs the model files to recompute the score."
+    }
+  ]
+}

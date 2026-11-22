@@ -1,6 +1,6 @@
 {
   "url": "https://agent402.tools/api/weather-forecast",
-  "checkedAt": "2026-11-22T04:51:40.065Z",
+  "checkedAt": "2026-11-22T05:40:20.795Z",
   "verdict": "ALLOW",
   "reasons": [
     {
@@ -13,13 +13,13 @@
       "pillar": "identity",
       "code": "identity_match",
       "effect": "ALLOW",
-      "text": "The declared payee matches the ERC-8004 registration [eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639: owner 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0, agentWallet 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0]."
+      "text": "The declared payee matches the ERC-8004 registration [eth_call at Base block 60678232, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639: owner 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0, agentWallet 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0]."
     },
     {
       "pillar": "delivery",
       "code": "delivery_delivered",
       "effect": "ALLOW",
-      "text": "vet402: vet402 recorded content coming back on 3 of 3 paid tests. ERC-8004 validation: No answered ERC-8004 validation for agent 94639 on chain 8453.",
+      "text": "vet402: vet402 recorded content coming back on 3 of 3 paid tests. ERC-8004 validation: No answered ERC-8004 validation from a trusted validator for agent 94639 on chain 8453.",
       "sources": [
         {
           "pillar": "delivery",
@@ -31,7 +31,7 @@
           "pillar": "validation",
           "code": "validation_no_record",
           "effect": "CAUTION",
-          "text": "No answered ERC-8004 validation for agent 94639 on chain 8453."
+          "text": "No answered ERC-8004 validation from a trusted validator for agent 94639 on chain 8453."
         }
       ]
     }
@@ -298,18 +298,18 @@
       },
       "http": [
         {
-          "url": "https://agent402.tools/.well-known/agent-registration.json",
-          "method": "GET",
-          "status": 200,
-          "contentType": "application/json; charset=utf-8",
-          "bytes": 885
-        },
-        {
           "url": "https://agent402.tools/api/agent-manifest.json",
           "method": "GET",
           "status": 404,
           "contentType": "application/json; charset=utf-8",
           "bytes": 549
+        },
+        {
+          "url": "https://agent402.tools/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 885
         },
         {
           "url": "https://agent402.tools/api/weather-forecast",
@@ -348,7 +348,9 @@
             "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
             "payTo": null,
             "bound": true,
-            "readAt": "eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639"
+            "mutual": true,
+            "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin",
+            "readAt": "eth_call at Base block 60678232, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639"
           }
         }
       },
@@ -465,7 +467,7 @@
         "chain": "Base",
         "agentId": "94639",
         "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
-        "block": 60663629,
+        "block": 60678232,
         "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
         "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
         "tokenURI": "https://agent402.tools/.well-known/agent-registration.json",
@@ -475,7 +477,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000171af",
-            "block": "0x39da74d",
+            "block": "0x39de058",
             "ok": true,
             "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
           },
@@ -484,7 +486,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x0033950900000000000000000000000000000000000000000000000000000000000171af",
-            "block": "0x39da74d",
+            "block": "0x39de058",
             "ok": true,
             "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
           },
@@ -493,19 +495,22 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000171af",
-            "block": "0x39da74d",
+            "block": "0x39de058",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003a68747470733a2f2f6167656e743430322e746f6f6c732f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e000000000000"
           }
         ]
       },
       "registrationFromChain": {
-        "how": "same file as the declared registration",
-        "name": "Agent402"
+        "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+        "name": null
       },
       "binding": {
         "bound": true,
-        "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+        "mutual": true,
+        "siteToAgent": true,
+        "agentToSite": true,
+        "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin"
       }
     },
     "delivery": {
@@ -615,6 +620,26 @@
             "protocol": "x402",
             "verified_at": "2026-11-07T12:01:04.681Z"
           },
+          "verified_pay_to_by_network": [
+            {
+              "network": "eip155:8453",
+              "pay_to": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+              "purchase_id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+              "verified_at": "2026-11-07T12:01:04.681Z"
+            },
+            {
+              "network": "stellar:pubnet",
+              "pay_to": "GDNJXCKW7ZM7GEEVP674TWPU26YJNBQ2FI4ZIPRKTPTNUEJMDHFJWWRL",
+              "purchase_id": "stellar:pubnet:6d776ae6113ed7cdca967536218037a200c4df31f001f471a88b74978d1ca08d",
+              "verified_at": "2026-10-30T12:01:25.892Z"
+            },
+            {
+              "network": "eip155:42220",
+              "pay_to": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+              "purchase_id": "eip155:42220:0xa1fcc993f55848487a0380d9ed18761391e54c027a5c2d14f9338247249ee309",
+              "verified_at": "2026-10-24T09:34:03.737Z"
+            }
+          ],
           "spending_halted": false,
           "refunds": {
             "window_days": 30,
@@ -661,7 +686,7 @@
           "record_url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9",
           "diagnose_url": null,
           "method_url": "https://vet402.com/observatory/methodology",
-          "as_of": "2026-11-22T04:50:39.786Z",
+          "as_of": "2026-11-22T05:36:43.566Z",
           "truncated": false,
           "next_action": "Pay only if what you are about to send matches this record: same recipient, network, and amount. Payment can still fail after you pay."
         }
@@ -686,8 +711,11 @@
           "pending": 0,
           "unresolved": 0,
           "selfExcluded": 0,
+          "untrusted": 0,
           "validators": [],
           "lowest": null,
+          "counted": [],
+          "notCounted": [],
           "evidence": []
         }
       }
@@ -765,7 +793,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:51:40.065Z",
+      "lastAudited": "2026-11-22T05:40:20.795Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -781,13 +809,13 @@
           "pillar": "identity",
           "code": "identity_match",
           "effect": "ALLOW",
-          "text": "The declared payee matches the ERC-8004 registration [eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639: owner 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0, agentWallet 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0]."
+          "text": "The declared payee matches the ERC-8004 registration [eth_call at Base block 60678232, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639: owner 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0, agentWallet 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0]."
         },
         {
           "pillar": "delivery",
           "code": "delivery_delivered",
           "effect": "ALLOW",
-          "text": "vet402: vet402 recorded content coming back on 3 of 3 paid tests. ERC-8004 validation: No answered ERC-8004 validation for agent 94639 on chain 8453.",
+          "text": "vet402: vet402 recorded content coming back on 3 of 3 paid tests. ERC-8004 validation: No answered ERC-8004 validation from a trusted validator for agent 94639 on chain 8453.",
           "sources": [
             {
               "pillar": "delivery",
@@ -799,16 +827,30 @@
               "pillar": "validation",
               "code": "validation_no_record",
               "effect": "CAUTION",
-              "text": "No answered ERC-8004 validation for agent 94639 on chain 8453."
+              "text": "No answered ERC-8004 validation from a trusted validator for agent 94639 on chain 8453."
             }
           ]
         }
       ],
       "notApplicable": []
     },
+    "x_factgate_validators": {
+      "rule": "A score counts only when its validator is on the trusted list for that chain; self-scores never count.",
+      "trustedList": [
+        {
+          "address": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+          "chains": [
+            84532
+          ],
+          "name": "Delivery Court judge"
+        }
+      ],
+      "counted": [],
+      "notCounted": []
+    },
     "x_factgate_evidence": {
       "target": "https://agent402.tools/api/weather-forecast",
-      "checkedAt": "2026-11-22T04:51:40.065Z",
+      "checkedAt": "2026-11-22T05:40:20.795Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -1070,18 +1112,18 @@
         },
         "http": [
           {
-            "url": "https://agent402.tools/.well-known/agent-registration.json",
-            "method": "GET",
-            "status": 200,
-            "contentType": "application/json; charset=utf-8",
-            "bytes": 885
-          },
-          {
             "url": "https://agent402.tools/api/agent-manifest.json",
             "method": "GET",
             "status": 404,
             "contentType": "application/json; charset=utf-8",
             "bytes": 549
+          },
+          {
+            "url": "https://agent402.tools/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 885
           },
           {
             "url": "https://agent402.tools/api/weather-forecast",
@@ -1120,7 +1162,9 @@
               "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
               "payTo": null,
               "bound": true,
-              "readAt": "eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639"
+              "mutual": true,
+              "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin",
+              "readAt": "eth_call at Base block 60678232, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639"
             }
           }
         },
@@ -1237,7 +1281,7 @@
           "chain": "Base",
           "agentId": "94639",
           "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
-          "block": 60663629,
+          "block": 60678232,
           "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
           "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
           "tokenURI": "https://agent402.tools/.well-known/agent-registration.json",
@@ -1247,7 +1291,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000171af",
-              "block": "0x39da74d",
+              "block": "0x39de058",
               "ok": true,
               "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
             },
@@ -1256,7 +1300,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x0033950900000000000000000000000000000000000000000000000000000000000171af",
-              "block": "0x39da74d",
+              "block": "0x39de058",
               "ok": true,
               "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
             },
@@ -1265,19 +1309,22 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000171af",
-              "block": "0x39da74d",
+              "block": "0x39de058",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003a68747470733a2f2f6167656e743430322e746f6f6c732f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e000000000000"
             }
           ]
         },
         "registrationFromChain": {
-          "how": "same file as the declared registration",
-          "name": "Agent402"
+          "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+          "name": null
         },
         "binding": {
           "bound": true,
-          "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+          "mutual": true,
+          "siteToAgent": true,
+          "agentToSite": true,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin"
         }
       },
       "delivery": {
@@ -1387,6 +1434,26 @@
               "protocol": "x402",
               "verified_at": "2026-11-07T12:01:04.681Z"
             },
+            "verified_pay_to_by_network": [
+              {
+                "network": "eip155:8453",
+                "pay_to": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+                "purchase_id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                "verified_at": "2026-11-07T12:01:04.681Z"
+              },
+              {
+                "network": "stellar:pubnet",
+                "pay_to": "GDNJXCKW7ZM7GEEVP674TWPU26YJNBQ2FI4ZIPRKTPTNUEJMDHFJWWRL",
+                "purchase_id": "stellar:pubnet:6d776ae6113ed7cdca967536218037a200c4df31f001f471a88b74978d1ca08d",
+                "verified_at": "2026-10-30T12:01:25.892Z"
+              },
+              {
+                "network": "eip155:42220",
+                "pay_to": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+                "purchase_id": "eip155:42220:0xa1fcc993f55848487a0380d9ed18761391e54c027a5c2d14f9338247249ee309",
+                "verified_at": "2026-10-24T09:34:03.737Z"
+              }
+            ],
             "spending_halted": false,
             "refunds": {
               "window_days": 30,
@@ -1433,7 +1500,7 @@
             "record_url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9",
             "diagnose_url": null,
             "method_url": "https://vet402.com/observatory/methodology",
-            "as_of": "2026-11-22T04:50:39.786Z",
+            "as_of": "2026-11-22T05:36:43.566Z",
             "truncated": false,
             "next_action": "Pay only if what you are about to send matches this record: same recipient, network, and amount. Payment can still fail after you pay."
           }
@@ -1458,8 +1525,11 @@
             "pending": 0,
             "unresolved": 0,
             "selfExcluded": 0,
+            "untrusted": 0,
             "validators": [],
             "lowest": null,
+            "counted": [],
+            "notCounted": [],
             "evidence": []
           }
         }
@@ -1474,6 +1544,11 @@
       "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
     }
   },
+  "counts": {
+    "paid": 3,
+    "delivered": 3,
+    "validationsPassed": 0
+  },
   "pageOrigin": "http://localhost:8790",
-  "ms": 2935
+  "ms": 2865
 }

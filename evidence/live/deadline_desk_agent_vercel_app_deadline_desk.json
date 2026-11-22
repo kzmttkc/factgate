@@ -1,6 +1,6 @@
 {
   "url": "https://deadline-desk-agent.vercel.app/deadline_desk",
-  "checkedAt": "2026-11-22T04:51:43.902Z",
+  "checkedAt": "2026-11-22T05:40:24.619Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -31,7 +31,8 @@
           "corsReachable": true,
           "answersAsDeclared": true,
           "detail": "as declared: manifest, network, MCP https://deadline-desk-agent.vercel.app/api/mcp",
-          "unreachable": []
+          "unreachable": [],
+          "instructionFindings": []
         }
       },
       "checks": {
@@ -51,6 +52,12 @@
           "url": "https://deadline-desk-agent.vercel.app/deadline_desk.network.json",
           "problems": [],
           "warnings": []
+        },
+        "instructions": {
+          "state": "scanned",
+          "url": "https://deadline-desk-agent.vercel.app/deadline_desk.network.json",
+          "scanned": 4,
+          "findings": []
         },
         "registration": {
           "state": "absent",
@@ -138,18 +145,18 @@
       },
       "http": [
         {
-          "url": "https://deadline-desk-agent.vercel.app/.well-known/agent-registration.json",
-          "method": "GET",
-          "status": 404,
-          "contentType": "application/json",
-          "bytes": 68
-        },
-        {
           "url": "https://deadline-desk-agent.vercel.app/agent-manifest.json",
           "method": "GET",
           "status": 200,
           "contentType": "application/json; charset=utf-8",
           "bytes": 2508
+        },
+        {
+          "url": "https://deadline-desk-agent.vercel.app/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 404,
+          "contentType": "application/json",
+          "bytes": 68
         },
         {
           "url": "https://deadline-desk-agent.vercel.app/deadline_desk",
@@ -236,7 +243,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:51:43.902Z",
+      "lastAudited": "2026-11-22T05:40:24.619Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -268,7 +275,7 @@
     },
     "x_factgate_evidence": {
       "target": "https://deadline-desk-agent.vercel.app/deadline_desk",
-      "checkedAt": "2026-11-22T04:51:43.902Z",
+      "checkedAt": "2026-11-22T05:40:24.619Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -276,7 +283,8 @@
             "corsReachable": true,
             "answersAsDeclared": true,
             "detail": "as declared: manifest, network, MCP https://deadline-desk-agent.vercel.app/api/mcp",
-            "unreachable": []
+            "unreachable": [],
+            "instructionFindings": []
           }
         },
         "checks": {
@@ -296,6 +304,12 @@
             "url": "https://deadline-desk-agent.vercel.app/deadline_desk.network.json",
             "problems": [],
             "warnings": []
+          },
+          "instructions": {
+            "state": "scanned",
+            "url": "https://deadline-desk-agent.vercel.app/deadline_desk.network.json",
+            "scanned": 4,
+            "findings": []
           },
           "registration": {
             "state": "absent",
@@ -383,18 +397,18 @@
         },
         "http": [
           {
-            "url": "https://deadline-desk-agent.vercel.app/.well-known/agent-registration.json",
-            "method": "GET",
-            "status": 404,
-            "contentType": "application/json",
-            "bytes": 68
-          },
-          {
             "url": "https://deadline-desk-agent.vercel.app/agent-manifest.json",
             "method": "GET",
             "status": 200,
             "contentType": "application/json; charset=utf-8",
             "bytes": 2508
+          },
+          {
+            "url": "https://deadline-desk-agent.vercel.app/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 404,
+            "contentType": "application/json",
+            "bytes": 68
           },
           {
             "url": "https://deadline-desk-agent.vercel.app/deadline_desk",
@@ -466,6 +480,11 @@
       "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
     }
   },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": null
+  },
   "pageOrigin": "http://localhost:8790",
-  "ms": 935
+  "ms": 855
 }

@@ -29,7 +29,7 @@ const DEFAULT_TARGETS = [
   "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
   "https://vet402.com/",
 ];
-const PEERS = ["http://127.0.0.1:8791/glossy_stay", "http://127.0.0.1:8792/verified_stay"];
+const PEERS = ["http://127.0.0.1:8791/glossy_stay", "http://127.0.0.1:8792/verified_stay", "http://[::1]:8793/stay_steward"];
 
 // ERC-8004 agents read directly: the Base Sepolia ids from the brief and Base mainnet examples.
 const AGENT_READS = [

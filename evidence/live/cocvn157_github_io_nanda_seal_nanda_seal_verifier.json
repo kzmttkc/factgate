@@ -1,6 +1,6 @@
 {
   "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
-  "checkedAt": "2026-11-22T04:51:46.574Z",
+  "checkedAt": "2026-11-22T05:40:27.389Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -31,7 +31,8 @@
           "corsReachable": true,
           "answersAsDeclared": true,
           "detail": "as declared: manifest, network",
-          "unreachable": []
+          "unreachable": [],
+          "instructionFindings": []
         }
       },
       "checks": {
@@ -51,6 +52,12 @@
           "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
           "problems": [],
           "warnings": []
+        },
+        "instructions": {
+          "state": "scanned",
+          "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
+          "scanned": 8,
+          "findings": []
         },
         "registration": {
           "state": "absent",
@@ -98,18 +105,18 @@
       },
       "http": [
         {
-          "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
-          "method": "GET",
-          "status": 404,
-          "contentType": "text/html; charset=utf-8",
-          "bytes": 9379
-        },
-        {
           "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
           "method": "GET",
           "status": 200,
           "contentType": "application/json; charset=utf-8",
           "bytes": 2547
+        },
+        {
+          "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 404,
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 9379
         },
         {
           "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
@@ -181,7 +188,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:51:46.574Z",
+      "lastAudited": "2026-11-22T05:40:27.389Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -213,7 +220,7 @@
     },
     "x_factgate_evidence": {
       "target": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
-      "checkedAt": "2026-11-22T04:51:46.574Z",
+      "checkedAt": "2026-11-22T05:40:27.389Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -221,7 +228,8 @@
             "corsReachable": true,
             "answersAsDeclared": true,
             "detail": "as declared: manifest, network",
-            "unreachable": []
+            "unreachable": [],
+            "instructionFindings": []
           }
         },
         "checks": {
@@ -241,6 +249,12 @@
             "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
             "problems": [],
             "warnings": []
+          },
+          "instructions": {
+            "state": "scanned",
+            "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
+            "scanned": 8,
+            "findings": []
           },
           "registration": {
             "state": "absent",
@@ -288,18 +302,18 @@
         },
         "http": [
           {
-            "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
-            "method": "GET",
-            "status": 404,
-            "contentType": "text/html; charset=utf-8",
-            "bytes": 9379
-          },
-          {
             "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
             "method": "GET",
             "status": 200,
             "contentType": "application/json; charset=utf-8",
             "bytes": 2547
+          },
+          {
+            "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 404,
+            "contentType": "text/html; charset=utf-8",
+            "bytes": 9379
           },
           {
             "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
@@ -359,6 +373,11 @@
       "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
     }
   },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": null
+  },
   "pageOrigin": "http://localhost:8790",
-  "ms": 129
+  "ms": 136
 }
