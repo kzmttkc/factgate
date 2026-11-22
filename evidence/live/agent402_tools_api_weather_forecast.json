@@ -1,0 +1,1398 @@
+{
+  "url": "https://agent402.tools/api/weather-forecast",
+  "checkedAt": "2026-11-22T04:38:12.938Z",
+  "verdict": "ALLOW",
+  "reasons": [
+    {
+      "pillar": "live",
+      "code": "live_as_declared",
+      "effect": "ALLOW",
+      "text": "The live answer matches the declaration."
+    },
+    {
+      "pillar": "identity",
+      "code": "identity_match",
+      "effect": "ALLOW",
+      "text": "The declared payee matches the ERC-8004 registration."
+    },
+    {
+      "pillar": "delivery",
+      "code": "delivery_delivered",
+      "effect": "ALLOW",
+      "text": "vet402 recorded content coming back on 3 of 3 paid tests."
+    }
+  ],
+  "evidence": {
+    "live": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "corsReachable": true,
+          "answersAsDeclared": true,
+          "detail": "as declared: MCP https://agent402.tools/mcp, x402 terms",
+          "unreachable": []
+        }
+      },
+      "checks": {
+        "target": {
+          "reachable": true,
+          "status": 402
+        },
+        "payment": {
+          "state": "terms",
+          "source": "header"
+        },
+        "manifest": {
+          "state": "absent",
+          "url": "https://agent402.tools/api/agent-manifest.json",
+          "status": 404
+        },
+        "registration": {
+          "state": "found",
+          "url": "https://agent402.tools/.well-known/agent-registration.json",
+          "status": 200
+        },
+        "wallets": {
+          "state": "not_compared",
+          "detail": "the site declares no wallet",
+          "wallets": []
+        },
+        "mcp": [
+          {
+            "url": "https://agent402.tools/mcp",
+            "tools": [],
+            "state": "ok",
+            "listed": [
+              "catalog.search",
+              "catalog.find",
+              "catalog.call",
+              "payment.info",
+              "web.search",
+              "web.answer",
+              "web.news",
+              "browser.render",
+              "audio.transcribe",
+              "memory.read",
+              "memory.write",
+              "decide.plan",
+              "decide.execute",
+              "demand.request",
+              "server.describe",
+              "decide.feedback"
+            ],
+            "missing": [],
+            "session": false,
+            "from": [
+              "registration services"
+            ]
+          }
+        ]
+      },
+      "declared": {
+        "manifestEntry": null,
+        "network": null,
+        "mcp": [
+          {
+            "url": "https://agent402.tools/mcp",
+            "tools": [],
+            "listed": [
+              "catalog.search",
+              "catalog.find",
+              "catalog.call",
+              "payment.info",
+              "web.search",
+              "web.answer",
+              "web.news",
+              "browser.render",
+              "audio.transcribe",
+              "memory.read",
+              "memory.write",
+              "decide.plan",
+              "decide.execute",
+              "demand.request",
+              "server.describe",
+              "decide.feedback"
+            ],
+            "state": "ok"
+          }
+        ],
+        "terms": {
+          "x402Version": 2,
+          "resourceUrl": "https://agent402.tools/api/weather-forecast",
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "1000",
+              "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:137",
+              "amount": "1000",
+              "asset": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:42161",
+              "amount": "1000",
+              "asset": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:143",
+              "amount": "1000",
+              "asset": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:43114",
+              "amount": "1000",
+              "asset": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:1329",
+              "amount": "1000",
+              "asset": "0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:10",
+              "amount": "2000",
+              "asset": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:4663",
+              "amount": "1000",
+              "asset": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:42220",
+              "amount": "1000",
+              "asset": "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:57073",
+              "amount": "1000",
+              "asset": "0x2D270e6886d130D724215A266106e6832161EAEd",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:5042",
+              "amount": "1000",
+              "asset": "0x3600000000000000000000000000000000000000",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "upto",
+              "network": "eip155:8453",
+              "amount": "1000",
+              "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+              "amount": "1000",
+              "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+              "payTo": "J7aN3PLJnTCF5qpEnvJHJsnCjcGuqC2rYtEM8Gv3xwg"
+            },
+            {
+              "scheme": "exact",
+              "network": "stellar:pubnet",
+              "amount": "10000",
+              "asset": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+              "payTo": "GDNJXCKW7ZM7GEEVP674TWPU26YJNBQ2FI4ZIPRKTPTNUEJMDHFJWWRL"
+            },
+            {
+              "scheme": "exact",
+              "network": "algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k",
+              "amount": "1000",
+              "asset": "31566704",
+              "payTo": "C7IIHG7SPLPZ5H7ZT6HW3UV2OQMQQE6Y2HBNGZXSLRJULE42BEE2OY2XIE"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:8453",
+              "amount": "1000",
+              "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            },
+            {
+              "scheme": "exact",
+              "network": "eip155:5042",
+              "amount": "1000",
+              "asset": "0x3600000000000000000000000000000000000000",
+              "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+            }
+          ]
+        },
+        "termsSource": "header",
+        "registrationFile": {
+          "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+          "name": "Agent402",
+          "description": "Pay-per-call web tools for autonomous agents: 636 priced endpoints settled in stablecoins (USDC, or USDG on Robinhood Chain) over x402 or MPP, free via proof of work for the pure-CPU tools, and finished reports by card. No account and no API key.",
+          "image": "https://agent402.tools/logo.png",
+          "services": [
+            {
+              "name": "web",
+              "endpoint": "https://agent402.tools/"
+            },
+            {
+              "name": "MCP",
+              "endpoint": "https://agent402.tools/mcp"
+            },
+            {
+              "name": "A2A",
+              "endpoint": "https://agent402.tools/.well-known/agent-card.json",
+              "version": "0.3.0"
+            },
+            {
+              "name": "OpenAPI",
+              "endpoint": "https://agent402.tools/openapi.json"
+            },
+            {
+              "name": "x402",
+              "endpoint": "https://agent402.tools/.well-known/x402"
+            }
+          ],
+          "x402Support": true,
+          "active": true,
+          "registrations": [
+            {
+              "agentId": 94639,
+              "agentRegistry": "eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432"
+            }
+          ]
+        },
+        "registrationUrl": "https://agent402.tools/.well-known/agent-registration.json",
+        "trust": null
+      },
+      "http": [
+        {
+          "url": "https://agent402.tools/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 885
+        },
+        {
+          "url": "https://agent402.tools/api/agent-manifest.json",
+          "method": "GET",
+          "status": 404,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 549
+        },
+        {
+          "url": "https://agent402.tools/api/weather-forecast",
+          "method": "GET",
+          "status": 402,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 8194,
+          "paymentRequiredHeader": "readable"
+        },
+        {
+          "url": "https://agent402.tools/mcp",
+          "method": "POST initialize",
+          "status": 200,
+          "contentType": "application/json",
+          "bytes": 2375
+        },
+        {
+          "url": "https://agent402.tools/mcp",
+          "method": "POST tools/list",
+          "status": 200,
+          "contentType": "application/json",
+          "bytes": 25490
+        }
+      ]
+    },
+    "identity": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "declaredPayTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+          "declaredPayTos": [
+            "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          ],
+          "registered": {
+            "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+            "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+            "payTo": null,
+            "bound": true
+          }
+        }
+      },
+      "payTos": {
+        "compared": [
+          {
+            "network": "eip155:8453",
+            "chainId": 8453,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:137",
+            "chainId": 137,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:42161",
+            "chainId": 42161,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:143",
+            "chainId": 143,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:43114",
+            "chainId": 43114,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:1329",
+            "chainId": 1329,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:10",
+            "chainId": 10,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:4663",
+            "chainId": 4663,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:42220",
+            "chainId": 42220,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:57073",
+            "chainId": 57073,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:5042",
+            "chainId": 5042,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:8453",
+            "chainId": 8453,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:8453",
+            "chainId": 8453,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "network": "eip155:5042",
+            "chainId": 5042,
+            "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          }
+        ],
+        "notCompared": [
+          {
+            "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+            "payTo": "J7aN3PLJnTCF5qpEnvJHJsnCjcGuqC2rYtEM8Gv3xwg"
+          },
+          {
+            "network": "stellar:pubnet",
+            "payTo": "GDNJXCKW7ZM7GEEVP674TWPU26YJNBQ2FI4ZIPRKTPTNUEJMDHFJWWRL"
+          },
+          {
+            "network": "algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k",
+            "payTo": "C7IIHG7SPLPZ5H7ZT6HW3UV2OQMQQE6Y2HBNGZXSLRJULE42BEE2OY2XIE"
+          }
+        ]
+      },
+      "source": "declared in https://agent402.tools/.well-known/agent-registration.json",
+      "agent": {
+        "chainId": 8453,
+        "agentId": "94639",
+        "chain": "Base",
+        "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+        "rpc": "https://mainnet.base.org"
+      },
+      "pick": {
+        "chosen": {
+          "chainId": 8453,
+          "agentId": "94639"
+        },
+        "skipped": [],
+        "declared": 1
+      },
+      "chainRead": {
+        "ok": true,
+        "exists": true,
+        "chainId": 8453,
+        "agentId": "94639",
+        "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+        "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+        "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+        "tokenURI": "https://agent402.tools/.well-known/agent-registration.json",
+        "rpc": [
+          {
+            "url": "https://mainnet.base.org",
+            "method": "eth_call ownerOf",
+            "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+            "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000171af",
+            "ok": true,
+            "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "url": "https://mainnet.base.org",
+            "method": "eth_call getAgentWallet",
+            "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+            "data": "0x0033950900000000000000000000000000000000000000000000000000000000000171af",
+            "ok": true,
+            "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+          },
+          {
+            "url": "https://mainnet.base.org",
+            "method": "eth_call tokenURI",
+            "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+            "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000171af",
+            "ok": true,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003a68747470733a2f2f6167656e743430322e746f6f6c732f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e000000000000"
+          }
+        ]
+      },
+      "registrationFromChain": {
+        "how": "same file as the declared registration",
+        "name": "Agent402"
+      },
+      "binding": {
+        "bound": true,
+        "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+      }
+    },
+    "delivery": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "evidence_age": {
+            "last_delivered_at": "2026-11-07T12:01:04.681Z",
+            "days_since_last_delivery": 14.7,
+            "last_paid_test_at": "2026-11-07T12:01:04.681Z",
+            "tier": "aging",
+            "max_recommendation": "ALLOW",
+            "waived_by_caller": false,
+            "fresh_within_days": 7,
+            "stale_after_days": 30,
+            "text": "Content last came back on a paid test on 2026-11-07, 14.7 days before this answer."
+          },
+          "canonical_url": "https://agent402.tools/api/weather-forecast",
+          "method": "GET",
+          "not_in_catalog": false,
+          "recommendation": "ALLOW",
+          "reason_codes": [
+            "l0_pass",
+            "l1_delivered",
+            "l2_conform"
+          ],
+          "reasons": [
+            {
+              "code": "l0_pass",
+              "text": "The latest probe returned a valid HTTP 402 payment request from this URL.",
+              "effect": "none",
+              "max_recommendation": "ALLOW",
+              "evidence_status": "record",
+              "evidence": [
+                {
+                  "kind": "record",
+                  "id": null,
+                  "url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9"
+                }
+              ]
+            },
+            {
+              "code": "l1_delivered",
+              "text": "vet402 recorded a non-empty 2xx other than 202 Accepted on a paid test within the 30 day window.",
+              "effect": "none",
+              "max_recommendation": "ALLOW",
+              "evidence_status": "linked",
+              "evidence": [
+                {
+                  "kind": "purchase",
+                  "id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                  "url": "https://vet402.com/api/v1/observatory/endpoints/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9/purchases"
+                },
+                {
+                  "kind": "tx",
+                  "id": "0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                  "url": "https://basescan.org/tx/0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171"
+                }
+              ]
+            },
+            {
+              "code": "l2_conform",
+              "text": "The latest delivered body has the keys the output declaration for this URL requires.",
+              "effect": "none",
+              "max_recommendation": "ALLOW",
+              "evidence_status": "linked",
+              "evidence": [
+                {
+                  "kind": "purchase",
+                  "id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                  "url": "https://vet402.com/api/v1/observatory/endpoints/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9/purchases"
+                },
+                {
+                  "kind": "tx",
+                  "id": "0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                  "url": "https://basescan.org/tx/0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171"
+                },
+                {
+                  "kind": "response_hash",
+                  "id": "afba06ae3cf16bb30d2390ad564d1d673d3cef360fe75562eff9833fd5e9ffe5",
+                  "url": null
+                },
+                {
+                  "kind": "declaration_hash",
+                  "id": "6b92470518ac462408d6661a45d883f8cf09a4238413bea2ea7a8323257e50de",
+                  "url": null
+                }
+              ]
+            }
+          ],
+          "delivery": {
+            "paid_attempts": 3,
+            "delivered": 3,
+            "settled_not_delivered": 0,
+            "last_attempt_at": "2026-11-07T12:01:04.681Z",
+            "window_days": 30
+          },
+          "l0_status": "pass",
+          "verified_terms": {
+            "purchase_id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+            "pay_to": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+            "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+            "amount": "1000",
+            "decimals": 6,
+            "network": "eip155:8453",
+            "scheme": "exact",
+            "protocol": "x402",
+            "verified_at": "2026-11-07T12:01:04.681Z"
+          },
+          "spending_halted": false,
+          "refunds": {
+            "window_days": 30,
+            "networks_read": [
+              "eip155:8453"
+            ],
+            "read_through": "2026-11-22T03:40:00.000Z",
+            "failures_counted": 0,
+            "paid_units": "0",
+            "refunded_units": "0",
+            "refund_rate": null
+          },
+          "freshness": {
+            "l0": "2026-11-20T16:40:45.629Z",
+            "l1": "2026-11-07T12:01:04.681Z",
+            "l2": "2026-11-07T12:01:04.681Z"
+          },
+          "l1_purchases": [
+            {
+              "attempted_at": "2026-11-07T12:01:04Z",
+              "network": "eip155:8453",
+              "status": "settled",
+              "tx_hash": "0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+              "explorer_url": "https://basescan.org/tx/0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171"
+            },
+            {
+              "attempted_at": "2026-10-30T12:01:25Z",
+              "network": "stellar:pubnet",
+              "status": "settled",
+              "tx_hash": "6d776ae6113ed7cdca967536218037a200c4df31f001f471a88b74978d1ca08d",
+              "explorer_url": "https://stellar.expert/explorer/public/tx/6d776ae6113ed7cdca967536218037a200c4df31f001f471a88b74978d1ca08d"
+            },
+            {
+              "attempted_at": "2026-10-24T09:34:03Z",
+              "network": "eip155:42220",
+              "status": "settled",
+              "tx_hash": "0xa1fcc993f55848487a0380d9ed18761391e54c027a5c2d14f9338247249ee309",
+              "explorer_url": "https://celoscan.io/tx/0xa1fcc993f55848487a0380d9ed18761391e54c027a5c2d14f9338247249ee309"
+            }
+          ],
+          "same_host_listings": [],
+          "listing_sources": [],
+          "note": null,
+          "record_url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9",
+          "diagnose_url": null,
+          "method_url": "https://vet402.com/observatory/methodology",
+          "as_of": "2026-11-22T04:38:15.332Z",
+          "truncated": false,
+          "next_action": "Pay only if what you are about to send matches this record: same recipient, network, and amount. Payment can still fail after you pay."
+        }
+      },
+      "target": "https://agent402.tools/api/weather-forecast",
+      "http": {
+        "url": "https://vet402.com/mcp",
+        "method": "POST tools/call check_x402_seller",
+        "argument": "https://agent402.tools/api/weather-forecast",
+        "status": 200
+      }
+    }
+  },
+  "agentFacts": {
+    "id": "eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432:94639",
+    "agent_name": "urn:agent:agent402.tools:Agent402",
+    "label": "Agent402",
+    "description": "Pay-per-call web tools for autonomous agents: 636 priced endpoints settled in stablecoins (USDC, or USDG on Robinhood Chain) over x402 or MPP, free via proof of work for the pure-CPU tools, and finished reports by card. No account and no API key.",
+    "provider": {
+      "url": "https://agent402.tools"
+    },
+    "endpoints": {
+      "static": [
+        "https://agent402.tools/api/weather-forecast",
+        "https://agent402.tools/mcp"
+      ]
+    },
+    "capabilities": {
+      "authentication": {
+        "methods": [
+          "x402"
+        ]
+      }
+    },
+    "skills": [
+      {
+        "id": "catalog.search"
+      },
+      {
+        "id": "catalog.find"
+      },
+      {
+        "id": "catalog.call"
+      },
+      {
+        "id": "payment.info"
+      },
+      {
+        "id": "web.search"
+      },
+      {
+        "id": "web.answer"
+      },
+      {
+        "id": "web.news"
+      },
+      {
+        "id": "browser.render"
+      },
+      {
+        "id": "audio.transcribe"
+      },
+      {
+        "id": "memory.read"
+      },
+      {
+        "id": "memory.write"
+      },
+      {
+        "id": "decide.plan"
+      },
+      {
+        "id": "decide.execute"
+      },
+      {
+        "id": "demand.request"
+      },
+      {
+        "id": "server.describe"
+      },
+      {
+        "id": "decide.feedback"
+      }
+    ],
+    "evaluations": {
+      "lastAudited": "2026-11-22T04:38:12.938Z",
+      "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
+    },
+    "x_factgate_verdict": {
+      "verdict": "ALLOW",
+      "reasons": [
+        {
+          "pillar": "live",
+          "code": "live_as_declared",
+          "effect": "ALLOW",
+          "text": "The live answer matches the declaration."
+        },
+        {
+          "pillar": "identity",
+          "code": "identity_match",
+          "effect": "ALLOW",
+          "text": "The declared payee matches the ERC-8004 registration."
+        },
+        {
+          "pillar": "delivery",
+          "code": "delivery_delivered",
+          "effect": "ALLOW",
+          "text": "vet402 recorded content coming back on 3 of 3 paid tests."
+        }
+      ]
+    },
+    "x_factgate_evidence": {
+      "target": "https://agent402.tools/api/weather-forecast",
+      "checkedAt": "2026-11-22T04:38:12.938Z",
+      "live": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "corsReachable": true,
+            "answersAsDeclared": true,
+            "detail": "as declared: MCP https://agent402.tools/mcp, x402 terms",
+            "unreachable": []
+          }
+        },
+        "checks": {
+          "target": {
+            "reachable": true,
+            "status": 402
+          },
+          "payment": {
+            "state": "terms",
+            "source": "header"
+          },
+          "manifest": {
+            "state": "absent",
+            "url": "https://agent402.tools/api/agent-manifest.json",
+            "status": 404
+          },
+          "registration": {
+            "state": "found",
+            "url": "https://agent402.tools/.well-known/agent-registration.json",
+            "status": 200
+          },
+          "wallets": {
+            "state": "not_compared",
+            "detail": "the site declares no wallet",
+            "wallets": []
+          },
+          "mcp": [
+            {
+              "url": "https://agent402.tools/mcp",
+              "tools": [],
+              "state": "ok",
+              "listed": [
+                "catalog.search",
+                "catalog.find",
+                "catalog.call",
+                "payment.info",
+                "web.search",
+                "web.answer",
+                "web.news",
+                "browser.render",
+                "audio.transcribe",
+                "memory.read",
+                "memory.write",
+                "decide.plan",
+                "decide.execute",
+                "demand.request",
+                "server.describe",
+                "decide.feedback"
+              ],
+              "missing": [],
+              "session": false,
+              "from": [
+                "registration services"
+              ]
+            }
+          ]
+        },
+        "declared": {
+          "manifestEntry": null,
+          "network": null,
+          "mcp": [
+            {
+              "url": "https://agent402.tools/mcp",
+              "tools": [],
+              "listed": [
+                "catalog.search",
+                "catalog.find",
+                "catalog.call",
+                "payment.info",
+                "web.search",
+                "web.answer",
+                "web.news",
+                "browser.render",
+                "audio.transcribe",
+                "memory.read",
+                "memory.write",
+                "decide.plan",
+                "decide.execute",
+                "demand.request",
+                "server.describe",
+                "decide.feedback"
+              ],
+              "state": "ok"
+            }
+          ],
+          "terms": {
+            "x402Version": 2,
+            "resourceUrl": "https://agent402.tools/api/weather-forecast",
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "eip155:8453",
+                "amount": "1000",
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:137",
+                "amount": "1000",
+                "asset": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:42161",
+                "amount": "1000",
+                "asset": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:143",
+                "amount": "1000",
+                "asset": "0x754704Bc059F8C67012fEd69BC8A327a5aafb603",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:43114",
+                "amount": "1000",
+                "asset": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:1329",
+                "amount": "1000",
+                "asset": "0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:10",
+                "amount": "2000",
+                "asset": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:4663",
+                "amount": "1000",
+                "asset": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:42220",
+                "amount": "1000",
+                "asset": "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:57073",
+                "amount": "1000",
+                "asset": "0x2D270e6886d130D724215A266106e6832161EAEd",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:5042",
+                "amount": "1000",
+                "asset": "0x3600000000000000000000000000000000000000",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "upto",
+                "network": "eip155:8453",
+                "amount": "1000",
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+                "amount": "1000",
+                "asset": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                "payTo": "J7aN3PLJnTCF5qpEnvJHJsnCjcGuqC2rYtEM8Gv3xwg"
+              },
+              {
+                "scheme": "exact",
+                "network": "stellar:pubnet",
+                "amount": "10000",
+                "asset": "CCW67TSZV3SSS2HXMBQ5JFGCKJNXKZM7UQUWUZPUTHXSTZLEO7SJMI75",
+                "payTo": "GDNJXCKW7ZM7GEEVP674TWPU26YJNBQ2FI4ZIPRKTPTNUEJMDHFJWWRL"
+              },
+              {
+                "scheme": "exact",
+                "network": "algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k",
+                "amount": "1000",
+                "asset": "31566704",
+                "payTo": "C7IIHG7SPLPZ5H7ZT6HW3UV2OQMQQE6Y2HBNGZXSLRJULE42BEE2OY2XIE"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:8453",
+                "amount": "1000",
+                "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              },
+              {
+                "scheme": "exact",
+                "network": "eip155:5042",
+                "amount": "1000",
+                "asset": "0x3600000000000000000000000000000000000000",
+                "payTo": "0xaBF4FAbd7c416fB67202E5f9002389Fc75e2a9D0"
+              }
+            ]
+          },
+          "termsSource": "header",
+          "registrationFile": {
+            "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+            "name": "Agent402",
+            "description": "Pay-per-call web tools for autonomous agents: 636 priced endpoints settled in stablecoins (USDC, or USDG on Robinhood Chain) over x402 or MPP, free via proof of work for the pure-CPU tools, and finished reports by card. No account and no API key.",
+            "image": "https://agent402.tools/logo.png",
+            "services": [
+              {
+                "name": "web",
+                "endpoint": "https://agent402.tools/"
+              },
+              {
+                "name": "MCP",
+                "endpoint": "https://agent402.tools/mcp"
+              },
+              {
+                "name": "A2A",
+                "endpoint": "https://agent402.tools/.well-known/agent-card.json",
+                "version": "0.3.0"
+              },
+              {
+                "name": "OpenAPI",
+                "endpoint": "https://agent402.tools/openapi.json"
+              },
+              {
+                "name": "x402",
+                "endpoint": "https://agent402.tools/.well-known/x402"
+              }
+            ],
+            "x402Support": true,
+            "active": true,
+            "registrations": [
+              {
+                "agentId": 94639,
+                "agentRegistry": "eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432"
+              }
+            ]
+          },
+          "registrationUrl": "https://agent402.tools/.well-known/agent-registration.json",
+          "trust": null
+        },
+        "http": [
+          {
+            "url": "https://agent402.tools/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 885
+          },
+          {
+            "url": "https://agent402.tools/api/agent-manifest.json",
+            "method": "GET",
+            "status": 404,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 549
+          },
+          {
+            "url": "https://agent402.tools/api/weather-forecast",
+            "method": "GET",
+            "status": 402,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 8194,
+            "paymentRequiredHeader": "readable"
+          },
+          {
+            "url": "https://agent402.tools/mcp",
+            "method": "POST initialize",
+            "status": 200,
+            "contentType": "application/json",
+            "bytes": 2375
+          },
+          {
+            "url": "https://agent402.tools/mcp",
+            "method": "POST tools/list",
+            "status": 200,
+            "contentType": "application/json",
+            "bytes": 25490
+          }
+        ]
+      },
+      "identity": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "declaredPayTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+            "declaredPayTos": [
+              "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            ],
+            "registered": {
+              "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+              "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+              "payTo": null,
+              "bound": true
+            }
+          }
+        },
+        "payTos": {
+          "compared": [
+            {
+              "network": "eip155:8453",
+              "chainId": 8453,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:137",
+              "chainId": 137,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:42161",
+              "chainId": 42161,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:143",
+              "chainId": 143,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:43114",
+              "chainId": 43114,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:1329",
+              "chainId": 1329,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:10",
+              "chainId": 10,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:4663",
+              "chainId": 4663,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:42220",
+              "chainId": 42220,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:57073",
+              "chainId": 57073,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:5042",
+              "chainId": 5042,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:8453",
+              "chainId": 8453,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:8453",
+              "chainId": 8453,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "network": "eip155:5042",
+              "chainId": 5042,
+              "payTo": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            }
+          ],
+          "notCompared": [
+            {
+              "network": "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp",
+              "payTo": "J7aN3PLJnTCF5qpEnvJHJsnCjcGuqC2rYtEM8Gv3xwg"
+            },
+            {
+              "network": "stellar:pubnet",
+              "payTo": "GDNJXCKW7ZM7GEEVP674TWPU26YJNBQ2FI4ZIPRKTPTNUEJMDHFJWWRL"
+            },
+            {
+              "network": "algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k",
+              "payTo": "C7IIHG7SPLPZ5H7ZT6HW3UV2OQMQQE6Y2HBNGZXSLRJULE42BEE2OY2XIE"
+            }
+          ]
+        },
+        "source": "declared in https://agent402.tools/.well-known/agent-registration.json",
+        "agent": {
+          "chainId": 8453,
+          "agentId": "94639",
+          "chain": "Base",
+          "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+          "rpc": "https://mainnet.base.org"
+        },
+        "pick": {
+          "chosen": {
+            "chainId": 8453,
+            "agentId": "94639"
+          },
+          "skipped": [],
+          "declared": 1
+        },
+        "chainRead": {
+          "ok": true,
+          "exists": true,
+          "chainId": 8453,
+          "agentId": "94639",
+          "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+          "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+          "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+          "tokenURI": "https://agent402.tools/.well-known/agent-registration.json",
+          "rpc": [
+            {
+              "url": "https://mainnet.base.org",
+              "method": "eth_call ownerOf",
+              "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+              "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000171af",
+              "ok": true,
+              "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "url": "https://mainnet.base.org",
+              "method": "eth_call getAgentWallet",
+              "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+              "data": "0x0033950900000000000000000000000000000000000000000000000000000000000171af",
+              "ok": true,
+              "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
+            },
+            {
+              "url": "https://mainnet.base.org",
+              "method": "eth_call tokenURI",
+              "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+              "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000171af",
+              "ok": true,
+              "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003a68747470733a2f2f6167656e743430322e746f6f6c732f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e000000000000"
+            }
+          ]
+        },
+        "registrationFromChain": {
+          "how": "same file as the declared registration",
+          "name": "Agent402"
+        },
+        "binding": {
+          "bound": true,
+          "how": "the target origin's /.well-known/agent-registration.json lists this agentId and registry"
+        }
+      },
+      "delivery": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "evidence_age": {
+              "last_delivered_at": "2026-11-07T12:01:04.681Z",
+              "days_since_last_delivery": 14.7,
+              "last_paid_test_at": "2026-11-07T12:01:04.681Z",
+              "tier": "aging",
+              "max_recommendation": "ALLOW",
+              "waived_by_caller": false,
+              "fresh_within_days": 7,
+              "stale_after_days": 30,
+              "text": "Content last came back on a paid test on 2026-11-07, 14.7 days before this answer."
+            },
+            "canonical_url": "https://agent402.tools/api/weather-forecast",
+            "method": "GET",
+            "not_in_catalog": false,
+            "recommendation": "ALLOW",
+            "reason_codes": [
+              "l0_pass",
+              "l1_delivered",
+              "l2_conform"
+            ],
+            "reasons": [
+              {
+                "code": "l0_pass",
+                "text": "The latest probe returned a valid HTTP 402 payment request from this URL.",
+                "effect": "none",
+                "max_recommendation": "ALLOW",
+                "evidence_status": "record",
+                "evidence": [
+                  {
+                    "kind": "record",
+                    "id": null,
+                    "url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9"
+                  }
+                ]
+              },
+              {
+                "code": "l1_delivered",
+                "text": "vet402 recorded a non-empty 2xx other than 202 Accepted on a paid test within the 30 day window.",
+                "effect": "none",
+                "max_recommendation": "ALLOW",
+                "evidence_status": "linked",
+                "evidence": [
+                  {
+                    "kind": "purchase",
+                    "id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                    "url": "https://vet402.com/api/v1/observatory/endpoints/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9/purchases"
+                  },
+                  {
+                    "kind": "tx",
+                    "id": "0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                    "url": "https://basescan.org/tx/0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171"
+                  }
+                ]
+              },
+              {
+                "code": "l2_conform",
+                "text": "The latest delivered body has the keys the output declaration for this URL requires.",
+                "effect": "none",
+                "max_recommendation": "ALLOW",
+                "evidence_status": "linked",
+                "evidence": [
+                  {
+                    "kind": "purchase",
+                    "id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                    "url": "https://vet402.com/api/v1/observatory/endpoints/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9/purchases"
+                  },
+                  {
+                    "kind": "tx",
+                    "id": "0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                    "url": "https://basescan.org/tx/0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171"
+                  },
+                  {
+                    "kind": "response_hash",
+                    "id": "afba06ae3cf16bb30d2390ad564d1d673d3cef360fe75562eff9833fd5e9ffe5",
+                    "url": null
+                  },
+                  {
+                    "kind": "declaration_hash",
+                    "id": "6b92470518ac462408d6661a45d883f8cf09a4238413bea2ea7a8323257e50de",
+                    "url": null
+                  }
+                ]
+              }
+            ],
+            "delivery": {
+              "paid_attempts": 3,
+              "delivered": 3,
+              "settled_not_delivered": 0,
+              "last_attempt_at": "2026-11-07T12:01:04.681Z",
+              "window_days": 30
+            },
+            "l0_status": "pass",
+            "verified_terms": {
+              "purchase_id": "eip155:8453:0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+              "pay_to": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
+              "asset": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+              "amount": "1000",
+              "decimals": 6,
+              "network": "eip155:8453",
+              "scheme": "exact",
+              "protocol": "x402",
+              "verified_at": "2026-11-07T12:01:04.681Z"
+            },
+            "spending_halted": false,
+            "refunds": {
+              "window_days": 30,
+              "networks_read": [
+                "eip155:8453"
+              ],
+              "read_through": "2026-11-22T03:40:00.000Z",
+              "failures_counted": 0,
+              "paid_units": "0",
+              "refunded_units": "0",
+              "refund_rate": null
+            },
+            "freshness": {
+              "l0": "2026-11-20T16:40:45.629Z",
+              "l1": "2026-11-07T12:01:04.681Z",
+              "l2": "2026-11-07T12:01:04.681Z"
+            },
+            "l1_purchases": [
+              {
+                "attempted_at": "2026-11-07T12:01:04Z",
+                "network": "eip155:8453",
+                "status": "settled",
+                "tx_hash": "0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171",
+                "explorer_url": "https://basescan.org/tx/0xe2bbe97b9633478b37f9d875554b54e6d30df6b7001e1d6fd9595b08d4a2d171"
+              },
+              {
+                "attempted_at": "2026-10-30T12:01:25Z",
+                "network": "stellar:pubnet",
+                "status": "settled",
+                "tx_hash": "6d776ae6113ed7cdca967536218037a200c4df31f001f471a88b74978d1ca08d",
+                "explorer_url": "https://stellar.expert/explorer/public/tx/6d776ae6113ed7cdca967536218037a200c4df31f001f471a88b74978d1ca08d"
+              },
+              {
+                "attempted_at": "2026-10-24T09:34:03Z",
+                "network": "eip155:42220",
+                "status": "settled",
+                "tx_hash": "0xa1fcc993f55848487a0380d9ed18761391e54c027a5c2d14f9338247249ee309",
+                "explorer_url": "https://celoscan.io/tx/0xa1fcc993f55848487a0380d9ed18761391e54c027a5c2d14f9338247249ee309"
+              }
+            ],
+            "same_host_listings": [],
+            "listing_sources": [],
+            "note": null,
+            "record_url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9",
+            "diagnose_url": null,
+            "method_url": "https://vet402.com/observatory/methodology",
+            "as_of": "2026-11-22T04:38:15.332Z",
+            "truncated": false,
+            "next_action": "Pay only if what you are about to send matches this record: same recipient, network, and amount. Payment can still fail after you pay."
+          }
+        },
+        "target": "https://agent402.tools/api/weather-forecast",
+        "http": {
+          "url": "https://vet402.com/mcp",
+          "method": "POST tools/call check_x402_seller",
+          "argument": "https://agent402.tools/api/weather-forecast",
+          "status": 200
+        }
+      }
+    },
+    "x_factgate_signature": {
+      "signed": false,
+      "note": "FactGate is not an issuer under the NANDA trust framework and does not sign. Re-run the check to verify; every value has its source URL in x_factgate_evidence."
+    },
+    "x_factgate_format": {
+      "source": "arXiv:2507.14263v1, Appendix 'Full AgentFacts Schema' (V0.3 draft)",
+      "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
+    }
+  },
+  "pageOrigin": "http://localhost:8790",
+  "ms": 2504
+}

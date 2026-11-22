@@ -1,0 +1,179 @@
+{
+  "measuredAt": "2026-11-22T04:38:12.937Z",
+  "pageOrigin": "http://localhost:8790",
+  "method": "gateCheck() with scripts/cors-fetch.mjs (browser CORS rules applied to real answers)",
+  "targets": [
+    {
+      "file": "agent402_tools_api_weather_forecast.json",
+      "url": "https://agent402.tools/api/weather-forecast",
+      "verdict": "ALLOW",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "ALLOW:identity_match",
+        "ALLOW:delivery_delivered"
+      ],
+      "http": [
+        "GET https://agent402.tools/.well-known/agent-registration.json -> 200",
+        "GET https://agent402.tools/api/agent-manifest.json -> 404",
+        "GET https://agent402.tools/api/weather-forecast -> 402",
+        "POST initialize https://agent402.tools/mcp -> 200",
+        "POST tools/list https://agent402.tools/mcp -> 200"
+      ]
+    },
+    {
+      "file": "agent_atlas_phi_vercel_app_agent_atlas.json",
+      "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_unavailable",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json -> 404",
+        "GET https://agent-atlas-phi.vercel.app/agent-manifest.json -> 200",
+        "GET https://agent-atlas-phi.vercel.app/agent_atlas -> TypeError: CORS refused: GET https://agent-atlas-phi.vercel.app/agent_atlas answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://agent-atlas-phi.vercel.app/agent_atlas.network.json -> 200",
+        "POST initialize https://agent-atlas-phi.vercel.app/api/mcp -> 200",
+        "POST tools/list https://agent-atlas-phi.vercel.app/api/mcp -> 200"
+      ]
+    },
+    {
+      "file": "deadline_desk_agent_vercel_app_deadline_desk.json",
+      "url": "https://deadline-desk-agent.vercel.app/deadline_desk",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_unavailable",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET https://deadline-desk-agent.vercel.app/agent-manifest.json -> 200",
+        "GET https://deadline-desk-agent.vercel.app/.well-known/agent-registration.json -> 404",
+        "GET https://deadline-desk-agent.vercel.app/deadline_desk -> TypeError: CORS refused: GET https://deadline-desk-agent.vercel.app/deadline_desk answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://deadline-desk-agent.vercel.app/deadline_desk.network.json -> 200",
+        "POST initialize https://deadline-desk-agent.vercel.app/api/mcp -> 200",
+        "POST tools/list https://deadline-desk-agent.vercel.app/api/mcp -> 200"
+      ]
+    },
+    {
+      "file": "ledenti_github_io_trois_nombres_three_numbers.json",
+      "url": "https://ledenti.github.io/trois-nombres/three_numbers",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_unavailable",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET https://ledenti.github.io/.well-known/agent-registration.json -> TypeError: CORS refused: GET https://ledenti.github.io/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://ledenti.github.io/trois-nombres/agent-manifest.json -> 200",
+        "GET https://ledenti.github.io/trois-nombres/three_numbers -> 404",
+        "GET https://ledenti.github.io/trois-nombres/three_numbers.network.json -> 200",
+        "POST initialize https://three-numbers-mcp.onrender.com/mcp -> 200",
+        "POST tools/list https://three-numbers-mcp.onrender.com/mcp -> 200"
+      ]
+    },
+    {
+      "file": "shutdown_clerk_pages_dev_shutdown_clerk.json",
+      "url": "https://shutdown-clerk.pages.dev/shutdown_clerk",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_unavailable",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET https://shutdown-clerk.pages.dev/agent-manifest.json -> 200",
+        "GET https://shutdown-clerk.pages.dev/.well-known/agent-registration.json -> 200",
+        "GET https://shutdown-clerk.pages.dev/shutdown_clerk -> 200",
+        "GET https://shutdown-clerk.pages.dev/shutdown_clerk.network.json -> 200"
+      ]
+    },
+    {
+      "file": "cocvn157_github_io_nanda_seal_nanda_seal_verifier.json",
+      "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_unavailable",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET https://cocvn157.github.io/nanda-seal/agent-manifest.json -> 200",
+        "GET https://cocvn157.github.io/.well-known/agent-registration.json -> 404",
+        "GET https://cocvn157.github.io/nanda-seal/nanda_seal_verifier -> 404",
+        "GET https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json -> 200"
+      ]
+    },
+    {
+      "file": "worldwideagenticweb_org_wp_content_plugins_wwaw_agent_widget_assets_worldwide_ag.json",
+      "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+      "verdict": "CAUTION",
+      "codes": [
+        "CAUTION:live_cors_unreachable",
+        "CAUTION:identity_unavailable",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json -> TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://worldwideagenticweb.org/.well-known/agent-registration.json -> TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget -> TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+      ]
+    },
+    {
+      "file": "vet402_com.json",
+      "url": "https://vet402.com/",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_no_declared_payee",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET https://vet402.com/.well-known/agent-registration.json -> 200",
+        "GET https://vet402.com/agent-manifest.json -> TypeError: CORS refused: GET https://vet402.com/agent-manifest.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://vet402.com/ -> TypeError: CORS refused: GET https://vet402.com/ answered 200 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "POST initialize https://vet402.com/mcp -> 200",
+        "POST tools/list https://vet402.com/mcp -> 200"
+      ]
+    },
+    {
+      "file": "127_0_0_1_8791_glossy_stay.json",
+      "url": "http://127.0.0.1:8791/glossy_stay",
+      "verdict": "BLOCK",
+      "codes": [
+        "BLOCK:live_not_as_declared",
+        "CAUTION:identity_declared_only",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET http://127.0.0.1:8791/.well-known/agent-registration.json -> 200",
+        "GET http://127.0.0.1:8791/agent-manifest.json -> 200",
+        "GET http://127.0.0.1:8791/glossy_stay -> TypeError: CORS refused: GET http://127.0.0.1:8791/glossy_stay answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET http://127.0.0.1:8791/glossy_stay.network.json -> 200",
+        "GET http://127.0.0.1:8791/pay/quote.json -> 200",
+        "GET http://127.0.0.1:8791/api/book.json -> 200",
+        "POST initialize https://mcp.glossy-stay.invalid/mcp -> TypeError: fetch failed"
+      ]
+    },
+    {
+      "file": "127_0_0_1_8792_verified_stay.json",
+      "url": "http://127.0.0.1:8792/verified_stay",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_declared_only",
+        "CAUTION:delivery_unavailable"
+      ],
+      "http": [
+        "GET http://127.0.0.1:8792/agent-manifest.json -> 200",
+        "GET http://127.0.0.1:8792/.well-known/agent-registration.json -> 200",
+        "GET http://127.0.0.1:8792/verified_stay -> TypeError: CORS refused: GET http://127.0.0.1:8792/verified_stay answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET http://127.0.0.1:8792/verified_stay.network.json -> 200",
+        "GET http://127.0.0.1:8792/pay/quote.json -> 200",
+        "GET http://127.0.0.1:8792/api/book.json -> 200"
+      ]
+    }
+  ]
+}

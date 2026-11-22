@@ -1,0 +1,20 @@
+HTTP/2 204 
+access-control-allow-headers: content-type, accept, mcp-session-id, mcp-protocol-version, last-event-id
+access-control-allow-methods: POST, GET, DELETE, OPTIONS
+access-control-allow-origin: *
+access-control-expose-headers: mcp-session-id, mcp-protocol-version, retry-after, ratelimit-limit, ratelimit-remaining, ratelimit-reset
+access-control-max-age: 86400
+cache-control: no-store
+content-security-policy: default-src 'self'; script-src 'self' 'nonce-jYJ2dr8ZEi1fNGypHJTsyA==' 'strict-dynamic'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src 'none'; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'
+date: Sun, 22 Nov 2026 03:44:38 GMT
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=63072000; includeSubDomains; preload
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-matched-path: /api/mcp
+x-nextjs-rewritten-path: /api/mcp
+x-vercel-cache: MISS
+x-vercel-id: hnd1::iad1::svzph-1795319077775-3ac2aeaa7dad
+

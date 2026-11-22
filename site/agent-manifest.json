@@ -1,0 +1,88 @@
+{
+  "brand": "FactGate",
+  "networks": [
+    {
+      "name": "factgate",
+      "front_man": "gate_coordinator",
+      "hocon": "./factgate.network.json",
+      "description": "Check an agent website or x402 seller before you connect or pay: live answers, ERC-8004 identity on chain, vet402 delivery records. ALLOW, CAUTION or BLOCK with the reasons, plus AgentFacts.",
+      "tags": [
+        "agentified-website",
+        "x402",
+        "erc-8004",
+        "trust"
+      ],
+      "sample_queries": [
+        "Should my agent pay https://agent402.tools/api/weather-forecast? Give FactGate's verdict with the reasons.",
+        "Does https://agent-atlas-phi.vercel.app/agent_atlas answer as its manifest declares? Check its MCP server too.",
+        "Whose wallet is behind https://agent402.tools/api/weather-forecast? Compare its payTo with its ERC-8004 registration.",
+        "How does FactGate decide between ALLOW, CAUTION and BLOCK?",
+        "Pay this seller for me."
+      ]
+    }
+  ],
+  "llm_router": {
+    "base_url": "https://api.otari.ai/api/v1",
+    "mock": false,
+    "byok_router": "https://api.otari.ai/api/v1"
+  },
+  "allowed_peers": [
+    "https://vet402.com"
+  ],
+  "peer_policy": {
+    "mode": "closed",
+    "deny_origins": [],
+    "note": "Local agents, page-local actions and the vet402.com MCP server only."
+  },
+  "agent_mcp": {
+    "protocol": "nsdeploy-agent-mcp/v1",
+    "network": "factgate",
+    "front_man": "gate_coordinator",
+    "available": false,
+    "reason": "This is a static bundle; a public MCP facade requires an application host."
+  },
+  "theme": {
+    "primary": "#24292f"
+  },
+  "linking": {
+    "protocol": "nsdeploy-link/v1",
+    "exports": [
+      {
+        "network": "factgate",
+        "front_man": "gate_coordinator",
+        "aliases": [
+          "factgate",
+          "gate_coordinator"
+        ],
+        "url": "factgate"
+      }
+    ],
+    "imports": [],
+    "link_updates": {
+      "mode": "browser-local"
+    }
+  },
+  "deployment": {
+    "mode": "static",
+    "self_contained_runtime": true,
+    "browser_mock": false,
+    "direct_byok": true,
+    "direct_mcp_requires_cors": true,
+    "public_mcp_facade": false
+  },
+  "actions": {
+    "version": 1,
+    "module": "./site-actions.js",
+    "bridge": "./bridge/action-bridge.html",
+    "agentTools": [
+      "get_gate_state",
+      "gate_check",
+      "inspect_manifest",
+      "probe_capabilities",
+      "read_identity",
+      "check_seller",
+      "evaluate_gate",
+      "save_check"
+    ]
+  }
+}

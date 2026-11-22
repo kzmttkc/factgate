@@ -1,0 +1,24 @@
+Partner network: http://127.0.0.1:8790/factgate
+Caller origin: any site. Pass --origin <this site's origin> to check yours.
+Read: http://127.0.0.1:8790/agent-manifest.json (200)
+Read: http://127.0.0.1:8790/factgate.network.json (200)
+Read: http://127.0.0.1:8790/links.json (200)
+Read: http://127.0.0.1:8790/bridge/action-bridge.html (200)
+Read: http://127.0.0.1:8790/runtime/action-bridge.js (200)
+Read: http://127.0.0.1:8790/bridge/agent-manifest.json (200)
+Read: http://127.0.0.1:8790/bridge/bridge-actions.js (200)
+
+What the partner's network can reach. It runs in this site's visitor's browser, on the visitor's key, and its instructions read every request.
+Its bridge loads http://127.0.0.1:8790/bridge/bridge-actions.js. The partner's agents get the reads in it that list this site's origin or "*" in callerOrigins and are in the partner's actions.agentTools. Each runs in a hidden frame on the partner's origin.
+Its front agent's instructions start: "You are the assistant on the FactGate website. You help people decide whether their agent should connect to or pay an x402 seller or agent, by checking whether it answers as declared, whether its payee matches its ERC-8004 registration, and whether content came back when vet402 paid it."
+It runs on the visitor's model, or else this site's front-agent model, within this site's step limit. Below are the models it names:
+  - gate_coordinator (front agent): model alibaba/qwen3.8-flash, max_steps 12
+      nothing beyond the partner's own agents
+  - evidence_verifier: model alibaba/qwen3.8-flash, max_steps 12
+      MCP server https://vet402.com/mcp (asks the visitor first)
+  links.json: none
+
+WARNING: links.json at http://127.0.0.1:8790/links.json sends no Access-Control-Allow-Origin header, so a browser on another site cannot read it and the call fails with "Failed to fetch". The runtime then ignores it.
+ERROR: The manifest at http://127.0.0.1:8790/agent-manifest.json sends no Access-Control-Allow-Origin header, so a browser on another site cannot read it and the call fails with "Failed to fetch".
+ERROR: The network file at http://127.0.0.1:8790/factgate.network.json sends no Access-Control-Allow-Origin header, so a browser on another site cannot read it and the call fails with "Failed to fetch".
+FAILED with 2 error(s).

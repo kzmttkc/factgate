@@ -1,0 +1,27 @@
+Partner network: http://localhost:8791/factgate
+Caller origin: any site. Pass --origin <this site's origin> to check yours.
+Read: http://localhost:8791/agent-manifest.json (200)
+Read: http://localhost:8791/factgate.network.json (200)
+Read: http://localhost:8791/links.json (200)
+Read: http://localhost:8791/bridge/action-bridge.html (200)
+Read: http://localhost:8791/runtime/action-bridge.js (200)
+Read: http://localhost:8791/bridge/agent-manifest.json (200)
+Read: http://localhost:8791/bridge/bridge-actions.js (200)
+
+What the partner's network can reach. It runs in this site's visitor's browser, on the visitor's key, and its instructions read every request.
+Its bridge loads http://localhost:8791/bridge/bridge-actions.js. The partner's agents get the reads in it that list this site's origin or "*" in callerOrigins and are in the partner's actions.agentTools. Each runs in a hidden frame on the partner's origin.
+Its front agent's instructions start: "You are the assistant on the FactGate website. You help people decide whether their agent should connect to or pay an x402 seller or agent, by checking whether it answers as declared, whether its payee matches its ERC-8004 registration, and whether content came back when vet402 paid it."
+It runs on the visitor's model, or else this site's front-agent model, within this site's step limit. Below are the models it names:
+  - gate_coordinator (front agent): model alibaba/qwen3.8-flash, max_steps 12
+      nothing beyond the partner's own agents
+  - evidence_verifier: model alibaba/qwen3.8-flash, max_steps 12
+      MCP server https://vet402.com/mcp (asks the visitor first)
+  links.json: none
+
+A site that calls this network adds:
+  allowed_peers in agent-manifest.json: "http://localhost:8791"
+  tools of the calling agent: "http://localhost:8791/factgate"
+  link_labels in the .hocon: "http://localhost:8791/factgate": "FactGate" (suggested; write your own)
+  Tool name the model sees: factgate
+
+OK: http://localhost:8791/factgate can be called from other sites.

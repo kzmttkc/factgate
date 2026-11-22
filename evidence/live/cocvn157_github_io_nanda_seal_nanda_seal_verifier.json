@@ -1,0 +1,351 @@
+{
+  "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+  "checkedAt": "2026-11-22T04:38:19.416Z",
+  "verdict": "CAUTION",
+  "reasons": [
+    {
+      "pillar": "live",
+      "code": "live_as_declared",
+      "effect": "ALLOW",
+      "text": "The live answer matches the declaration."
+    },
+    {
+      "pillar": "identity",
+      "code": "identity_unavailable",
+      "effect": "CAUTION",
+      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+    },
+    {
+      "pillar": "delivery",
+      "code": "delivery_unavailable",
+      "effect": "CAUTION",
+      "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+    }
+  ],
+  "evidence": {
+    "live": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "corsReachable": true,
+          "answersAsDeclared": true,
+          "detail": "as declared: manifest, network",
+          "unreachable": []
+        }
+      },
+      "checks": {
+        "target": {
+          "reachable": true,
+          "status": 404
+        },
+        "manifest": {
+          "state": "found",
+          "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
+          "status": 200,
+          "problems": [],
+          "warnings": []
+        },
+        "network": {
+          "state": "found",
+          "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
+          "problems": [],
+          "warnings": []
+        },
+        "registration": {
+          "state": "absent",
+          "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
+          "status": 404
+        },
+        "wallets": {
+          "state": "not_compared",
+          "detail": "the site declares no wallet",
+          "wallets": []
+        },
+        "mcp": []
+      },
+      "declared": {
+        "manifestEntry": {
+          "name": "nanda_seal_verifier",
+          "front_man": "trust_coordinator",
+          "hocon": "./nanda_seal_verifier.network.json",
+          "description": "Cryptographic AgentFacts verifier, MVP Profile 0.3 conformance auditor, and peer trust boundary inspector for the Open Agentic Web.",
+          "sample_queries": [
+            "Verify NandaSeal's own cryptographic AgentFacts seal right now.",
+            "Run a 1-byte tamper simulation to show how Web Crypto detects manifest modification.",
+            "Audit https://worldwideagenticweb.org/ for Open Agentic Web MVP 0.3 conformance.",
+            "How do I embed the <nanda-seal> Web Component on my agentic website?"
+          ]
+        },
+        "network": {
+          "agents": 4,
+          "mcp": [],
+          "peers": [],
+          "sampleQueries": 4
+        },
+        "mcp": [],
+        "terms": null,
+        "termsSource": null,
+        "registrationFile": null,
+        "registrationUrl": null,
+        "trust": {
+          "quoteUrl": null,
+          "resourceUrl": null,
+          "registrationUrl": null,
+          "mcp": [],
+          "wallets": []
+        }
+      },
+      "http": [
+        {
+          "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 2547
+        },
+        {
+          "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 404,
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 9379
+        },
+        {
+          "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+          "method": "GET",
+          "status": 404,
+          "contentType": "text/html; charset=utf-8",
+          "bytes": 9379
+        },
+        {
+          "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 5190
+        }
+      ]
+    },
+    "identity": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+      },
+      "payTos": {
+        "compared": [],
+        "notCompared": []
+      },
+      "source": null,
+      "agent": null,
+      "pick": {
+        "chosen": null,
+        "skipped": [],
+        "declared": 0
+      },
+      "chainRead": null,
+      "registrationFromChain": null,
+      "binding": null
+    },
+    "delivery": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+      },
+      "target": null,
+      "http": null
+    }
+  },
+  "agentFacts": {
+    "id": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+    "agent_name": "urn:agent:cocvn157.github.io:nanda_seal_verifier",
+    "label": "nanda_seal_verifier",
+    "description": "Cryptographic AgentFacts verifier, MVP Profile 0.3 conformance auditor, and peer trust boundary inspector for the Open Agentic Web.",
+    "provider": {
+      "url": "https://cocvn157.github.io"
+    },
+    "endpoints": {
+      "static": [
+        "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier"
+      ]
+    },
+    "capabilities": {},
+    "skills": [
+      {
+        "id": "nanda_seal_verifier",
+        "description": "Cryptographic AgentFacts verifier, MVP Profile 0.3 conformance auditor, and peer trust boundary inspector for the Open Agentic Web."
+      }
+    ],
+    "evaluations": {
+      "lastAudited": "2026-11-22T04:38:19.416Z",
+      "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
+    },
+    "x_factgate_verdict": {
+      "verdict": "CAUTION",
+      "reasons": [
+        {
+          "pillar": "live",
+          "code": "live_as_declared",
+          "effect": "ALLOW",
+          "text": "The live answer matches the declaration."
+        },
+        {
+          "pillar": "identity",
+          "code": "identity_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+        },
+        {
+          "pillar": "delivery",
+          "code": "delivery_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+        }
+      ]
+    },
+    "x_factgate_evidence": {
+      "target": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+      "checkedAt": "2026-11-22T04:38:19.416Z",
+      "live": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "corsReachable": true,
+            "answersAsDeclared": true,
+            "detail": "as declared: manifest, network",
+            "unreachable": []
+          }
+        },
+        "checks": {
+          "target": {
+            "reachable": true,
+            "status": 404
+          },
+          "manifest": {
+            "state": "found",
+            "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
+            "status": 200,
+            "problems": [],
+            "warnings": []
+          },
+          "network": {
+            "state": "found",
+            "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
+            "problems": [],
+            "warnings": []
+          },
+          "registration": {
+            "state": "absent",
+            "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
+            "status": 404
+          },
+          "wallets": {
+            "state": "not_compared",
+            "detail": "the site declares no wallet",
+            "wallets": []
+          },
+          "mcp": []
+        },
+        "declared": {
+          "manifestEntry": {
+            "name": "nanda_seal_verifier",
+            "front_man": "trust_coordinator",
+            "hocon": "./nanda_seal_verifier.network.json",
+            "description": "Cryptographic AgentFacts verifier, MVP Profile 0.3 conformance auditor, and peer trust boundary inspector for the Open Agentic Web.",
+            "sample_queries": [
+              "Verify NandaSeal's own cryptographic AgentFacts seal right now.",
+              "Run a 1-byte tamper simulation to show how Web Crypto detects manifest modification.",
+              "Audit https://worldwideagenticweb.org/ for Open Agentic Web MVP 0.3 conformance.",
+              "How do I embed the <nanda-seal> Web Component on my agentic website?"
+            ]
+          },
+          "network": {
+            "agents": 4,
+            "mcp": [],
+            "peers": [],
+            "sampleQueries": 4
+          },
+          "mcp": [],
+          "terms": null,
+          "termsSource": null,
+          "registrationFile": null,
+          "registrationUrl": null,
+          "trust": {
+            "quoteUrl": null,
+            "resourceUrl": null,
+            "registrationUrl": null,
+            "mcp": [],
+            "wallets": []
+          }
+        },
+        "http": [
+          {
+            "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 2547
+          },
+          {
+            "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 404,
+            "contentType": "text/html; charset=utf-8",
+            "bytes": 9379
+          },
+          {
+            "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
+            "method": "GET",
+            "status": 404,
+            "contentType": "text/html; charset=utf-8",
+            "bytes": 9379
+          },
+          {
+            "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 5190
+          }
+        ]
+      },
+      "identity": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+        },
+        "payTos": {
+          "compared": [],
+          "notCompared": []
+        },
+        "source": null,
+        "agent": null,
+        "pick": {
+          "chosen": null,
+          "skipped": [],
+          "declared": 0
+        },
+        "chainRead": null,
+        "registrationFromChain": null,
+        "binding": null
+      },
+      "delivery": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+        },
+        "target": null,
+        "http": null
+      }
+    },
+    "x_factgate_signature": {
+      "signed": false,
+      "note": "FactGate is not an issuer under the NANDA trust framework and does not sign. Re-run the check to verify; every value has its source URL in x_factgate_evidence."
+    },
+    "x_factgate_format": {
+      "source": "arXiv:2507.14263v1, Appendix 'Full AgentFacts Schema' (V0.3 draft)",
+      "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
+    }
+  },
+  "pageOrigin": "http://localhost:8790",
+  "ms": 71
+}

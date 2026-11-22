@@ -1,0 +1,473 @@
+{
+  "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
+  "checkedAt": "2026-11-22T04:38:15.447Z",
+  "verdict": "CAUTION",
+  "reasons": [
+    {
+      "pillar": "live",
+      "code": "live_as_declared",
+      "effect": "ALLOW",
+      "text": "The live answer matches the declaration."
+    },
+    {
+      "pillar": "identity",
+      "code": "identity_unavailable",
+      "effect": "CAUTION",
+      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+    },
+    {
+      "pillar": "delivery",
+      "code": "delivery_unavailable",
+      "effect": "CAUTION",
+      "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+    }
+  ],
+  "evidence": {
+    "live": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "corsReachable": true,
+          "answersAsDeclared": true,
+          "detail": "as declared: manifest, network, MCP https://agent-atlas-phi.vercel.app/api/mcp",
+          "unreachable": []
+        }
+      },
+      "checks": {
+        "target": {
+          "reachable": false,
+          "error": "TypeError: CORS refused: GET https://agent-atlas-phi.vercel.app/agent_atlas answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        "manifest": {
+          "state": "found",
+          "url": "https://agent-atlas-phi.vercel.app/agent-manifest.json",
+          "status": 200,
+          "problems": [],
+          "warnings": []
+        },
+        "network": {
+          "state": "found",
+          "url": "https://agent-atlas-phi.vercel.app/agent_atlas.network.json",
+          "problems": [],
+          "warnings": []
+        },
+        "registration": {
+          "state": "absent",
+          "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
+          "status": 404
+        },
+        "wallets": {
+          "state": "not_compared",
+          "detail": "the site declares no wallet",
+          "wallets": []
+        },
+        "mcp": [
+          {
+            "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+            "tools": [
+              "search_directory",
+              "check_site",
+              "list_sites"
+            ],
+            "state": "ok",
+            "listed": [
+              "search_directory",
+              "check_site",
+              "list_sites"
+            ],
+            "missing": [],
+            "session": false,
+            "from": [
+              "manifest agent_mcp",
+              "network definition"
+            ]
+          }
+        ]
+      },
+      "declared": {
+        "manifestEntry": {
+          "name": "agent_atlas",
+          "front_man": "atlas_guide",
+          "hocon": "./agent_atlas.network.json",
+          "description": "Ask Atlas to find agentic websites by what they do, or to check a site before you link to it. Add your AI provider key in the settings to start.",
+          "sample_queries": [
+            "Is there an agentic website that books boat tours? Is it safe to link to?",
+            "Check https://example.com/my_network against the spec and tell me what to fix.",
+            "Which sites in the directory are fully conformant?",
+            "Compare the two sites that sell food and tell me which one I could call from my own site.",
+            "Book me a table at a restaurant."
+          ]
+        },
+        "network": {
+          "agents": 1,
+          "mcp": [
+            {
+              "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+              "tools": [
+                "search_directory",
+                "check_site",
+                "list_sites"
+              ]
+            }
+          ],
+          "peers": [],
+          "sampleQueries": 5
+        },
+        "mcp": [
+          {
+            "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+            "tools": [
+              "search_directory",
+              "check_site",
+              "list_sites"
+            ],
+            "listed": [
+              "search_directory",
+              "check_site",
+              "list_sites"
+            ],
+            "state": "ok"
+          }
+        ],
+        "terms": null,
+        "termsSource": null,
+        "registrationFile": null,
+        "registrationUrl": null,
+        "trust": {
+          "quoteUrl": null,
+          "resourceUrl": null,
+          "registrationUrl": null,
+          "mcp": [],
+          "wallets": []
+        }
+      },
+      "http": [
+        {
+          "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 404,
+          "contentType": "application/json",
+          "bytes": 68
+        },
+        {
+          "url": "https://agent-atlas-phi.vercel.app/agent-manifest.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 2464
+        },
+        {
+          "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://agent-atlas-phi.vercel.app/agent_atlas answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        {
+          "url": "https://agent-atlas-phi.vercel.app/agent_atlas.network.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 5662
+        },
+        {
+          "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+          "method": "POST initialize",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 497
+        },
+        {
+          "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+          "method": "POST tools/list",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 1649
+        }
+      ]
+    },
+    "identity": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+      },
+      "payTos": {
+        "compared": [],
+        "notCompared": []
+      },
+      "source": null,
+      "agent": null,
+      "pick": {
+        "chosen": null,
+        "skipped": [],
+        "declared": 0
+      },
+      "chainRead": null,
+      "registrationFromChain": null,
+      "binding": null
+    },
+    "delivery": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+      },
+      "target": null,
+      "http": null
+    }
+  },
+  "agentFacts": {
+    "id": "https://agent-atlas-phi.vercel.app/agent_atlas",
+    "agent_name": "urn:agent:agent-atlas-phi.vercel.app:agent_atlas",
+    "label": "agent_atlas",
+    "description": "Ask Atlas to find agentic websites by what they do, or to check a site before you link to it. Add your AI provider key in the settings to start.",
+    "provider": {
+      "url": "https://agent-atlas-phi.vercel.app"
+    },
+    "endpoints": {
+      "static": [
+        "https://agent-atlas-phi.vercel.app/agent_atlas",
+        "https://agent-atlas-phi.vercel.app/api/mcp"
+      ]
+    },
+    "capabilities": {},
+    "skills": [
+      {
+        "id": "search_directory"
+      },
+      {
+        "id": "check_site"
+      },
+      {
+        "id": "list_sites"
+      }
+    ],
+    "evaluations": {
+      "lastAudited": "2026-11-22T04:38:15.447Z",
+      "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
+    },
+    "x_factgate_verdict": {
+      "verdict": "CAUTION",
+      "reasons": [
+        {
+          "pillar": "live",
+          "code": "live_as_declared",
+          "effect": "ALLOW",
+          "text": "The live answer matches the declaration."
+        },
+        {
+          "pillar": "identity",
+          "code": "identity_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+        },
+        {
+          "pillar": "delivery",
+          "code": "delivery_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+        }
+      ]
+    },
+    "x_factgate_evidence": {
+      "target": "https://agent-atlas-phi.vercel.app/agent_atlas",
+      "checkedAt": "2026-11-22T04:38:15.447Z",
+      "live": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "corsReachable": true,
+            "answersAsDeclared": true,
+            "detail": "as declared: manifest, network, MCP https://agent-atlas-phi.vercel.app/api/mcp",
+            "unreachable": []
+          }
+        },
+        "checks": {
+          "target": {
+            "reachable": false,
+            "error": "TypeError: CORS refused: GET https://agent-atlas-phi.vercel.app/agent_atlas answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          "manifest": {
+            "state": "found",
+            "url": "https://agent-atlas-phi.vercel.app/agent-manifest.json",
+            "status": 200,
+            "problems": [],
+            "warnings": []
+          },
+          "network": {
+            "state": "found",
+            "url": "https://agent-atlas-phi.vercel.app/agent_atlas.network.json",
+            "problems": [],
+            "warnings": []
+          },
+          "registration": {
+            "state": "absent",
+            "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
+            "status": 404
+          },
+          "wallets": {
+            "state": "not_compared",
+            "detail": "the site declares no wallet",
+            "wallets": []
+          },
+          "mcp": [
+            {
+              "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+              "tools": [
+                "search_directory",
+                "check_site",
+                "list_sites"
+              ],
+              "state": "ok",
+              "listed": [
+                "search_directory",
+                "check_site",
+                "list_sites"
+              ],
+              "missing": [],
+              "session": false,
+              "from": [
+                "manifest agent_mcp",
+                "network definition"
+              ]
+            }
+          ]
+        },
+        "declared": {
+          "manifestEntry": {
+            "name": "agent_atlas",
+            "front_man": "atlas_guide",
+            "hocon": "./agent_atlas.network.json",
+            "description": "Ask Atlas to find agentic websites by what they do, or to check a site before you link to it. Add your AI provider key in the settings to start.",
+            "sample_queries": [
+              "Is there an agentic website that books boat tours? Is it safe to link to?",
+              "Check https://example.com/my_network against the spec and tell me what to fix.",
+              "Which sites in the directory are fully conformant?",
+              "Compare the two sites that sell food and tell me which one I could call from my own site.",
+              "Book me a table at a restaurant."
+            ]
+          },
+          "network": {
+            "agents": 1,
+            "mcp": [
+              {
+                "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+                "tools": [
+                  "search_directory",
+                  "check_site",
+                  "list_sites"
+                ]
+              }
+            ],
+            "peers": [],
+            "sampleQueries": 5
+          },
+          "mcp": [
+            {
+              "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+              "tools": [
+                "search_directory",
+                "check_site",
+                "list_sites"
+              ],
+              "listed": [
+                "search_directory",
+                "check_site",
+                "list_sites"
+              ],
+              "state": "ok"
+            }
+          ],
+          "terms": null,
+          "termsSource": null,
+          "registrationFile": null,
+          "registrationUrl": null,
+          "trust": {
+            "quoteUrl": null,
+            "resourceUrl": null,
+            "registrationUrl": null,
+            "mcp": [],
+            "wallets": []
+          }
+        },
+        "http": [
+          {
+            "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 404,
+            "contentType": "application/json",
+            "bytes": 68
+          },
+          {
+            "url": "https://agent-atlas-phi.vercel.app/agent-manifest.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 2464
+          },
+          {
+            "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://agent-atlas-phi.vercel.app/agent_atlas answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          {
+            "url": "https://agent-atlas-phi.vercel.app/agent_atlas.network.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 5662
+          },
+          {
+            "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+            "method": "POST initialize",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 497
+          },
+          {
+            "url": "https://agent-atlas-phi.vercel.app/api/mcp",
+            "method": "POST tools/list",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 1649
+          }
+        ]
+      },
+      "identity": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+        },
+        "payTos": {
+          "compared": [],
+          "notCompared": []
+        },
+        "source": null,
+        "agent": null,
+        "pick": {
+          "chosen": null,
+          "skipped": [],
+          "declared": 0
+        },
+        "chainRead": null,
+        "registrationFromChain": null,
+        "binding": null
+      },
+      "delivery": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+        },
+        "target": null,
+        "http": null
+      }
+    },
+    "x_factgate_signature": {
+      "signed": false,
+      "note": "FactGate is not an issuer under the NANDA trust framework and does not sign. Re-run the check to verify; every value has its source URL in x_factgate_evidence."
+    },
+    "x_factgate_format": {
+      "source": "arXiv:2507.14263v1, Appendix 'Full AgentFacts Schema' (V0.3 draft)",
+      "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
+    }
+  },
+  "pageOrigin": "http://localhost:8790",
+  "ms": 962
+}

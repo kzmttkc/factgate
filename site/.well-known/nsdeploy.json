@@ -1,0 +1,18 @@
+{
+  "protocol": "nsdeploy-link/v1",
+  "exports": [
+    {
+      "network": "factgate",
+      "front_man": "gate_coordinator",
+      "aliases": [
+        "factgate",
+        "gate_coordinator"
+      ],
+      "url": "factgate"
+    }
+  ],
+  "imports": [],
+  "link_updates": {
+    "mode": "browser-local"
+  }
+}

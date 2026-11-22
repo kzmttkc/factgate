@@ -1,0 +1,3 @@
+event: message
+data: {"result":{"content":[{"type":"text","text":"{\"error\":\"ambiguous_feedback_index\",\"message\":\"Several clients left feedback at this index. Pass client with feedbackIndex to choose one.\"}"}],"isError":true},"jsonrpc":"2.0","id":3}
+

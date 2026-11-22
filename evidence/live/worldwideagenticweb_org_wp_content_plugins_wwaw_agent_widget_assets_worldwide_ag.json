@@ -1,0 +1,259 @@
+{
+  "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+  "checkedAt": "2026-11-22T04:38:19.488Z",
+  "verdict": "CAUTION",
+  "reasons": [
+    {
+      "pillar": "live",
+      "code": "live_cors_unreachable",
+      "effect": "CAUTION",
+      "text": "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it."
+    },
+    {
+      "pillar": "identity",
+      "code": "identity_unavailable",
+      "effect": "CAUTION",
+      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+    },
+    {
+      "pillar": "delivery",
+      "code": "delivery_unavailable",
+      "effect": "CAUTION",
+      "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+    }
+  ],
+  "evidence": {
+    "live": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "corsReachable": false,
+          "answersAsDeclared": null,
+          "detail": "the browser could not read the counterparty: TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+          "unreachable": []
+        }
+      },
+      "checks": {
+        "target": {
+          "reachable": false,
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        "manifest": {
+          "state": "unreachable",
+          "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        "registration": {
+          "state": "unreachable",
+          "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        "wallets": {
+          "state": "not_compared",
+          "detail": "the site declares no wallet",
+          "wallets": []
+        },
+        "mcp": []
+      },
+      "declared": {
+        "manifestEntry": null,
+        "network": null,
+        "mcp": [],
+        "terms": null,
+        "termsSource": null,
+        "registrationFile": null,
+        "registrationUrl": null,
+        "trust": null
+      },
+      "http": [
+        {
+          "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        {
+          "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        {
+          "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        }
+      ]
+    },
+    "identity": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+      },
+      "payTos": {
+        "compared": [],
+        "notCompared": []
+      },
+      "source": null,
+      "agent": null,
+      "pick": {
+        "chosen": null,
+        "skipped": [],
+        "declared": 0
+      },
+      "chainRead": null,
+      "registrationFromChain": null,
+      "binding": null
+    },
+    "delivery": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+      },
+      "target": null,
+      "http": null
+    }
+  },
+  "agentFacts": {
+    "id": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+    "agent_name": "urn:agent:worldwideagenticweb.org:worldwideagenticweb.org",
+    "label": "worldwideagenticweb.org",
+    "provider": {
+      "url": "https://worldwideagenticweb.org"
+    },
+    "endpoints": {
+      "static": [
+        "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget"
+      ]
+    },
+    "capabilities": {},
+    "skills": [],
+    "evaluations": {
+      "lastAudited": "2026-11-22T04:38:19.488Z",
+      "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
+    },
+    "x_factgate_verdict": {
+      "verdict": "CAUTION",
+      "reasons": [
+        {
+          "pillar": "live",
+          "code": "live_cors_unreachable",
+          "effect": "CAUTION",
+          "text": "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it."
+        },
+        {
+          "pillar": "identity",
+          "code": "identity_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+        },
+        {
+          "pillar": "delivery",
+          "code": "delivery_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+        }
+      ]
+    },
+    "x_factgate_evidence": {
+      "target": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+      "checkedAt": "2026-11-22T04:38:19.488Z",
+      "live": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "corsReachable": false,
+            "answersAsDeclared": null,
+            "detail": "the browser could not read the counterparty: TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+            "unreachable": []
+          }
+        },
+        "checks": {
+          "target": {
+            "reachable": false,
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          "manifest": {
+            "state": "unreachable",
+            "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          "registration": {
+            "state": "unreachable",
+            "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          "wallets": {
+            "state": "not_compared",
+            "detail": "the site declares no wallet",
+            "wallets": []
+          },
+          "mcp": []
+        },
+        "declared": {
+          "manifestEntry": null,
+          "network": null,
+          "mcp": [],
+          "terms": null,
+          "termsSource": null,
+          "registrationFile": null,
+          "registrationUrl": null,
+          "trust": null
+        },
+        "http": [
+          {
+            "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          {
+            "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          {
+            "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          }
+        ]
+      },
+      "identity": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+        },
+        "payTos": {
+          "compared": [],
+          "notCompared": []
+        },
+        "source": null,
+        "agent": null,
+        "pick": {
+          "chosen": null,
+          "skipped": [],
+          "declared": 0
+        },
+        "chainRead": null,
+        "registrationFromChain": null,
+        "binding": null
+      },
+      "delivery": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+        },
+        "target": null,
+        "http": null
+      }
+    },
+    "x_factgate_signature": {
+      "signed": false,
+      "note": "FactGate is not an issuer under the NANDA trust framework and does not sign. Re-run the check to verify; every value has its source URL in x_factgate_evidence."
+    },
+    "x_factgate_format": {
+      "source": "arXiv:2507.14263v1, Appendix 'Full AgentFacts Schema' (V0.3 draft)",
+      "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
+    }
+  },
+  "pageOrigin": "http://localhost:8790",
+  "ms": 2392
+}
