@@ -1,0 +1,1285 @@
+{
+  "url": "https://glossy-stay-demo.vercel.app/glossy_stay",
+  "checkedAt": "2026-11-22T07:12:19.629Z",
+  "verdict": "BLOCK",
+  "reasons": [
+    {
+      "pillar": "live",
+      "code": "live_not_as_declared",
+      "effect": "BLOCK",
+      "text": "The live answer does not match what the counterparty declares (402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource https://glossy-stay-demo.vercel.app/api/book.json answers with an empty body).",
+      "short": "Its live answer contradicts its declaration.",
+      "kinds": []
+    },
+    {
+      "pillar": "identity",
+      "code": "identity_payee_mismatch",
+      "effect": "BLOCK",
+      "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62048358, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f].",
+      "short": "Its payee is not the wallet of its ERC-8004 registration.",
+      "kinds": []
+    },
+    {
+      "pillar": "delivery",
+      "code": "delivery_validation_low",
+      "effect": "BLOCK",
+      "text": "vet402: vet402 has no paid test of this counterparty yet. No record is not the same as a bad record. ERC-8004 validation: ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+      "short": "A trusted validator scored a delivery below 70.",
+      "kinds": [],
+      "sources": [
+        {
+          "pillar": "delivery",
+          "code": "delivery_no_record",
+          "effect": "CAUTION",
+          "text": "vet402 has no paid test of this counterparty yet. No record is not the same as a bad record.",
+          "short": "No record of a paid call coming back yet.",
+          "kinds": [
+            "no_delivery_record"
+          ]
+        },
+        {
+          "pillar": "validation",
+          "code": "validation_low_score",
+          "effect": "BLOCK",
+          "text": "ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+          "short": "A trusted validator scored a delivery below 70.",
+          "kinds": []
+        }
+      ]
+    }
+  ],
+  "evidence": {
+    "live": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "corsReachable": true,
+          "answersAsDeclared": false,
+          "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource https://glossy-stay-demo.vercel.app/api/book.json answers with an empty body",
+          "unreachable": [
+            "MCP https://mcp.glossy-stay.invalid/mcp: TypeError: fetch failed"
+          ],
+          "instructionFindings": []
+        }
+      },
+      "checks": {
+        "target": {
+          "reachable": false,
+          "error": "TypeError: CORS refused: GET https://glossy-stay-demo.vercel.app/glossy_stay answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+        },
+        "manifest": {
+          "state": "found",
+          "url": "https://glossy-stay-demo.vercel.app/agent-manifest.json",
+          "status": 200,
+          "problems": [],
+          "warnings": []
+        },
+        "network": {
+          "state": "found",
+          "url": "https://glossy-stay-demo.vercel.app/glossy_stay.network.json",
+          "problems": [],
+          "warnings": []
+        },
+        "instructions": {
+          "state": "scanned",
+          "url": "https://glossy-stay-demo.vercel.app/glossy_stay.network.json",
+          "scanned": 4,
+          "findings": []
+        },
+        "registration": {
+          "state": "found",
+          "url": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+          "status": 200
+        },
+        "payment": {
+          "state": "terms",
+          "source": "declared quote (simulated 402)",
+          "url": "https://glossy-stay-demo.vercel.app/pay/quote.json"
+        },
+        "wallets": {
+          "state": "mismatch",
+          "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111)",
+          "wallets": [
+            "0x1111111111111111111111111111111111111111"
+          ]
+        },
+        "resource": {
+          "state": "empty",
+          "detail": "HTTP 200 with an empty body",
+          "url": "https://glossy-stay-demo.vercel.app/api/book.json",
+          "status": 200,
+          "bytes": 0
+        },
+        "mcp": [
+          {
+            "url": "https://mcp.glossy-stay.invalid/mcp",
+            "tools": [
+              "get_guest_reviews"
+            ],
+            "state": "unreachable",
+            "error": "TypeError: fetch failed",
+            "from": [
+              "manifest trust.mcp",
+              "network definition",
+              "registration services"
+            ]
+          }
+        ]
+      },
+      "declared": {
+        "manifestEntry": {
+          "name": "glossy_stay",
+          "front_man": "glossy_front_desk",
+          "hocon": "./glossy_stay.network.json",
+          "description": "Ask about Glossy Stay's rooms, prices and policies, choose a room and book it.",
+          "sample_queries": [
+            "Which room fits three guests, and what does it cost per night?",
+            "Put the Garden Loft in the booking box for two nights.",
+            "Book the room in the booking box for Sam Rivera.",
+            "Who receives the deposit, and where is the payment quote?",
+            "Can you arrange an airport taxi for us?"
+          ]
+        },
+        "network": {
+          "agents": 2,
+          "mcp": [
+            {
+              "url": "https://mcp.glossy-stay.invalid/mcp",
+              "tools": [
+                "get_guest_reviews"
+              ]
+            }
+          ],
+          "peers": [],
+          "sampleQueries": 5
+        },
+        "mcp": [
+          {
+            "url": "https://mcp.glossy-stay.invalid/mcp",
+            "tools": [
+              "get_guest_reviews"
+            ],
+            "listed": [],
+            "state": "unreachable"
+          }
+        ],
+        "terms": {
+          "x402Version": 1,
+          "accepts": [
+            {
+              "scheme": "exact",
+              "network": "base-sepolia",
+              "amount": "180000000",
+              "asset": "0x4444444444444444444444444444444444444444",
+              "payTo": "0x2222222222222222222222222222222222222222"
+            }
+          ]
+        },
+        "termsSource": "declared quote (simulated 402)",
+        "registrationFile": {
+          "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+          "name": "Glossy Stay Assistant",
+          "description": "Booking assistant for Glossy Stay, a fictional guesthouse. Demo run by the author: points to the author's test seller agent 10799 on Base Sepolia (official ERC-8004 IdentityRegistry).",
+          "image": "https://glossy-stay-demo.vercel.app/favicon.svg",
+          "services": [
+            {
+              "name": "web",
+              "endpoint": "https://glossy-stay-demo.vercel.app/"
+            },
+            {
+              "name": "MCP",
+              "endpoint": "https://mcp.glossy-stay.invalid/mcp",
+              "version": "2025-06-18"
+            },
+            {
+              "name": "agentWallet",
+              "endpoint": "eip155:84532:0x1111111111111111111111111111111111111111"
+            }
+          ],
+          "agentWallet": "0x1111111111111111111111111111111111111111",
+          "x402Support": true,
+          "active": true,
+          "registrations": [
+            {
+              "agentId": 10799,
+              "agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e"
+            }
+          ],
+          "supportedTrust": [
+            "reputation"
+          ]
+        },
+        "registrationUrl": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+        "trust": {
+          "quoteUrl": "https://glossy-stay-demo.vercel.app/pay/quote.json",
+          "resourceUrl": "https://glossy-stay-demo.vercel.app/api/book.json",
+          "registrationUrl": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+          "mcp": [
+            {
+              "url": "https://mcp.glossy-stay.invalid/mcp",
+              "tools": [
+                "get_guest_reviews"
+              ]
+            }
+          ],
+          "wallets": [
+            "0x1111111111111111111111111111111111111111"
+          ]
+        }
+      },
+      "http": [
+        {
+          "url": "https://glossy-stay-demo.vercel.app/agent-manifest.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 2800
+        },
+        {
+          "url": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 1014
+        },
+        {
+          "url": "https://glossy-stay-demo.vercel.app/glossy_stay",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://glossy-stay-demo.vercel.app/glossy_stay answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+        },
+        {
+          "url": "https://glossy-stay-demo.vercel.app/glossy_stay.network.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 5800
+        },
+        {
+          "url": "https://glossy-stay-demo.vercel.app/pay/quote.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 850
+        },
+        {
+          "url": "https://glossy-stay-demo.vercel.app/api/book.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 0
+        },
+        {
+          "url": "https://mcp.glossy-stay.invalid/mcp",
+          "method": "POST initialize",
+          "error": "TypeError: fetch failed"
+        }
+      ]
+    },
+    "identity": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "declaredPayTo": "0x2222222222222222222222222222222222222222",
+          "declaredPayTos": [
+            "0x2222222222222222222222222222222222222222"
+          ],
+          "registered": {
+            "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+            "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+            "payTo": null,
+            "bound": true,
+            "mutual": false,
+            "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
+            "readAt": "eth_call at Base Sepolia block 62048358, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+          }
+        }
+      },
+      "payTos": {
+        "compared": [
+          {
+            "network": "base-sepolia",
+            "chainId": 84532,
+            "payTo": "0x2222222222222222222222222222222222222222"
+          }
+        ],
+        "notCompared": []
+      },
+      "source": "declared in https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+      "agent": {
+        "chainId": 84532,
+        "agentId": "10799",
+        "chain": "Base Sepolia",
+        "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+        "rpc": "https://sepolia.base.org"
+      },
+      "pick": {
+        "chosen": {
+          "chainId": 84532,
+          "agentId": "10799"
+        },
+        "skipped": [],
+        "unofficial": [],
+        "declared": 1
+      },
+      "unofficial": [],
+      "chainRead": {
+        "ok": true,
+        "exists": true,
+        "chainId": 84532,
+        "chain": "Base Sepolia",
+        "agentId": "10799",
+        "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+        "block": 62048358,
+        "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+        "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+        "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-empty.json",
+        "rpc": [
+          {
+            "url": "https://sepolia.base.org",
+            "method": "eth_call ownerOf",
+            "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+            "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2f",
+            "block": "0x3b2c866",
+            "ok": true,
+            "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
+          },
+          {
+            "url": "https://sepolia.base.org",
+            "method": "eth_call getAgentWallet",
+            "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+            "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2f",
+            "block": "0x3b2c866",
+            "ok": true,
+            "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
+          },
+          {
+            "url": "https://sepolia.base.org",
+            "method": "eth_call tokenURI",
+            "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+            "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2f",
+            "block": "0x3b2c866",
+            "ok": true,
+            "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005f68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d656d7074792e6a736f6e00"
+          }
+        ]
+      },
+      "registrationFromChain": {
+        "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+        "name": null
+      },
+      "binding": {
+        "bound": true,
+        "mutual": false,
+        "siteToAgent": true,
+        "agentToSite": false,
+        "how": "the site's /.well-known/agent-registration.json lists this agentId and registry"
+      }
+    },
+    "delivery": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "evidence_age": null,
+          "canonical_url": null,
+          "method": null,
+          "not_in_catalog": true,
+          "recommendation": null,
+          "reason_codes": [],
+          "reasons": [],
+          "delivery": null,
+          "l0_status": null,
+          "verified_terms": null,
+          "verified_pay_to_by_network": [],
+          "spending_halted": null,
+          "refunds": null,
+          "freshness": null,
+          "l1_purchases": [],
+          "same_host_listings": [],
+          "listing_sources": [
+            {
+              "source": "cdp_bazaar",
+              "name": "CDP Bazaar discovery catalog",
+              "url": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources",
+              "protocol": "x402",
+              "sync_times_utc": [
+                "00:05",
+                "02:05",
+                "04:05",
+                "06:05",
+                "08:05",
+                "10:05",
+                "12:05",
+                "14:05",
+                "16:05",
+                "18:05",
+                "20:05",
+                "22:05"
+              ]
+            },
+            {
+              "source": "mpp_directory",
+              "name": "MPP directory (Tempo)",
+              "url": "https://mpp.dev/api/services",
+              "protocol": "mpp",
+              "sync_times_utc": [
+                "01:30"
+              ]
+            },
+            {
+              "source": "circle_discovery",
+              "name": "Circle x402 discovery",
+              "url": "https://api.circle.com/v2/x402/discovery/resources",
+              "protocol": "x402",
+              "sync_times_utc": [
+                "01:30"
+              ]
+            }
+          ],
+          "note": "vet402 has no record of this URL in the catalogs it reads. listing_sources names those catalogs and when vet402 syncs them. same_host_listings shows up to five other listings on the same host. Having no record says nothing about the URL itself.",
+          "record_url": null,
+          "method_url": "https://vet402.com/observatory/methodology",
+          "diagnose_url": "https://vet402.com/api/v1/diagnose?url=https%3A%2F%2Fglossy-stay-demo.vercel.app%2Fapi%2Fbook.json",
+          "as_of": "2026-11-22T07:12:21.453Z",
+          "truncated": false,
+          "next_action": null
+        }
+      },
+      "paid": true,
+      "target": "https://glossy-stay-demo.vercel.app/api/book.json",
+      "http": {
+        "url": "https://vet402.com/mcp",
+        "method": "POST tools/call check_x402_seller",
+        "argument": "https://glossy-stay-demo.vercel.app/api/book.json",
+        "status": 200
+      },
+      "validation": {
+        "status": "ok",
+        "data": {
+          "registry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+          "chainId": 84532,
+          "agentId": "10799",
+          "total": 8,
+          "passed": 1,
+          "failed": 1,
+          "pending": 0,
+          "unresolved": 6,
+          "selfExcluded": 0,
+          "untrusted": 0,
+          "validators": [
+            "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc"
+          ],
+          "lowest": 3,
+          "counted": [
+            {
+              "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+              "count": 2,
+              "reason": "on the trusted validator list",
+              "name": "Delivery Court judge"
+            }
+          ],
+          "notCounted": [],
+          "evidence": [
+            {
+              "role": "lowest answered score",
+              "response": 3,
+              "requestHash": "0x4c815331b96bae8a3597f2c1531ec1d2a42f5de1b2c360e9904ec59a351ee31c",
+              "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+              "log": {
+                "kind": "response",
+                "block": 61711651,
+                "tx": "0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a",
+                "logIndex": 6,
+                "response": 3
+              }
+            },
+            {
+              "role": "latest passing score",
+              "response": 99,
+              "requestHash": "0x2ba811bb0288161003b766018051105bc396620db61a6886a5fc258e33f8142a",
+              "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+              "log": {
+                "kind": "response",
+                "block": 61921492,
+                "tx": "0x6eb358f6f6034a73db554e9b60937eb3add0796af34dad7c22faeeeba463255e",
+                "logIndex": 3,
+                "response": 99
+              }
+            }
+          ]
+        }
+      }
+    },
+    "nanda": {
+      "status": "not_listed",
+      "query": {
+        "url": "https://glossy-stay-demo.vercel.app/glossy_stay"
+      },
+      "searched": 138,
+      "http": [
+        {
+          "method": "GET",
+          "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+          "status": 200
+        }
+      ]
+    }
+  },
+  "agentFacts": {
+    "id": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e:10799",
+    "agent_name": "urn:agent:glossy-stay-demo.vercel.app:Glossy_Stay_Assistant",
+    "label": "Glossy Stay Assistant",
+    "description": "Booking assistant for Glossy Stay, a fictional guesthouse. Demo run by the author: points to the author's test seller agent 10799 on Base Sepolia (official ERC-8004 IdentityRegistry).",
+    "provider": {
+      "url": "https://glossy-stay-demo.vercel.app"
+    },
+    "endpoints": {
+      "static": [
+        "https://glossy-stay-demo.vercel.app/glossy_stay",
+        "https://mcp.glossy-stay.invalid/mcp"
+      ]
+    },
+    "capabilities": {
+      "authentication": {
+        "methods": [
+          "x402"
+        ]
+      }
+    },
+    "skills": [
+      {
+        "id": "get_guest_reviews"
+      }
+    ],
+    "evaluations": {
+      "lastAudited": "2026-11-22T07:12:19.629Z",
+      "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
+    },
+    "x_factgate_verdict": {
+      "verdict": "BLOCK",
+      "reasons": [
+        {
+          "pillar": "live",
+          "code": "live_not_as_declared",
+          "effect": "BLOCK",
+          "text": "The live answer does not match what the counterparty declares (402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource https://glossy-stay-demo.vercel.app/api/book.json answers with an empty body).",
+          "short": "Its live answer contradicts its declaration.",
+          "kinds": []
+        },
+        {
+          "pillar": "identity",
+          "code": "identity_payee_mismatch",
+          "effect": "BLOCK",
+          "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62048358, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f].",
+          "short": "Its payee is not the wallet of its ERC-8004 registration.",
+          "kinds": []
+        },
+        {
+          "pillar": "delivery",
+          "code": "delivery_validation_low",
+          "effect": "BLOCK",
+          "text": "vet402: vet402 has no paid test of this counterparty yet. No record is not the same as a bad record. ERC-8004 validation: ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+          "short": "A trusted validator scored a delivery below 70.",
+          "kinds": [],
+          "sources": [
+            {
+              "pillar": "delivery",
+              "code": "delivery_no_record",
+              "effect": "CAUTION",
+              "text": "vet402 has no paid test of this counterparty yet. No record is not the same as a bad record.",
+              "short": "No record of a paid call coming back yet.",
+              "kinds": [
+                "no_delivery_record"
+              ]
+            },
+            {
+              "pillar": "validation",
+              "code": "validation_low_score",
+              "effect": "BLOCK",
+              "text": "ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+              "short": "A trusted validator scored a delivery below 70.",
+              "kinds": []
+            }
+          ]
+        }
+      ],
+      "notApplicable": []
+    },
+    "x_factgate_validators": {
+      "rule": "A score counts only when its validator is on the trusted list for that chain; self-scores never count.",
+      "trustedList": [
+        {
+          "address": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+          "chains": [
+            84532
+          ],
+          "name": "Delivery Court judge"
+        }
+      ],
+      "counted": [
+        {
+          "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+          "count": 2,
+          "reason": "on the trusted validator list",
+          "name": "Delivery Court judge"
+        }
+      ],
+      "notCounted": []
+    },
+    "x_factgate_nanda": {
+      "status": "not_listed",
+      "source": "https://api.nandaindex.org/api/v1/index",
+      "searched": 138
+    },
+    "x_factgate_evidence": {
+      "target": "https://glossy-stay-demo.vercel.app/glossy_stay",
+      "checkedAt": "2026-11-22T07:12:19.629Z",
+      "live": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "corsReachable": true,
+            "answersAsDeclared": false,
+            "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource https://glossy-stay-demo.vercel.app/api/book.json answers with an empty body",
+            "unreachable": [
+              "MCP https://mcp.glossy-stay.invalid/mcp: TypeError: fetch failed"
+            ],
+            "instructionFindings": []
+          }
+        },
+        "checks": {
+          "target": {
+            "reachable": false,
+            "error": "TypeError: CORS refused: GET https://glossy-stay-demo.vercel.app/glossy_stay answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+          },
+          "manifest": {
+            "state": "found",
+            "url": "https://glossy-stay-demo.vercel.app/agent-manifest.json",
+            "status": 200,
+            "problems": [],
+            "warnings": []
+          },
+          "network": {
+            "state": "found",
+            "url": "https://glossy-stay-demo.vercel.app/glossy_stay.network.json",
+            "problems": [],
+            "warnings": []
+          },
+          "instructions": {
+            "state": "scanned",
+            "url": "https://glossy-stay-demo.vercel.app/glossy_stay.network.json",
+            "scanned": 4,
+            "findings": []
+          },
+          "registration": {
+            "state": "found",
+            "url": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+            "status": 200
+          },
+          "payment": {
+            "state": "terms",
+            "source": "declared quote (simulated 402)",
+            "url": "https://glossy-stay-demo.vercel.app/pay/quote.json"
+          },
+          "wallets": {
+            "state": "mismatch",
+            "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111)",
+            "wallets": [
+              "0x1111111111111111111111111111111111111111"
+            ]
+          },
+          "resource": {
+            "state": "empty",
+            "detail": "HTTP 200 with an empty body",
+            "url": "https://glossy-stay-demo.vercel.app/api/book.json",
+            "status": 200,
+            "bytes": 0
+          },
+          "mcp": [
+            {
+              "url": "https://mcp.glossy-stay.invalid/mcp",
+              "tools": [
+                "get_guest_reviews"
+              ],
+              "state": "unreachable",
+              "error": "TypeError: fetch failed",
+              "from": [
+                "manifest trust.mcp",
+                "network definition",
+                "registration services"
+              ]
+            }
+          ]
+        },
+        "declared": {
+          "manifestEntry": {
+            "name": "glossy_stay",
+            "front_man": "glossy_front_desk",
+            "hocon": "./glossy_stay.network.json",
+            "description": "Ask about Glossy Stay's rooms, prices and policies, choose a room and book it.",
+            "sample_queries": [
+              "Which room fits three guests, and what does it cost per night?",
+              "Put the Garden Loft in the booking box for two nights.",
+              "Book the room in the booking box for Sam Rivera.",
+              "Who receives the deposit, and where is the payment quote?",
+              "Can you arrange an airport taxi for us?"
+            ]
+          },
+          "network": {
+            "agents": 2,
+            "mcp": [
+              {
+                "url": "https://mcp.glossy-stay.invalid/mcp",
+                "tools": [
+                  "get_guest_reviews"
+                ]
+              }
+            ],
+            "peers": [],
+            "sampleQueries": 5
+          },
+          "mcp": [
+            {
+              "url": "https://mcp.glossy-stay.invalid/mcp",
+              "tools": [
+                "get_guest_reviews"
+              ],
+              "listed": [],
+              "state": "unreachable"
+            }
+          ],
+          "terms": {
+            "x402Version": 1,
+            "accepts": [
+              {
+                "scheme": "exact",
+                "network": "base-sepolia",
+                "amount": "180000000",
+                "asset": "0x4444444444444444444444444444444444444444",
+                "payTo": "0x2222222222222222222222222222222222222222"
+              }
+            ]
+          },
+          "termsSource": "declared quote (simulated 402)",
+          "registrationFile": {
+            "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+            "name": "Glossy Stay Assistant",
+            "description": "Booking assistant for Glossy Stay, a fictional guesthouse. Demo run by the author: points to the author's test seller agent 10799 on Base Sepolia (official ERC-8004 IdentityRegistry).",
+            "image": "https://glossy-stay-demo.vercel.app/favicon.svg",
+            "services": [
+              {
+                "name": "web",
+                "endpoint": "https://glossy-stay-demo.vercel.app/"
+              },
+              {
+                "name": "MCP",
+                "endpoint": "https://mcp.glossy-stay.invalid/mcp",
+                "version": "2025-06-18"
+              },
+              {
+                "name": "agentWallet",
+                "endpoint": "eip155:84532:0x1111111111111111111111111111111111111111"
+              }
+            ],
+            "agentWallet": "0x1111111111111111111111111111111111111111",
+            "x402Support": true,
+            "active": true,
+            "registrations": [
+              {
+                "agentId": 10799,
+                "agentRegistry": "eip155:84532:0x8004A818BFB912233c491871b3d84c89A494BD9e"
+              }
+            ],
+            "supportedTrust": [
+              "reputation"
+            ]
+          },
+          "registrationUrl": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+          "trust": {
+            "quoteUrl": "https://glossy-stay-demo.vercel.app/pay/quote.json",
+            "resourceUrl": "https://glossy-stay-demo.vercel.app/api/book.json",
+            "registrationUrl": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+            "mcp": [
+              {
+                "url": "https://mcp.glossy-stay.invalid/mcp",
+                "tools": [
+                  "get_guest_reviews"
+                ]
+              }
+            ],
+            "wallets": [
+              "0x1111111111111111111111111111111111111111"
+            ]
+          }
+        },
+        "http": [
+          {
+            "url": "https://glossy-stay-demo.vercel.app/agent-manifest.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 2800
+          },
+          {
+            "url": "https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 1014
+          },
+          {
+            "url": "https://glossy-stay-demo.vercel.app/glossy_stay",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://glossy-stay-demo.vercel.app/glossy_stay answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+          },
+          {
+            "url": "https://glossy-stay-demo.vercel.app/glossy_stay.network.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 5800
+          },
+          {
+            "url": "https://glossy-stay-demo.vercel.app/pay/quote.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 850
+          },
+          {
+            "url": "https://glossy-stay-demo.vercel.app/api/book.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 0
+          },
+          {
+            "url": "https://mcp.glossy-stay.invalid/mcp",
+            "method": "POST initialize",
+            "error": "TypeError: fetch failed"
+          }
+        ]
+      },
+      "identity": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "declaredPayTo": "0x2222222222222222222222222222222222222222",
+            "declaredPayTos": [
+              "0x2222222222222222222222222222222222222222"
+            ],
+            "registered": {
+              "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+              "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+              "payTo": null,
+              "bound": true,
+              "mutual": false,
+              "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
+              "readAt": "eth_call at Base Sepolia block 62048358, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+            }
+          }
+        },
+        "payTos": {
+          "compared": [
+            {
+              "network": "base-sepolia",
+              "chainId": 84532,
+              "payTo": "0x2222222222222222222222222222222222222222"
+            }
+          ],
+          "notCompared": []
+        },
+        "source": "declared in https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json",
+        "agent": {
+          "chainId": 84532,
+          "agentId": "10799",
+          "chain": "Base Sepolia",
+          "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+          "rpc": "https://sepolia.base.org"
+        },
+        "pick": {
+          "chosen": {
+            "chainId": 84532,
+            "agentId": "10799"
+          },
+          "skipped": [],
+          "unofficial": [],
+          "declared": 1
+        },
+        "unofficial": [],
+        "chainRead": {
+          "ok": true,
+          "exists": true,
+          "chainId": 84532,
+          "chain": "Base Sepolia",
+          "agentId": "10799",
+          "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+          "block": 62048358,
+          "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+          "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+          "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-empty.json",
+          "rpc": [
+            {
+              "url": "https://sepolia.base.org",
+              "method": "eth_call ownerOf",
+              "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+              "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2f",
+              "block": "0x3b2c866",
+              "ok": true,
+              "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
+            },
+            {
+              "url": "https://sepolia.base.org",
+              "method": "eth_call getAgentWallet",
+              "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+              "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2f",
+              "block": "0x3b2c866",
+              "ok": true,
+              "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
+            },
+            {
+              "url": "https://sepolia.base.org",
+              "method": "eth_call tokenURI",
+              "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+              "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2f",
+              "block": "0x3b2c866",
+              "ok": true,
+              "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005f68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d656d7074792e6a736f6e00"
+            }
+          ]
+        },
+        "registrationFromChain": {
+          "how": "not read: the site's own registration file names this agent, and a paid counterparty is judged by its payee",
+          "name": null
+        },
+        "binding": {
+          "bound": true,
+          "mutual": false,
+          "siteToAgent": true,
+          "agentToSite": false,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry"
+        }
+      },
+      "delivery": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "evidence_age": null,
+            "canonical_url": null,
+            "method": null,
+            "not_in_catalog": true,
+            "recommendation": null,
+            "reason_codes": [],
+            "reasons": [],
+            "delivery": null,
+            "l0_status": null,
+            "verified_terms": null,
+            "verified_pay_to_by_network": [],
+            "spending_halted": null,
+            "refunds": null,
+            "freshness": null,
+            "l1_purchases": [],
+            "same_host_listings": [],
+            "listing_sources": [
+              {
+                "source": "cdp_bazaar",
+                "name": "CDP Bazaar discovery catalog",
+                "url": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources",
+                "protocol": "x402",
+                "sync_times_utc": [
+                  "00:05",
+                  "02:05",
+                  "04:05",
+                  "06:05",
+                  "08:05",
+                  "10:05",
+                  "12:05",
+                  "14:05",
+                  "16:05",
+                  "18:05",
+                  "20:05",
+                  "22:05"
+                ]
+              },
+              {
+                "source": "mpp_directory",
+                "name": "MPP directory (Tempo)",
+                "url": "https://mpp.dev/api/services",
+                "protocol": "mpp",
+                "sync_times_utc": [
+                  "01:30"
+                ]
+              },
+              {
+                "source": "circle_discovery",
+                "name": "Circle x402 discovery",
+                "url": "https://api.circle.com/v2/x402/discovery/resources",
+                "protocol": "x402",
+                "sync_times_utc": [
+                  "01:30"
+                ]
+              }
+            ],
+            "note": "vet402 has no record of this URL in the catalogs it reads. listing_sources names those catalogs and when vet402 syncs them. same_host_listings shows up to five other listings on the same host. Having no record says nothing about the URL itself.",
+            "record_url": null,
+            "method_url": "https://vet402.com/observatory/methodology",
+            "diagnose_url": "https://vet402.com/api/v1/diagnose?url=https%3A%2F%2Fglossy-stay-demo.vercel.app%2Fapi%2Fbook.json",
+            "as_of": "2026-11-22T07:12:21.453Z",
+            "truncated": false,
+            "next_action": null
+          }
+        },
+        "paid": true,
+        "target": "https://glossy-stay-demo.vercel.app/api/book.json",
+        "http": {
+          "url": "https://vet402.com/mcp",
+          "method": "POST tools/call check_x402_seller",
+          "argument": "https://glossy-stay-demo.vercel.app/api/book.json",
+          "status": 200
+        },
+        "validation": {
+          "status": "ok",
+          "data": {
+            "registry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+            "chainId": 84532,
+            "agentId": "10799",
+            "total": 8,
+            "passed": 1,
+            "failed": 1,
+            "pending": 0,
+            "unresolved": 6,
+            "selfExcluded": 0,
+            "untrusted": 0,
+            "validators": [
+              "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc"
+            ],
+            "lowest": 3,
+            "counted": [
+              {
+                "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+                "count": 2,
+                "reason": "on the trusted validator list",
+                "name": "Delivery Court judge"
+              }
+            ],
+            "notCounted": [],
+            "evidence": [
+              {
+                "role": "lowest answered score",
+                "response": 3,
+                "requestHash": "0x4c815331b96bae8a3597f2c1531ec1d2a42f5de1b2c360e9904ec59a351ee31c",
+                "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+                "log": {
+                  "kind": "response",
+                  "block": 61711651,
+                  "tx": "0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a",
+                  "logIndex": 6,
+                  "response": 3
+                }
+              },
+              {
+                "role": "latest passing score",
+                "response": 99,
+                "requestHash": "0x2ba811bb0288161003b766018051105bc396620db61a6886a5fc258e33f8142a",
+                "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+                "log": {
+                  "kind": "response",
+                  "block": 61921492,
+                  "tx": "0x6eb358f6f6034a73db554e9b60937eb3add0796af34dad7c22faeeeba463255e",
+                  "logIndex": 3,
+                  "response": 99
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "x_factgate_signature": {
+      "signed": false,
+      "note": "FactGate is not an issuer under the NANDA trust framework and does not sign. Re-run the check to verify; every value has its source URL in x_factgate_evidence."
+    },
+    "x_factgate_format": {
+      "source": "arXiv:2507.14263v1, Appendix 'Full AgentFacts Schema' (V0.3 draft)",
+      "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
+    }
+  },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": 1,
+    "validationsFailed": 1
+  },
+  "pillars": {
+    "live": {
+      "status": "ok",
+      "data": {
+        "corsReachable": true,
+        "answersAsDeclared": false,
+        "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource https://glossy-stay-demo.vercel.app/api/book.json answers with an empty body",
+        "unreachable": [
+          "MCP https://mcp.glossy-stay.invalid/mcp: TypeError: fetch failed"
+        ],
+        "instructionFindings": []
+      }
+    },
+    "identity": {
+      "status": "ok",
+      "data": {
+        "declaredPayTo": "0x2222222222222222222222222222222222222222",
+        "declaredPayTos": [
+          "0x2222222222222222222222222222222222222222"
+        ],
+        "registered": {
+          "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+          "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+          "payTo": null,
+          "bound": true,
+          "mutual": false,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
+          "readAt": "eth_call at Base Sepolia block 62048358, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+        }
+      }
+    },
+    "delivery": {
+      "status": "ok",
+      "data": {
+        "evidence_age": null,
+        "canonical_url": null,
+        "method": null,
+        "not_in_catalog": true,
+        "recommendation": null,
+        "reason_codes": [],
+        "reasons": [],
+        "delivery": null,
+        "l0_status": null,
+        "verified_terms": null,
+        "verified_pay_to_by_network": [],
+        "spending_halted": null,
+        "refunds": null,
+        "freshness": null,
+        "l1_purchases": [],
+        "same_host_listings": [],
+        "listing_sources": [
+          {
+            "source": "cdp_bazaar",
+            "name": "CDP Bazaar discovery catalog",
+            "url": "https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources",
+            "protocol": "x402",
+            "sync_times_utc": [
+              "00:05",
+              "02:05",
+              "04:05",
+              "06:05",
+              "08:05",
+              "10:05",
+              "12:05",
+              "14:05",
+              "16:05",
+              "18:05",
+              "20:05",
+              "22:05"
+            ]
+          },
+          {
+            "source": "mpp_directory",
+            "name": "MPP directory (Tempo)",
+            "url": "https://mpp.dev/api/services",
+            "protocol": "mpp",
+            "sync_times_utc": [
+              "01:30"
+            ]
+          },
+          {
+            "source": "circle_discovery",
+            "name": "Circle x402 discovery",
+            "url": "https://api.circle.com/v2/x402/discovery/resources",
+            "protocol": "x402",
+            "sync_times_utc": [
+              "01:30"
+            ]
+          }
+        ],
+        "note": "vet402 has no record of this URL in the catalogs it reads. listing_sources names those catalogs and when vet402 syncs them. same_host_listings shows up to five other listings on the same host. Having no record says nothing about the URL itself.",
+        "record_url": null,
+        "method_url": "https://vet402.com/observatory/methodology",
+        "diagnose_url": "https://vet402.com/api/v1/diagnose?url=https%3A%2F%2Fglossy-stay-demo.vercel.app%2Fapi%2Fbook.json",
+        "as_of": "2026-11-22T07:12:21.453Z",
+        "truncated": false,
+        "next_action": null
+      }
+    },
+    "validation": {
+      "status": "ok",
+      "data": {
+        "registry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+        "chainId": 84532,
+        "agentId": "10799",
+        "total": 8,
+        "passed": 1,
+        "failed": 1,
+        "pending": 0,
+        "unresolved": 6,
+        "selfExcluded": 0,
+        "untrusted": 0,
+        "validators": [
+          "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc"
+        ],
+        "lowest": 3,
+        "counted": [
+          {
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "count": 2,
+            "reason": "on the trusted validator list",
+            "name": "Delivery Court judge"
+          }
+        ],
+        "notCounted": [],
+        "evidence": [
+          {
+            "role": "lowest answered score",
+            "response": 3,
+            "requestHash": "0x4c815331b96bae8a3597f2c1531ec1d2a42f5de1b2c360e9904ec59a351ee31c",
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "log": {
+              "kind": "response",
+              "block": 61711651,
+              "tx": "0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a",
+              "logIndex": 6,
+              "response": 3
+            }
+          },
+          {
+            "role": "latest passing score",
+            "response": 99,
+            "requestHash": "0x2ba811bb0288161003b766018051105bc396620db61a6886a5fc258e33f8142a",
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "log": {
+              "kind": "response",
+              "block": 61921492,
+              "tx": "0x6eb358f6f6034a73db554e9b60937eb3add0796af34dad7c22faeeeba463255e",
+              "logIndex": 3,
+              "response": 99
+            }
+          }
+        ]
+      }
+    },
+    "paid": true
+  },
+  "nanda": {
+    "status": "not_listed",
+    "query": {
+      "url": "https://glossy-stay-demo.vercel.app/glossy_stay"
+    },
+    "searched": 138,
+    "http": [
+      {
+        "method": "GET",
+        "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+        "status": 200
+      }
+    ]
+  },
+  "pageOrigin": "https://factgate.vercel.app",
+  "ms": 9193
+}

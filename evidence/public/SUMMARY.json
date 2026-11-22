@@ -1,0 +1,77 @@
+{
+  "measuredAt": "2026-11-22T07:12:02.558Z",
+  "pageOrigin": "https://factgate.vercel.app",
+  "method": "gateCheck() with scripts/cors-fetch.mjs (browser CORS rules applied to real answers)",
+  "targets": [
+    {
+      "file": "agent402_tools_api_weather_forecast.json",
+      "url": "https://agent402.tools/api/weather-forecast",
+      "verdict": "ALLOW",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "ALLOW:identity_match",
+        "ALLOW:delivery_delivered"
+      ],
+      "http": [
+        "GET https://agent402.tools/.well-known/agent-registration.json -> 200",
+        "GET https://agent402.tools/api/agent-manifest.json -> 404",
+        "GET https://agent402.tools/api/weather-forecast -> 402",
+        "POST initialize https://agent402.tools/mcp -> 200",
+        "POST tools/list https://agent402.tools/mcp -> 200"
+      ]
+    },
+    {
+      "file": "verified_stay_demo_vercel_app_verified_stay.json",
+      "url": "https://verified-stay-demo.vercel.app/verified_stay",
+      "verdict": "ALLOW",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "ALLOW:identity_match",
+        "ALLOW:delivery_validated"
+      ],
+      "http": [
+        "GET https://verified-stay-demo.vercel.app/.well-known/agent-registration.json -> 200",
+        "GET https://verified-stay-demo.vercel.app/agent-manifest.json -> 200",
+        "GET https://verified-stay-demo.vercel.app/verified_stay -> TypeError: CORS refused: GET https://verified-stay-demo.vercel.app/verified_stay answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app",
+        "GET https://verified-stay-demo.vercel.app/verified_stay.network.json -> 200",
+        "GET https://verified-stay-demo.vercel.app/pay/quote.json -> 200",
+        "GET https://verified-stay-demo.vercel.app/api/book.json -> 200"
+      ]
+    },
+    {
+      "file": "glossy_stay_demo_vercel_app_glossy_stay.json",
+      "url": "https://glossy-stay-demo.vercel.app/glossy_stay",
+      "verdict": "BLOCK",
+      "codes": [
+        "BLOCK:live_not_as_declared",
+        "BLOCK:identity_payee_mismatch",
+        "BLOCK:delivery_validation_low"
+      ],
+      "http": [
+        "GET https://glossy-stay-demo.vercel.app/agent-manifest.json -> 200",
+        "GET https://glossy-stay-demo.vercel.app/.well-known/agent-registration.json -> 200",
+        "GET https://glossy-stay-demo.vercel.app/glossy_stay -> TypeError: CORS refused: GET https://glossy-stay-demo.vercel.app/glossy_stay answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app",
+        "GET https://glossy-stay-demo.vercel.app/glossy_stay.network.json -> 200",
+        "GET https://glossy-stay-demo.vercel.app/pay/quote.json -> 200",
+        "GET https://glossy-stay-demo.vercel.app/api/book.json -> 200",
+        "POST initialize https://mcp.glossy-stay.invalid/mcp -> TypeError: fetch failed"
+      ]
+    },
+    {
+      "file": "stay_steward_demo_vercel_app_stay_steward.json",
+      "url": "https://stay-steward-demo.vercel.app/stay_steward",
+      "verdict": "CAUTION",
+      "codes": [
+        "ALLOW:live_as_declared",
+        "CAUTION:identity_unavailable",
+        "NOT_APPLICABLE:delivery_not_applicable"
+      ],
+      "http": [
+        "GET https://stay-steward-demo.vercel.app/.well-known/agent-registration.json -> 404",
+        "GET https://stay-steward-demo.vercel.app/agent-manifest.json -> 200",
+        "GET https://stay-steward-demo.vercel.app/stay_steward -> TypeError: CORS refused: GET https://stay-steward-demo.vercel.app/stay_steward answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app",
+        "GET https://stay-steward-demo.vercel.app/stay_steward.network.json -> 200"
+      ]
+    }
+  ]
+}

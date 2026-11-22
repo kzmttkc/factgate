@@ -1,0 +1,458 @@
+{
+  "url": "https://stay-steward-demo.vercel.app/stay_steward",
+  "checkedAt": "2026-11-22T07:12:28.823Z",
+  "verdict": "CAUTION",
+  "reasons": [
+    {
+      "pillar": "live",
+      "code": "live_as_declared",
+      "effect": "ALLOW",
+      "text": "The live answer matches the declaration.",
+      "short": "Answers as it declares.",
+      "kinds": []
+    },
+    {
+      "pillar": "identity",
+      "code": "identity_unavailable",
+      "effect": "CAUTION",
+      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+      "short": "Not measured: no ERC-8004 registration speaks for it.",
+      "kinds": [
+        "identity_unknown"
+      ]
+    },
+    {
+      "pillar": "delivery",
+      "code": "delivery_not_applicable",
+      "effect": "NOT_APPLICABLE",
+      "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+      "short": "Not applicable: it asks for no payment.",
+      "kinds": [],
+      "applicable": false
+    }
+  ],
+  "evidence": {
+    "live": {
+      "pillar": {
+        "status": "ok",
+        "data": {
+          "corsReachable": true,
+          "answersAsDeclared": true,
+          "detail": "as declared: manifest, network",
+          "unreachable": [],
+          "instructionFindings": []
+        }
+      },
+      "checks": {
+        "target": {
+          "reachable": false,
+          "error": "TypeError: CORS refused: GET https://stay-steward-demo.vercel.app/stay_steward answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+        },
+        "manifest": {
+          "state": "found",
+          "url": "https://stay-steward-demo.vercel.app/agent-manifest.json",
+          "status": 200,
+          "problems": [],
+          "warnings": []
+        },
+        "network": {
+          "state": "found",
+          "url": "https://stay-steward-demo.vercel.app/stay_steward.network.json",
+          "problems": [],
+          "warnings": []
+        },
+        "instructions": {
+          "state": "scanned",
+          "url": "https://stay-steward-demo.vercel.app/stay_steward.network.json",
+          "scanned": 2,
+          "findings": []
+        },
+        "registration": {
+          "state": "absent",
+          "url": "https://stay-steward-demo.vercel.app/.well-known/agent-registration.json",
+          "status": 404
+        },
+        "wallets": {
+          "state": "not_compared",
+          "detail": "the site declares no wallet",
+          "wallets": []
+        },
+        "mcp": []
+      },
+      "declared": {
+        "manifestEntry": {
+          "name": "stay_steward",
+          "front_man": "stay_steward_desk",
+          "hocon": "./stay_steward.network.json",
+          "description": "Book a stay through its own agent, after FactGate checks it.",
+          "sample_queries": [
+            "Book my trip at the stay I picked.",
+            "Is Glossy Stay safe to book through its assistant?",
+            "Which stays can you book for me?",
+            "Pay the deposit for me now."
+          ]
+        },
+        "network": {
+          "agents": 1,
+          "mcp": [],
+          "peers": [
+            "link:factgate",
+            "link:verified_stay",
+            "link:glossy_stay"
+          ],
+          "sampleQueries": 4
+        },
+        "mcp": [],
+        "terms": null,
+        "termsSource": null,
+        "registrationFile": null,
+        "registrationUrl": null,
+        "trust": {
+          "quoteUrl": null,
+          "resourceUrl": null,
+          "registrationUrl": null,
+          "mcp": [],
+          "wallets": []
+        }
+      },
+      "http": [
+        {
+          "url": "https://stay-steward-demo.vercel.app/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 404,
+          "contentType": "application/json",
+          "bytes": 68
+        },
+        {
+          "url": "https://stay-steward-demo.vercel.app/agent-manifest.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 3038
+        },
+        {
+          "url": "https://stay-steward-demo.vercel.app/stay_steward",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://stay-steward-demo.vercel.app/stay_steward answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+        },
+        {
+          "url": "https://stay-steward-demo.vercel.app/stay_steward.network.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 6179
+        }
+      ]
+    },
+    "identity": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+      },
+      "payTos": {
+        "compared": [],
+        "notCompared": []
+      },
+      "source": null,
+      "agent": null,
+      "pick": {
+        "chosen": null,
+        "skipped": [],
+        "unofficial": [],
+        "declared": 0
+      },
+      "unofficial": [],
+      "chainRead": null,
+      "registrationFromChain": null,
+      "binding": null
+    },
+    "delivery": {
+      "pillar": {
+        "status": "unavailable",
+        "error": "not applicable: no 402"
+      },
+      "paid": false,
+      "target": null,
+      "http": null,
+      "validation": null
+    },
+    "nanda": {
+      "status": "not_listed",
+      "query": {
+        "url": "https://stay-steward-demo.vercel.app/stay_steward"
+      },
+      "searched": 138,
+      "http": [
+        {
+          "method": "GET",
+          "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+          "status": 200
+        }
+      ]
+    }
+  },
+  "agentFacts": {
+    "id": "https://stay-steward-demo.vercel.app/stay_steward",
+    "agent_name": "urn:agent:stay-steward-demo.vercel.app:stay_steward",
+    "label": "stay_steward",
+    "description": "Book a stay through its own agent, after FactGate checks it.",
+    "provider": {
+      "url": "https://stay-steward-demo.vercel.app"
+    },
+    "endpoints": {
+      "static": [
+        "https://stay-steward-demo.vercel.app/stay_steward"
+      ]
+    },
+    "capabilities": {},
+    "skills": [
+      {
+        "id": "stay_steward",
+        "description": "Book a stay through its own agent, after FactGate checks it."
+      }
+    ],
+    "evaluations": {
+      "lastAudited": "2026-11-22T07:12:28.823Z",
+      "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
+    },
+    "x_factgate_verdict": {
+      "verdict": "CAUTION",
+      "reasons": [
+        {
+          "pillar": "live",
+          "code": "live_as_declared",
+          "effect": "ALLOW",
+          "text": "The live answer matches the declaration.",
+          "short": "Answers as it declares.",
+          "kinds": []
+        },
+        {
+          "pillar": "identity",
+          "code": "identity_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+          "short": "Not measured: no ERC-8004 registration speaks for it.",
+          "kinds": [
+            "identity_unknown"
+          ]
+        },
+        {
+          "pillar": "delivery",
+          "code": "delivery_not_applicable",
+          "effect": "NOT_APPLICABLE",
+          "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+          "short": "Not applicable: it asks for no payment.",
+          "kinds": [],
+          "applicable": false
+        }
+      ],
+      "notApplicable": [
+        "delivery: not applicable (not a pass)"
+      ]
+    },
+    "x_factgate_nanda": {
+      "status": "not_listed",
+      "source": "https://api.nandaindex.org/api/v1/index",
+      "searched": 138
+    },
+    "x_factgate_evidence": {
+      "target": "https://stay-steward-demo.vercel.app/stay_steward",
+      "checkedAt": "2026-11-22T07:12:28.823Z",
+      "live": {
+        "pillar": {
+          "status": "ok",
+          "data": {
+            "corsReachable": true,
+            "answersAsDeclared": true,
+            "detail": "as declared: manifest, network",
+            "unreachable": [],
+            "instructionFindings": []
+          }
+        },
+        "checks": {
+          "target": {
+            "reachable": false,
+            "error": "TypeError: CORS refused: GET https://stay-steward-demo.vercel.app/stay_steward answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+          },
+          "manifest": {
+            "state": "found",
+            "url": "https://stay-steward-demo.vercel.app/agent-manifest.json",
+            "status": 200,
+            "problems": [],
+            "warnings": []
+          },
+          "network": {
+            "state": "found",
+            "url": "https://stay-steward-demo.vercel.app/stay_steward.network.json",
+            "problems": [],
+            "warnings": []
+          },
+          "instructions": {
+            "state": "scanned",
+            "url": "https://stay-steward-demo.vercel.app/stay_steward.network.json",
+            "scanned": 2,
+            "findings": []
+          },
+          "registration": {
+            "state": "absent",
+            "url": "https://stay-steward-demo.vercel.app/.well-known/agent-registration.json",
+            "status": 404
+          },
+          "wallets": {
+            "state": "not_compared",
+            "detail": "the site declares no wallet",
+            "wallets": []
+          },
+          "mcp": []
+        },
+        "declared": {
+          "manifestEntry": {
+            "name": "stay_steward",
+            "front_man": "stay_steward_desk",
+            "hocon": "./stay_steward.network.json",
+            "description": "Book a stay through its own agent, after FactGate checks it.",
+            "sample_queries": [
+              "Book my trip at the stay I picked.",
+              "Is Glossy Stay safe to book through its assistant?",
+              "Which stays can you book for me?",
+              "Pay the deposit for me now."
+            ]
+          },
+          "network": {
+            "agents": 1,
+            "mcp": [],
+            "peers": [
+              "link:factgate",
+              "link:verified_stay",
+              "link:glossy_stay"
+            ],
+            "sampleQueries": 4
+          },
+          "mcp": [],
+          "terms": null,
+          "termsSource": null,
+          "registrationFile": null,
+          "registrationUrl": null,
+          "trust": {
+            "quoteUrl": null,
+            "resourceUrl": null,
+            "registrationUrl": null,
+            "mcp": [],
+            "wallets": []
+          }
+        },
+        "http": [
+          {
+            "url": "https://stay-steward-demo.vercel.app/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 404,
+            "contentType": "application/json",
+            "bytes": 68
+          },
+          {
+            "url": "https://stay-steward-demo.vercel.app/agent-manifest.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 3038
+          },
+          {
+            "url": "https://stay-steward-demo.vercel.app/stay_steward",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://stay-steward-demo.vercel.app/stay_steward answered 404 without an Access-Control-Allow-Origin for https://factgate.vercel.app"
+          },
+          {
+            "url": "https://stay-steward-demo.vercel.app/stay_steward.network.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 6179
+          }
+        ]
+      },
+      "identity": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+        },
+        "payTos": {
+          "compared": [],
+          "notCompared": []
+        },
+        "source": null,
+        "agent": null,
+        "pick": {
+          "chosen": null,
+          "skipped": [],
+          "unofficial": [],
+          "declared": 0
+        },
+        "unofficial": [],
+        "chainRead": null,
+        "registrationFromChain": null,
+        "binding": null
+      },
+      "delivery": {
+        "pillar": {
+          "status": "unavailable",
+          "error": "not applicable: no 402"
+        },
+        "paid": false,
+        "target": null,
+        "http": null,
+        "validation": null
+      }
+    },
+    "x_factgate_signature": {
+      "signed": false,
+      "note": "FactGate is not an issuer under the NANDA trust framework and does not sign. Re-run the check to verify; every value has its source URL in x_factgate_evidence."
+    },
+    "x_factgate_format": {
+      "source": "arXiv:2507.14263v1, Appendix 'Full AgentFacts Schema' (V0.3 draft)",
+      "note": "No @context: the paper calls AgentFacts JSON-LD but gives no context URL. Fields starting with x_factgate_ are FactGate extensions."
+    }
+  },
+  "counts": {
+    "paid": null,
+    "delivered": null,
+    "validationsPassed": null,
+    "validationsFailed": null
+  },
+  "pillars": {
+    "live": {
+      "status": "ok",
+      "data": {
+        "corsReachable": true,
+        "answersAsDeclared": true,
+        "detail": "as declared: manifest, network",
+        "unreachable": [],
+        "instructionFindings": []
+      }
+    },
+    "identity": {
+      "status": "unavailable",
+      "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+    },
+    "delivery": {
+      "status": "unavailable",
+      "error": "not applicable: no 402"
+    },
+    "paid": false
+  },
+  "nanda": {
+    "status": "not_listed",
+    "query": {
+      "url": "https://stay-steward-demo.vercel.app/stay_steward"
+    },
+    "searched": 138,
+    "http": [
+      {
+        "method": "GET",
+        "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+        "status": 200
+      }
+    ]
+  },
+  "pageOrigin": "https://factgate.vercel.app",
+  "ms": 529
+}

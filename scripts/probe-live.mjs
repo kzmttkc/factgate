@@ -6,16 +6,20 @@
 //   node scripts/probe-live.mjs                 # the default public targets
 //   node scripts/probe-live.mjs --peers         # also the local demo peers on 8791/8792
 //   node scripts/probe-live.mjs <url> [<url>…]  # only these
-import { mkdir, writeFile } from "node:fs/promises";
+//   node scripts/probe-live.mjs --public        # as the deployed page (deploy/public-origins.json):
+//                                               # agent402 plus the three deployed demo peers
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { CHAINS, readAgent } from "../site/js/chain.mjs";
 import { gateCheck, summarizeCheck } from "../site/js/gatecheck.mjs";
 import { corsFetch } from "./cors-fetch.mjs";
 
-const ORIGIN = "http://localhost:8790";
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const OUT = path.join(ROOT, "evidence", "live");
+const PUBLIC = process.argv.includes("--public");
+const SITES = JSON.parse(await readFile(path.join(ROOT, "deploy", "public-origins.json"), "utf8")).sites;
+const ORIGIN = PUBLIC ? SITES.factgate.public : "http://localhost:8790";
+const OUT = path.join(ROOT, "evidence", PUBLIC ? "public" : "live");
 
 // From docs/agentic_websites.md (cognizant-ai-labs/agentic-web, main, read 2026-11-22), plus
 // vet402.com and one x402 seller vet402 has paid.
@@ -30,6 +34,12 @@ const DEFAULT_TARGETS = [
   "https://vet402.com/",
 ];
 const PEERS = ["http://127.0.0.1:8791/glossy_stay", "http://127.0.0.1:8792/verified_stay", "http://[::1]:8793/stay_steward"];
+const PUBLIC_TARGETS = [
+  "https://agent402.tools/api/weather-forecast",
+  `${SITES["verified-stay"].public}/verified_stay`,
+  `${SITES["glossy-stay"].public}/glossy_stay`,
+  `${SITES["stay-steward"].public}/stay_steward`,
+];
 
 // ERC-8004 agents read directly: the Base Sepolia ids from the brief and Base mainnet examples.
 const AGENT_READS = [
@@ -48,7 +58,7 @@ function slug(url) {
 async function main() {
   const args = process.argv.slice(2);
   const urls = args.filter((a) => !a.startsWith("--"));
-  let targets = urls.length ? urls : DEFAULT_TARGETS;
+  let targets = urls.length ? urls : PUBLIC ? PUBLIC_TARGETS : DEFAULT_TARGETS;
   if (args.includes("--peers")) {
     targets = [...targets, ...PEERS];
   }

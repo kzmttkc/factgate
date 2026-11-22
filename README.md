@@ -20,6 +20,19 @@ The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that c
 
 **How FactGate breaks self-declaration:** a site's own manifest, AgentFacts and signature only say who wrote the claims, so FactGate compares every claim with something the site does not control — what its endpoints actually answer, what the chain says its registered wallet is, and what came back when someone paid it.
 
+## Try it (deployed)
+
+| Site | URL | Source |
+| --- | --- | --- |
+| FactGate | https://factgate.vercel.app/ (network: `https://factgate.vercel.app/factgate`) | https://github.com/kzmttkc/factgate |
+| Stay Steward (demo booking agent) | https://stay-steward-demo.vercel.app/ | https://github.com/kzmttkc/factgate-peers |
+| Verified Stay (demo, expected ALLOW) | https://verified-stay-demo.vercel.app/ (`/verified_stay`) | same |
+| Glossy Stay (demo, expected BLOCK) | https://glossy-stay-demo.vercel.app/ (`/glossy_stay`) | same |
+
+On Stay Steward, pick a stay and press **Check with FactGate**. No AI key is needed: page code runs the gate. Allow the cards and the windows it opens. Verified Stay ends with a booking made in Verified Stay's own window. Glossy Stay stops at FactGate's BLOCK, and the page shows why. The demo stays are fictional, and no money moves.
+
+The four sites are static (Vercel), each on its own origin. `deploy/build-public.mjs` writes `dist/<project>/` with the local demo URLs rewritten to the public ones (`deploy/public-origins.json`) and a `vercel.json` with the CORS and worker headers; then `vercel deploy --prod dist/<project>`. The source keeps the local URLs, so the local run below is unchanged.
+
 ## Who it is for
 
 - **Agent sites that link to other agent sites.** Before your network loads a partner network (spec 3.2), ask FactGate. The demo booking agent, Stay Steward, does exactly that: it never loads a stay that FactGate blocks, and its gate is page code, not a prompt.
@@ -72,6 +85,7 @@ node $SKILL/scripts/serve_site.mjs site --port 8790 --open-as localhost     # ht
 # Measure real counterparties with the page's own code (writes evidence/live/)
 node scripts/probe-live.mjs            # agent402, the contest's list, vet402.com
 node scripts/probe-live.mjs --peers    # plus the three demo sites (serve them first, see below)
+node scripts/probe-live.mjs --public   # as the deployed page: agent402 and the three deployed demo sites (writes evidence/public/)
 ```
 
 ### Run the three-site demo
@@ -101,7 +115,7 @@ The tests use a scripted model. To check the same flows with a real LLM, use you
 
 | # | Check | Shown by |
 | --- | --- | --- |
-| 1 | Two-agent HOCON network and manifest on an ordinary host | `site/factgate.hocon` (four agents) → `site/factgate.network.json`, `site/agent-manifest.json`; build `--check` passes. Hosting: not deployed yet |
+| 1 | Two-agent HOCON network and manifest on an ordinary host | `site/factgate.hocon` (four agents) → `site/factgate.network.json`, `site/agent-manifest.json`; build `--check` passes. Hosting: https://factgate.vercel.app/ (static, HTTPS; the manifest answers 200 with `Access-Control-Allow-Origin: *`) |
 | 2 | Run with the site's default router and model; BYOK path | Default router Otari, model `alibaba/qwen3.8-flash`; BYOK in "AI model settings". Real-model run: steps above (needs a key) |
 | 3 | Internal agent plus a grounded capability | `site/tests/agentified.test.mjs`: "the front agent asks the engine…" (website action), "evidence_verifier reaches vet402.com/mcp as an MCP tool" |
 | 4 | After approval, load an exact named network from a second origin and run it locally | `~/factgate-peers/tests/three_sites.e2e.test.mjs`: "6-4 ALLOW: Stay Steward asks FactGate, then loads Verified Stay by name…" (cards before contact, `remote_fetch` of `factgate` and `verified_stay`, both networks run on the caller's page) |
@@ -166,7 +180,7 @@ Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/f
 ## Limits
 
 - Redirects are not followed in a browser (the browser hides where they point); a counterparty whose files sit behind a redirect reads as unreachable until it serves them directly.
-- Not deployed yet. Before hosting, the demo URLs (`127.0.0.1`, `localhost`, `[::1]`) in `site/js/examples.mjs` and in the demo sites must change to https URLs.
+- The deployed build rewrites only the four demo origins (`deploy/public-origins.json`). Vercel sends `Access-Control-Allow-Origin: *` on every static file by default, a wider set than serve_site.mjs opens locally; the files are all public.
 - The real-model path is not covered by the tests (it needs a key); the steps above check it by hand.
 - The reference runtime applies one private-context allow rule per calling network, so Verified Stay also receives `target_url` (its own URL). Destination-scoped rules are a spec section 5 extension.
 - vet402 records public https sellers only; local demo sites get pillar 3 from validation scores.
