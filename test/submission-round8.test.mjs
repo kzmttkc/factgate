@@ -35,14 +35,14 @@ test("index.html masthead: Stay Steward links to demo", async () => {
   );
 });
 
-test("demo script SCREEN C caption: dated as-of and post-window Unchecked", async () => {
+test("demo script SCREEN C caption: vet402 delivery record, no post-window Unchecked", async () => {
   const script = await readFile(path.join(NOTES, "video", "SCRIPT_final.md"), "utf8");
-  const caption = script.match(/^CAPTION: `([^`]+)`/m);
   const screenC = script.slice(script.indexOf("SCREEN C"));
   const capInC = screenC.match(/^CAPTION: `([^`]+)`/m);
   assert.ok(capInC, "SCREEN C CAPTION missing");
   const text = capInC[1];
-  assert.match(text, /as of 2026-11-22/i);
-  assert.match(text, /after 2026-12-07.*Unchecked/is);
-  assert.doesNotMatch(text, /^Real x402 seller · vet402 record: 3 paid, 3 delivered$/);
+  assert.match(text, /Real x402 seller/i);
+  assert.match(text, /vet402 record/i);
+  assert.doesNotMatch(text, /2026-12-07/i);
+  assert.doesNotMatch(text, /Unchecked/i);
 });

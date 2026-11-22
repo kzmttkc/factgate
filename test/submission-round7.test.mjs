@@ -25,14 +25,15 @@ function countSayWords(script) {
   return words;
 }
 
-test("README measured table: agent402 row closed at 2026-12-07", async () => {
+test("README measured table: agent402 row dated with vet402 record", async () => {
   const readme = await mustRead("README.md");
   const row = readme.match(
     /\| agent402\.tools\/api\/weather-forecast[\s\S]*?\n/
   );
   assert.ok(row, "agent402 table row missing");
-  assert.match(row[0], /ALLOW on 2026-11-22 only/);
-  assert.match(row[0], /After 2026-12-07/);
+  assert.match(row[0], /ALLOW \(3 of 3 delivered, vet402 record, checked 2026-11-22\)/);
+  assert.doesNotMatch(row[0], /2026-12-07/);
+  assert.doesNotMatch(row[0], /After 2026-12-07/);
   assert.doesNotMatch(row[0], /\| ALLOW \(Link \/ pay: OK\) \| Answers as declared;/);
 });
 
@@ -42,13 +43,13 @@ test("README product question: should my agent connect", async () => {
   assert.doesNotMatch(readme, /is it safe to connect to this agent site/i);
 });
 
-test("index.html masthead: hotel fail story and tool contrast", async () => {
+test("index.html masthead: hotel fail story only", async () => {
   const page = await mustRead("site/index.html");
   const start = page.indexOf("<header class=\"masthead\">");
   const masthead = page.slice(start, page.indexOf("</header>", start));
   assert.match(masthead, /I built Glossy Stay to fail/);
-  assert.match(masthead, /ScopeGate Studio watches the call leave/);
-  assert.match(masthead, /none of them stops the link/i);
+  assert.doesNotMatch(masthead, /ScopeGate Studio/);
+  assert.doesNotMatch(masthead, /none of them stops the link/i);
 });
 
 test("docs/devpost.md: only fictional BLOCK through judging", async () => {
@@ -60,9 +61,9 @@ test("docs/devpost.md: only fictional BLOCK through judging", async () => {
 test("demo script round 7: trimmed SAY, timing, recording date", async () => {
   const script = await readFile(path.join(NOTES, "video", "SCRIPT_final.md"), "utf8");
   assert.match(script, /recording 2026-11-24/);
-  assert.doesNotMatch(script, /So I built FactGate\./);
-  assert.doesNotMatch(script, /Before my agent links or pays, it checks three things\./);
-  assert.match(script, /My code decides\. The model only explains\./);
+  assert.match(script, /So I built FactGate\./);
+  assert.match(script, /Before my agent links or pays,\nit checks three things\./s);
+  assert.match(script, /My code decides\.\nThe model only explains\./s);
   assert.match(script, /SCREEN C \(1:10–1:28\)/);
   assert.match(script, /\| 9 \| 1:53–1:58 \|/);
   const headerWords = script.match(/Spoken words: (\d+)/);

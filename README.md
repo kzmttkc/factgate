@@ -2,7 +2,7 @@
 
 My agent was about to book the nicer hotel. I had built that hotel to fail. FactGate caught it.
 
-FactGate runs before a partner network loads and returns ALLOW, CAUTION, or BLOCK in page code; ScopeGate Studio watches the call as it leaves, Agent Customs scans the prompt, and Agent Atlas checks the manifest format, and none of them stops the link.
+ScopeGate Studio guards calls as they leave, Agent Customs scans prompts, Agent Atlas checks the format; FactGate decides before the link, from measured live answers, on-chain identity and delivery.
 
 Before your agent links to or pays a site, FactGate checks three facts:
 **Live** (does it answer as declared?) · **Identity** (does the ERC-8004 wallet match the x402 payee?) · **Delivery** (did paid calls really return content?).
@@ -16,13 +16,13 @@ Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
 |---|---|---|
-| ALLOW → booked VS-0001 — [Stay Steward](https://stay-steward-demo.vercel.app/) | BLOCK → never loaded | ALLOW on 2026-11-22 only (3 of 3). Last vet402 delivery 2026-11-07; the 30-day window closes 2026-12-07, so on 2027-01-12..18 this button reads Unchecked. |
+| ALLOW → booked VS-0001 — [Stay Steward](https://stay-steward-demo.vercel.app/) | BLOCK → never loaded | ALLOW (3 of 3 delivered, vet402 record, checked 2026-11-22) |
 
 ### Measured on 2026-11-22
 
 On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded 3 of 3 paid calls delivered. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
 
-The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. agent402.tools will not repeat ALLOW after 2026-12-07: vet402's last delivery is 2026-11-07, a delivery older than 30 days is WARN (`l1_stale`), and FactGate shows that as **CAUTION**, **Unchecked — do not treat as safe**. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
+The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. vet402 re-checks this seller before judging; the card shows the last delivery date. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
 
 **Screenshots** (deployed sites, captured 2026-11-22):
 
@@ -94,7 +94,7 @@ Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`
 
 | Counterparty | Verdict | Why |
 | --- | --- | --- |
-| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW on 2026-11-22 only (Link / pay: OK). After 2026-12-07 the same URL reads Unchecked. | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; vet402 delivered 3 of 3 paid calls (window closes 2026-12-07) |
+| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW (3 of 3 delivered, vet402 record, checked 2026-11-22) (Link / pay: OK) | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; vet402 delivered 3 of 3 paid calls |
 | vet402.com (the author's own service) | ALLOW (Link / pay: OK) | No payment asked; the site and its ERC-8004 registration point at each other (rule C-1) |
 | Verified Stay (fictional demo, local) | ALLOW (Link / pay: OK) | payTo = agent 10798's wallet on Base Sepolia; trusted validations passed 79 / below 70 0 (the Delivery Court judge) |
 | Glossy Stay (fictional demo, local) | BLOCK (Do not pay) | payTo is not its own declared wallet nor agent 10799's; the paid resource answers an empty body; trusted validations passed 1 / below 70 1 (a score of 3) |
