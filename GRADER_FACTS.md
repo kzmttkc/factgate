@@ -48,7 +48,7 @@ Deployed results (2026-11-22 07:12 UTC, page origin https://factgate.vercel.app,
 
 Local results (2026-11-22 06:57 UTC, `evidence/live/SUMMARY.json`): agent402.tools = ALLOW; vet402.com (author's own) = ALLOW via the mutual-binding rule; Verified Stay = ALLOW (validations passed 79 / below 70 0); Glossy Stay = BLOCK (passed 1 / below 70 1); Stay Steward = CAUTION (identity_unknown); five contest-listed sites = CAUTION (identity_unknown); organizer's widget = CAUTION (unreachable: manifest not CORS-readable). None of them is in the NANDA Index (138 records searched 2026-11-22T22:04:45Z; 102 card not validated, 36 with cardValidation set).
 
-Tests: FactGate 175 (168 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions and README/script round-6/7 submission checks. Demo sites 55 (55 pass), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button).
+Tests: FactGate 181 (174 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions and README/script round-6/7/8/9 submission checks. Demo sites 55 (55 pass), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button).
 
 Competitors already listed: Agent Atlas (manifest format check), NandaSeal (browser self-signed facts), Agent Customs (static prompt-injection scan), Agent Crash Test (own-site confirm dialogs), Three Numbers (XRPL escrow counts).
 

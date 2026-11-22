@@ -8,4 +8,6 @@ Try it: https://factgate.vercel.app/ — no key needed.
 
 The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. vet402 re-checks this seller before judging; the card shows the last delivery date.
 
+For an agent builder about to load a partner agent site or pay an x402 seller, the card says what to do before the link.
+
 The only BLOCK a judge can repeat through 2027-01-18 is fictional Glossy Stay. Five real contest sites measured on 2026-11-22 were CAUTION (identity unknown), not blocked.
