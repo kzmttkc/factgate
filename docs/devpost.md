@@ -7,3 +7,5 @@ FactGate runs before a partner network loads and returns ALLOW, CAUTION, or BLOC
 Try it: https://factgate.vercel.app/ — no key needed.
 
 The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. agent402.tools will not repeat ALLOW after 2026-12-07: vet402's last delivery is 2026-11-07, a delivery older than 30 days is WARN (`l1_stale`), and FactGate shows that as **CAUTION**, **Unchecked — do not treat as safe**.
+
+The only BLOCK a judge can repeat through 2027-01-18 is fictional Glossy Stay. Five real contest sites measured on 2026-11-22 were CAUTION (identity unknown), not blocked.

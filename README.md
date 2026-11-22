@@ -41,7 +41,7 @@ The result that still runs on the live sites through judging is **Verified Stay 
 
 For a site with no ERC-8004 registration, FactGate still tells you before you connect whether it answers the way it declares, whether its agent instructions are safe to load, and whether it can be reached at all.
 
-FactGate is an open agentic website (Worldwide Agentic Web MVP spec) that answers one question for an agent builder or a visitor: *is it safe to connect to this agent site, NANDA-listed agent or x402 seller?* It measures three things from the browser and returns a deterministic **ALLOW / CAUTION / BLOCK** with the evidence, plus an AgentFacts JSON.
+FactGate is an open agentic website (Worldwide Agentic Web MVP spec) that answers one question for an agent builder or a visitor: *should my agent connect to this agent site, NANDA-listed agent or x402 seller?* It measures three things from the browser and returns a deterministic **ALLOW / CAUTION / BLOCK** with the evidence, plus an AgentFacts JSON.
 
 | Pillar | What FactGate measures | Source |
 | --- | --- | --- |
@@ -94,7 +94,7 @@ Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`
 
 | Counterparty | Verdict | Why |
 | --- | --- | --- |
-| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW (Link / pay: OK) | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; vet402 delivered 3 of 3 paid calls |
+| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW on 2026-11-22 only (Link / pay: OK). After 2026-12-07 the same URL reads Unchecked. | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; vet402 delivered 3 of 3 paid calls (window closes 2026-12-07) |
 | vet402.com (the author's own service) | ALLOW (Link / pay: OK) | No payment asked; the site and its ERC-8004 registration point at each other (rule C-1) |
 | Verified Stay (fictional demo, local) | ALLOW (Link / pay: OK) | payTo = agent 10798's wallet on Base Sepolia; trusted validations passed 79 / below 70 0 (the Delivery Court judge) |
 | Glossy Stay (fictional demo, local) | BLOCK (Do not pay) | payTo is not its own declared wallet nor agent 10799's; the paid resource answers an empty body; trusted validations passed 1 / below 70 1 (a score of 3) |
