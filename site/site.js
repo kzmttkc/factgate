@@ -17,6 +17,12 @@ export class AssistantMount {
   static GREETING = "I can check an x402 seller or agent before you connect or pay: I read vet402's delivery record and run FactGate's verdict engine, which answers ALLOW, CAUTION or BLOCK.";
 
   /**
+   * Shown when the page checker works without a key but the chat assistant is idle until BYOK.
+   */
+  static KEYLESS_ASSISTANT_LINE =
+    "The check above needs no key. The assistant is optional. Add a key in AI model settings.";
+
+  /**
    * The confirmation dialog's words for each irreversible action. Name each button after
    * what it does, so that "Cancel" never has two meanings. With no irreversible action,
    * leave this empty.
@@ -47,10 +53,10 @@ export class AssistantMount {
       // runtime's "API key required" badge in runtime/ui.js.
       const needsKey = !booted.engine.mockLLM
         && (!booted.engine.byokKey || booted.engine.byokKey === "demo");
-      status.textContent = needsKey
-        ? "Assistant needs your AI provider key. Add it in AI model settings below."
-        : "Assistant connected to this page.";
-      if (!needsKey) {
+      if (needsKey) {
+        AssistantMount.keylessChrome();
+      } else {
+        status.textContent = "Assistant connected to this page.";
         AssistantMount.greet();
       }
       return booted.engine;
@@ -70,6 +76,20 @@ export class AssistantMount {
     const first = document.querySelector("#ns-msgs .ns-msg.bot");
     if (first) {
       first.textContent = AssistantMount.GREETING;
+    }
+  }
+
+  /**
+   * Keyless visitors still use the checker; keep assistant chrome from implying the gate needs BYOK.
+   */
+  static keylessChrome() {
+    const status = document.querySelector("#assistant-status");
+    if (status) {
+      status.textContent = AssistantMount.KEYLESS_ASSISTANT_LINE;
+    }
+    const first = document.querySelector("#ns-msgs .ns-msg.bot");
+    if (first) {
+      first.textContent = AssistantMount.KEYLESS_ASSISTANT_LINE;
     }
   }
 

@@ -230,7 +230,7 @@ node --test "*/tests/*.test.mjs" "tests/*.test.mjs"
 
 | Suite | Expected (2026-11-22) |
 | --- | --- |
-| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 181: 174 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
+| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 185: 178 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
 | `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` (in `factgate-peers`, with `../factgate`) | 55: 55 pass, 0 fail (10 three-site end-to-end tests, 2 of those run the no-model button) |
 
 ## Limits
