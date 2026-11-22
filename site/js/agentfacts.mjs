@@ -111,7 +111,12 @@ export function buildAgentFacts(input) {
       lastAudited: input.checkedAt,
       auditorID: "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned",
     },
-    x_factgate_verdict: { verdict: verdict.verdict, reasons: clone(verdict.reasons) || [] },
+    x_factgate_verdict: {
+      verdict: verdict.verdict,
+      reasons: clone(verdict.reasons) || [],
+      notApplicable: (verdict.reasons || []).filter((r) => r.applicable === false).map((r) => `${r.pillar}: not applicable (not a pass)`),
+    },
+    x_factgate_unofficial_registries: identity.unofficial && identity.unofficial.length ? clone(identity.unofficial) : undefined,
     x_factgate_evidence: {
       target: url,
       checkedAt: input.checkedAt,

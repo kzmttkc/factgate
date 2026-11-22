@@ -1,6 +1,6 @@
 {
   "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
-  "checkedAt": "2026-11-22T04:38:19.416Z",
+  "checkedAt": "2026-11-22T04:51:46.574Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -17,9 +17,10 @@
     },
     {
       "pillar": "delivery",
-      "code": "delivery_unavailable",
-      "effect": "CAUTION",
-      "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+      "code": "delivery_not_applicable",
+      "effect": "NOT_APPLICABLE",
+      "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+      "applicable": false
     }
   ],
   "evidence": {
@@ -97,18 +98,18 @@
       },
       "http": [
         {
-          "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
-          "method": "GET",
-          "status": 200,
-          "contentType": "application/json; charset=utf-8",
-          "bytes": 2547
-        },
-        {
           "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
           "method": "GET",
           "status": 404,
           "contentType": "text/html; charset=utf-8",
           "bytes": 9379
+        },
+        {
+          "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
+          "method": "GET",
+          "status": 200,
+          "contentType": "application/json; charset=utf-8",
+          "bytes": 2547
         },
         {
           "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
@@ -140,8 +141,10 @@
       "pick": {
         "chosen": null,
         "skipped": [],
+        "unofficial": [],
         "declared": 0
       },
+      "unofficial": [],
       "chainRead": null,
       "registrationFromChain": null,
       "binding": null
@@ -149,10 +152,12 @@
     "delivery": {
       "pillar": {
         "status": "unavailable",
-        "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+        "error": "not applicable: no 402"
       },
+      "paid": false,
       "target": null,
-      "http": null
+      "http": null,
+      "validation": null
     }
   },
   "agentFacts": {
@@ -176,7 +181,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:38:19.416Z",
+      "lastAudited": "2026-11-22T04:51:46.574Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -196,15 +201,19 @@
         },
         {
           "pillar": "delivery",
-          "code": "delivery_unavailable",
-          "effect": "CAUTION",
-          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+          "code": "delivery_not_applicable",
+          "effect": "NOT_APPLICABLE",
+          "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+          "applicable": false
         }
+      ],
+      "notApplicable": [
+        "delivery: not applicable (not a pass)"
       ]
     },
     "x_factgate_evidence": {
       "target": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
-      "checkedAt": "2026-11-22T04:38:19.416Z",
+      "checkedAt": "2026-11-22T04:51:46.574Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -279,18 +288,18 @@
         },
         "http": [
           {
-            "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
-            "method": "GET",
-            "status": 200,
-            "contentType": "application/json; charset=utf-8",
-            "bytes": 2547
-          },
-          {
             "url": "https://cocvn157.github.io/.well-known/agent-registration.json",
             "method": "GET",
             "status": 404,
             "contentType": "text/html; charset=utf-8",
             "bytes": 9379
+          },
+          {
+            "url": "https://cocvn157.github.io/nanda-seal/agent-manifest.json",
+            "method": "GET",
+            "status": 200,
+            "contentType": "application/json; charset=utf-8",
+            "bytes": 2547
           },
           {
             "url": "https://cocvn157.github.io/nanda-seal/nanda_seal_verifier",
@@ -322,8 +331,10 @@
         "pick": {
           "chosen": null,
           "skipped": [],
+          "unofficial": [],
           "declared": 0
         },
+        "unofficial": [],
         "chainRead": null,
         "registrationFromChain": null,
         "binding": null
@@ -331,10 +342,12 @@
       "delivery": {
         "pillar": {
           "status": "unavailable",
-          "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+          "error": "not applicable: no 402"
         },
+        "paid": false,
         "target": null,
-        "http": null
+        "http": null,
+        "validation": null
       }
     },
     "x_factgate_signature": {
@@ -347,5 +360,5 @@
     }
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 71
+  "ms": 129
 }

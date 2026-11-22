@@ -128,12 +128,23 @@ class GatePage {
     reasons.replaceChildren();
     for (const r of result.reasons) {
       const li = document.createElement("li");
-      li.textContent = `[${r.effect}] ${r.pillar}: ${r.text}`;
+      li.textContent = `[${r.effect === "NOT_APPLICABLE" ? "NOT APPLICABLE" : r.effect}] ${r.pillar}: ${r.text}`;
       reasons.append(li);
     }
+    const unofficial = document.querySelector("#full-unofficial");
+    const others = result.evidence.identity.unofficial || [];
+    unofficial.hidden = others.length === 0;
+    unofficial.textContent = others.length ? `Other registries (shown, not used in the verdict): ${others.map((u) => `agentId ${u.agentId} at ${u.agentRegistry}`).join("; ")}` : "";
     const http = document.querySelector("#full-http");
     http.replaceChildren();
-    const rows = [...result.evidence.live.http, ...((result.evidence.identity.chainRead && result.evidence.identity.chainRead.rpc) || []).map((x) => ({ method: x.method, url: x.url, status: x.ok ? (x.reverted ? "reverted" : "200") : undefined, error: x.ok ? undefined : x.error }))];
+    const rows = [...result.evidence.live.http, ...((result.evidence.identity.chainRead && result.evidence.identity.chainRead.rpc) || []).map((x) => ({ method: `${x.method} @${x.block}`, url: x.url, status: x.ok ? (x.reverted ? "reverted" : "200") : undefined, error: x.ok ? undefined : x.error }))];
+    const val = result.evidence.delivery.validation;
+    if (val && val.data) {
+      rows.push({ method: `ValidationRegistry ${val.data.registry}`, url: `agent ${val.data.agentId}: ${val.data.total} requests, ${val.data.passed} >= 70, ${val.data.failed} < 70, ${val.data.pending} unanswered`, status: "eth_call" });
+      for (const e of val.data.evidence || []) {
+        rows.push({ method: e.role, url: e.log && e.log.tx ? `tx ${e.log.tx} (block ${e.log.block}, log ${e.log.logIndex})` : `request ${e.requestHash}`, status: `score ${e.response}` });
+      }
+    }
     if (result.evidence.delivery.http) {
       rows.push(result.evidence.delivery.http);
     }

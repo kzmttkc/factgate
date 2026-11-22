@@ -1,6 +1,6 @@
 {
   "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
-  "checkedAt": "2026-11-22T04:38:19.488Z",
+  "checkedAt": "2026-11-22T04:51:46.703Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -19,7 +19,21 @@
       "pillar": "delivery",
       "code": "delivery_unavailable",
       "effect": "CAUTION",
-      "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+      "text": "vet402: Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero. ERC-8004 validation: Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+      "sources": [
+        {
+          "pillar": "delivery",
+          "code": "delivery_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+        },
+        {
+          "pillar": "validation",
+          "code": "validation_unavailable",
+          "effect": "CAUTION",
+          "text": "Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+        }
+      ]
     }
   ],
   "evidence": {
@@ -67,14 +81,14 @@
       },
       "http": [
         {
-          "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
-          "method": "GET",
-          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
-        },
-        {
           "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
           "method": "GET",
           "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        {
+          "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
         },
         {
           "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
@@ -97,8 +111,10 @@
       "pick": {
         "chosen": null,
         "skipped": [],
+        "unofficial": [],
         "declared": 0
       },
+      "unofficial": [],
       "chainRead": null,
       "registrationFromChain": null,
       "binding": null
@@ -109,7 +125,11 @@
         "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
       },
       "target": null,
-      "http": null
+      "http": null,
+      "validation": {
+        "status": "unavailable",
+        "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+      }
     }
   },
   "agentFacts": {
@@ -127,7 +147,7 @@
     "capabilities": {},
     "skills": [],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:38:19.488Z",
+      "lastAudited": "2026-11-22T04:51:46.703Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -149,13 +169,28 @@
           "pillar": "delivery",
           "code": "delivery_unavailable",
           "effect": "CAUTION",
-          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+          "text": "vet402: Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero. ERC-8004 validation: Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+          "sources": [
+            {
+              "pillar": "delivery",
+              "code": "delivery_unavailable",
+              "effect": "CAUTION",
+              "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+            },
+            {
+              "pillar": "validation",
+              "code": "validation_unavailable",
+              "effect": "CAUTION",
+              "text": "Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+            }
+          ]
         }
-      ]
+      ],
+      "notApplicable": []
     },
     "x_factgate_evidence": {
       "target": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
-      "checkedAt": "2026-11-22T04:38:19.488Z",
+      "checkedAt": "2026-11-22T04:51:46.703Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -200,14 +235,14 @@
         },
         "http": [
           {
-            "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
-            "method": "GET",
-            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
-          },
-          {
             "url": "https://worldwideagenticweb.org/.well-known/agent-registration.json",
             "method": "GET",
             "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          {
+            "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790"
           },
           {
             "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
@@ -230,8 +265,10 @@
         "pick": {
           "chosen": null,
           "skipped": [],
+          "unofficial": [],
           "declared": 0
         },
+        "unofficial": [],
         "chainRead": null,
         "registrationFromChain": null,
         "binding": null
@@ -242,7 +279,11 @@
           "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
         },
         "target": null,
-        "http": null
+        "http": null,
+        "validation": {
+          "status": "unavailable",
+          "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+        }
       }
     },
     "x_factgate_signature": {
@@ -255,5 +296,5 @@
     }
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 2392
+  "ms": 70
 }

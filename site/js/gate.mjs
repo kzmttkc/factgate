@@ -8,11 +8,14 @@
 // A missing pillar counts as unavailable. Unavailable is never read as zero or as good.
 //
 // Output: { verdict: "ALLOW" | "CAUTION" | "BLOCK", reasons: [{ pillar, code, effect, text }] }
+// effect is ALLOW, CAUTION, BLOCK or NOT_APPLICABLE (pillar 3 of a counterparty with no 402).
 // The verdict is the worst effect among the reasons.
 
 export const VERDICTS = Object.freeze(["ALLOW", "CAUTION", "BLOCK"]);
 
-const RANK = { ALLOW: 0, CAUTION: 1, BLOCK: 2 };
+// NOT_APPLICABLE (pillar 3 of a free counterparty) ranks with ALLOW: it does not stop ALLOW, but
+// it is shown as "not applicable", never as a pass.
+const RANK = { NOT_APPLICABLE: 0, ALLOW: 0, CAUTION: 1, BLOCK: 2 };
 
 /**
  * The rules, as plain data, for the page and the bridge to show.
@@ -23,7 +26,7 @@ export function gateRules() {
     pillars: [
       "live: does the counterparty answer as declared, and can a browser reach it over CORS",
       "identity: the site's declared ERC-8004 registration is read on chain (eth_call), then its owner and agentWallet are compared with the 402 payTo. A declaration that is not on chain is never ALLOW",
-      "delivery: does vet402's production record show content came back after payment",
+      "delivery: for a paid counterparty, vet402's production record or ERC-8004 validation scores (>= 70, none below 70) show content came back; any record of an empty paid answer or a score below 70 is BLOCK; a counterparty with no 402 is not applicable (not a pass)",
     ],
     unavailableRule: "A pillar whose data could not be fetched is CAUTION, never zero and never good.",
   };
@@ -100,14 +103,15 @@ export function judgeIdentity(identity) {
   if (registered.length === 0) {
     return reason("identity", "identity_unregistered", "CAUTION", "The ERC-8004 registration names no owner, agentWallet or payTo.");
   }
+  const at = d.registered.readAt ? ` [${d.registered.readAt}: owner ${normAddress(d.registered.owner) || "-"}, agentWallet ${normAddress(d.registered.agentWallet) || "-"}]` : "";
   const strangers = declared.filter((a) => !registered.includes(a));
   if (strangers.length > 0) {
     if (d.registered.bound === false) {
-      return reason("identity", "identity_unbound", "CAUTION", `The declared payee ${strangers.join(", ")} is not this ERC-8004 agent's, but the agent does not claim this URL either, so the comparison proves nothing.`);
+      return reason("identity", "identity_unbound", "CAUTION", `The declared payee ${strangers.join(", ")} is not this ERC-8004 agent's, but the agent does not claim this URL either, so the comparison proves nothing${at}.`);
     }
-    return reason("identity", "identity_payee_mismatch", "BLOCK", `The declared payee ${strangers.join(", ")} is not the ERC-8004 owner, agentWallet or payTo.`);
+    return reason("identity", "identity_payee_mismatch", "BLOCK", `The declared payee ${strangers.join(", ")} is not the ERC-8004 owner, agentWallet or payTo${at}.`);
   }
-  return reason("identity", "identity_match", "ALLOW", "The declared payee matches the ERC-8004 registration.");
+  return reason("identity", "identity_match", "ALLOW", `The declared payee matches the ERC-8004 registration${at}.`);
 }
 
 /**
@@ -139,14 +143,80 @@ export function judgeDelivery(delivery) {
 }
 
 /**
+ * Pillar 3, second source: ERC-8004 ValidationRegistry scores for the counterparty's agent.
+ * data: { passed, failed, pending, unresolved, selfExcluded, validators, lowest, evidence, chainId, agentId }
+ */
+export function judgeValidation(validation) {
+  if (!isOk(validation)) {
+    return unavailable(validation, "validation", "ERC-8004 validation record");
+  }
+  const d = validation.data;
+  const where = (role) => {
+    const e = Array.isArray(d.evidence) ? d.evidence.find((x) => x.role === role) : null;
+    return e && e.log && e.log.tx ? ` (tx ${e.log.tx}, block ${e.log.block}, log ${e.log.logIndex})` : "";
+  };
+  const agent = `agent ${d.agentId} on chain ${d.chainId}`;
+  if (Number(d.failed) > 0) {
+    return reason("validation", "validation_low_score", "BLOCK", `ERC-8004 validators scored ${agent} below 70 ${d.failed} time(s), lowest ${d.lowest}${where("lowest answered score") || where("answered score 0")}. Same as a paid answer that came back empty.`);
+  }
+  if (Number(d.unresolved) > 0) {
+    return reason("validation", "validation_inconclusive", "CAUTION", `${d.unresolved} score(s) of 0 for ${agent} could not be told apart from unanswered requests, so the record cannot pass.`);
+  }
+  if (Number(d.passed) > 0) {
+    return reason("validation", "validation_passed", "ALLOW", `ERC-8004 validators (${(d.validators || []).join(", ")}) scored ${agent} 70 or more ${d.passed} time(s) and never below 70${where("latest passing score")}.`);
+  }
+  return reason("validation", "validation_no_record", "CAUTION", `No answered ERC-8004 validation for ${agent}.`);
+}
+
+/**
+ * Pillar 3 from its two sources. A free counterparty (no 402) is "not applicable": it does not
+ * stop ALLOW, and the reason says it is not a pass. A paid one passes on a delivered record from
+ * either source; any BLOCK from either source is BLOCK; with no record anywhere it is CAUTION.
+ */
+export function judgeDeliveryPillar({ delivery, validation, paid }) {
+  if (paid === false) {
+    return { ...reason("delivery", "delivery_not_applicable", "NOT_APPLICABLE", "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass."), applicable: false };
+  }
+  const v402 = judgeDelivery(delivery);
+  if (validation === undefined) {
+    return v402;
+  }
+  const val = judgeValidation(validation);
+  const both = `vet402: ${v402.text} ERC-8004 validation: ${val.text}`;
+  const sources = [v402, val];
+  if (v402.effect === "BLOCK" || val.effect === "BLOCK") {
+    const code = v402.effect === "BLOCK" ? v402.code : "delivery_validation_low";
+    return { ...reason("delivery", code, "BLOCK", both), sources };
+  }
+  if (v402.effect === "ALLOW" || val.effect === "ALLOW") {
+    const code = v402.effect === "ALLOW" ? v402.code : "delivery_validated";
+    return { ...reason("delivery", code, "ALLOW", both), sources };
+  }
+  let code = "delivery_no_record";
+  if (v402.code === "delivery_unavailable" && val.code === "validation_unavailable") {
+    code = "delivery_unavailable";
+  } else if (v402.code !== "delivery_unavailable") {
+    code = v402.code;
+  } else if (val.code === "validation_inconclusive") {
+    code = "delivery_inconclusive";
+  }
+  return { ...reason("delivery", code, "CAUTION", both), sources };
+}
+
+/**
  * Combine the three pillars into one verdict.
  *
- * :param input: { live, identity, delivery }, each a pillar result or missing.
+ * :param input: { live, identity, delivery, validation?, paid? }, each a pillar result or missing.
+ *   validation is pillar 3's second source; paid false marks a counterparty with no 402.
  * :return: { verdict, reasons }.
  */
 export function evaluateGate(input) {
   const pillars = input && typeof input === "object" ? input : {};
-  const reasons = [judgeLive(pillars.live), judgeIdentity(pillars.identity), judgeDelivery(pillars.delivery)];
+  const reasons = [
+    judgeLive(pillars.live),
+    judgeIdentity(pillars.identity),
+    judgeDeliveryPillar({ delivery: pillars.delivery, validation: pillars.validation, paid: pillars.paid }),
+  ];
   let verdict = "ALLOW";
   for (const r of reasons) {
     if (RANK[r.effect] > RANK[verdict]) {

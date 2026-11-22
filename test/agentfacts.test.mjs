@@ -92,3 +92,14 @@ test("the output is plain JSON and the input is not changed", () => {
   assert.deepEqual(JSON.parse(JSON.stringify(facts)), facts);
   assert.equal(JSON.stringify(INPUT), before);
 });
+
+test("a pillar that does not apply is listed as not applicable, never as a pass; unofficial registries are shown apart", () => {
+  const facts = buildAgentFacts({
+    ...INPUT,
+    verdict: { verdict: "ALLOW", reasons: [{ pillar: "delivery", code: "delivery_not_applicable", effect: "NOT_APPLICABLE", applicable: false, text: "Not applicable" }] },
+    identity: { ...INPUT.identity, unofficial: [{ agentId: 194, agentRegistry: "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944", note: "shown only" }] },
+  });
+  assert.deepEqual(facts.x_factgate_verdict.notApplicable, ["delivery: not applicable (not a pass)"]);
+  assert.equal(facts.x_factgate_unofficial_registries[0].agentId, 194);
+  assert.doesNotMatch(JSON.stringify(facts.x_factgate_verdict.notApplicable), /pass"/);
+});

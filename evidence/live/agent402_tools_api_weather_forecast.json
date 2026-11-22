@@ -1,6 +1,6 @@
 {
   "url": "https://agent402.tools/api/weather-forecast",
-  "checkedAt": "2026-11-22T04:38:12.938Z",
+  "checkedAt": "2026-11-22T04:51:40.065Z",
   "verdict": "ALLOW",
   "reasons": [
     {
@@ -13,13 +13,27 @@
       "pillar": "identity",
       "code": "identity_match",
       "effect": "ALLOW",
-      "text": "The declared payee matches the ERC-8004 registration."
+      "text": "The declared payee matches the ERC-8004 registration [eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639: owner 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0, agentWallet 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0]."
     },
     {
       "pillar": "delivery",
       "code": "delivery_delivered",
       "effect": "ALLOW",
-      "text": "vet402 recorded content coming back on 3 of 3 paid tests."
+      "text": "vet402: vet402 recorded content coming back on 3 of 3 paid tests. ERC-8004 validation: No answered ERC-8004 validation for agent 94639 on chain 8453.",
+      "sources": [
+        {
+          "pillar": "delivery",
+          "code": "delivery_delivered",
+          "effect": "ALLOW",
+          "text": "vet402 recorded content coming back on 3 of 3 paid tests."
+        },
+        {
+          "pillar": "validation",
+          "code": "validation_no_record",
+          "effect": "CAUTION",
+          "text": "No answered ERC-8004 validation for agent 94639 on chain 8453."
+        }
+      ]
     }
   ],
   "evidence": {
@@ -333,7 +347,8 @@
             "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
             "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
             "payTo": null,
-            "bound": true
+            "bound": true,
+            "readAt": "eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639"
           }
         }
       },
@@ -439,14 +454,18 @@
           "agentId": "94639"
         },
         "skipped": [],
+        "unofficial": [],
         "declared": 1
       },
+      "unofficial": [],
       "chainRead": {
         "ok": true,
         "exists": true,
         "chainId": 8453,
+        "chain": "Base",
         "agentId": "94639",
         "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+        "block": 60663629,
         "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
         "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
         "tokenURI": "https://agent402.tools/.well-known/agent-registration.json",
@@ -456,6 +475,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000171af",
+            "block": "0x39da74d",
             "ok": true,
             "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
           },
@@ -464,6 +484,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x0033950900000000000000000000000000000000000000000000000000000000000171af",
+            "block": "0x39da74d",
             "ok": true,
             "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
           },
@@ -472,6 +493,7 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000171af",
+            "block": "0x39da74d",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003a68747470733a2f2f6167656e743430322e746f6f6c732f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e000000000000"
           }
@@ -639,17 +661,35 @@
           "record_url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9",
           "diagnose_url": null,
           "method_url": "https://vet402.com/observatory/methodology",
-          "as_of": "2026-11-22T04:38:15.332Z",
+          "as_of": "2026-11-22T04:50:39.786Z",
           "truncated": false,
           "next_action": "Pay only if what you are about to send matches this record: same recipient, network, and amount. Payment can still fail after you pay."
         }
       },
+      "paid": true,
       "target": "https://agent402.tools/api/weather-forecast",
       "http": {
         "url": "https://vet402.com/mcp",
         "method": "POST tools/call check_x402_seller",
         "argument": "https://agent402.tools/api/weather-forecast",
         "status": 200
+      },
+      "validation": {
+        "status": "ok",
+        "data": {
+          "registry": "0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58",
+          "chainId": 8453,
+          "agentId": "94639",
+          "total": 0,
+          "passed": 0,
+          "failed": 0,
+          "pending": 0,
+          "unresolved": 0,
+          "selfExcluded": 0,
+          "validators": [],
+          "lowest": null,
+          "evidence": []
+        }
       }
     }
   },
@@ -725,7 +765,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:38:12.938Z",
+      "lastAudited": "2026-11-22T04:51:40.065Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -741,19 +781,34 @@
           "pillar": "identity",
           "code": "identity_match",
           "effect": "ALLOW",
-          "text": "The declared payee matches the ERC-8004 registration."
+          "text": "The declared payee matches the ERC-8004 registration [eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639: owner 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0, agentWallet 0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0]."
         },
         {
           "pillar": "delivery",
           "code": "delivery_delivered",
           "effect": "ALLOW",
-          "text": "vet402 recorded content coming back on 3 of 3 paid tests."
+          "text": "vet402: vet402 recorded content coming back on 3 of 3 paid tests. ERC-8004 validation: No answered ERC-8004 validation for agent 94639 on chain 8453.",
+          "sources": [
+            {
+              "pillar": "delivery",
+              "code": "delivery_delivered",
+              "effect": "ALLOW",
+              "text": "vet402 recorded content coming back on 3 of 3 paid tests."
+            },
+            {
+              "pillar": "validation",
+              "code": "validation_no_record",
+              "effect": "CAUTION",
+              "text": "No answered ERC-8004 validation for agent 94639 on chain 8453."
+            }
+          ]
         }
-      ]
+      ],
+      "notApplicable": []
     },
     "x_factgate_evidence": {
       "target": "https://agent402.tools/api/weather-forecast",
-      "checkedAt": "2026-11-22T04:38:12.938Z",
+      "checkedAt": "2026-11-22T04:51:40.065Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -1064,7 +1119,8 @@
               "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
               "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
               "payTo": null,
-              "bound": true
+              "bound": true,
+              "readAt": "eth_call at Base block 60663629, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 94639"
             }
           }
         },
@@ -1170,14 +1226,18 @@
             "agentId": "94639"
           },
           "skipped": [],
+          "unofficial": [],
           "declared": 1
         },
+        "unofficial": [],
         "chainRead": {
           "ok": true,
           "exists": true,
           "chainId": 8453,
+          "chain": "Base",
           "agentId": "94639",
           "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+          "block": 60663629,
           "owner": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
           "agentWallet": "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0",
           "tokenURI": "https://agent402.tools/.well-known/agent-registration.json",
@@ -1187,6 +1247,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000171af",
+              "block": "0x39da74d",
               "ok": true,
               "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
             },
@@ -1195,6 +1256,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x0033950900000000000000000000000000000000000000000000000000000000000171af",
+              "block": "0x39da74d",
               "ok": true,
               "result": "0x000000000000000000000000abf4fabd7c416fb67202e5f9002389fc75e2a9d0"
             },
@@ -1203,6 +1265,7 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000171af",
+              "block": "0x39da74d",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003a68747470733a2f2f6167656e743430322e746f6f6c732f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e000000000000"
             }
@@ -1370,17 +1433,35 @@
             "record_url": "https://vet402.com/observatory/e/7cf89d69-70dd-4e1c-9ee3-4e68e8def7e9",
             "diagnose_url": null,
             "method_url": "https://vet402.com/observatory/methodology",
-            "as_of": "2026-11-22T04:38:15.332Z",
+            "as_of": "2026-11-22T04:50:39.786Z",
             "truncated": false,
             "next_action": "Pay only if what you are about to send matches this record: same recipient, network, and amount. Payment can still fail after you pay."
           }
         },
+        "paid": true,
         "target": "https://agent402.tools/api/weather-forecast",
         "http": {
           "url": "https://vet402.com/mcp",
           "method": "POST tools/call check_x402_seller",
           "argument": "https://agent402.tools/api/weather-forecast",
           "status": 200
+        },
+        "validation": {
+          "status": "ok",
+          "data": {
+            "registry": "0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58",
+            "chainId": 8453,
+            "agentId": "94639",
+            "total": 0,
+            "passed": 0,
+            "failed": 0,
+            "pending": 0,
+            "unresolved": 0,
+            "selfExcluded": 0,
+            "validators": [],
+            "lowest": null,
+            "evidence": []
+          }
         }
       }
     },
@@ -1394,5 +1475,5 @@
     }
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 2504
+  "ms": 2935
 }

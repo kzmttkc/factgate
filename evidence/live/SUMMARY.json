@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-11-22T04:38:12.937Z",
+  "measuredAt": "2026-11-22T04:51:40.064Z",
   "pageOrigin": "http://localhost:8790",
   "method": "gateCheck() with scripts/cors-fetch.mjs (browser CORS rules applied to real answers)",
   "targets": [
@@ -27,7 +27,7 @@
       "codes": [
         "ALLOW:live_as_declared",
         "CAUTION:identity_unavailable",
-        "CAUTION:delivery_unavailable"
+        "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
         "GET https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json -> 404",
@@ -45,11 +45,11 @@
       "codes": [
         "ALLOW:live_as_declared",
         "CAUTION:identity_unavailable",
-        "CAUTION:delivery_unavailable"
+        "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
-        "GET https://deadline-desk-agent.vercel.app/agent-manifest.json -> 200",
         "GET https://deadline-desk-agent.vercel.app/.well-known/agent-registration.json -> 404",
+        "GET https://deadline-desk-agent.vercel.app/agent-manifest.json -> 200",
         "GET https://deadline-desk-agent.vercel.app/deadline_desk -> TypeError: CORS refused: GET https://deadline-desk-agent.vercel.app/deadline_desk answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
         "GET https://deadline-desk-agent.vercel.app/deadline_desk.network.json -> 200",
         "POST initialize https://deadline-desk-agent.vercel.app/api/mcp -> 200",
@@ -63,11 +63,11 @@
       "codes": [
         "ALLOW:live_as_declared",
         "CAUTION:identity_unavailable",
-        "CAUTION:delivery_unavailable"
+        "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
-        "GET https://ledenti.github.io/.well-known/agent-registration.json -> TypeError: CORS refused: GET https://ledenti.github.io/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
         "GET https://ledenti.github.io/trois-nombres/agent-manifest.json -> 200",
+        "GET https://ledenti.github.io/.well-known/agent-registration.json -> TypeError: CORS refused: GET https://ledenti.github.io/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
         "GET https://ledenti.github.io/trois-nombres/three_numbers -> 404",
         "GET https://ledenti.github.io/trois-nombres/three_numbers.network.json -> 200",
         "POST initialize https://three-numbers-mcp.onrender.com/mcp -> 200",
@@ -81,11 +81,11 @@
       "codes": [
         "ALLOW:live_as_declared",
         "CAUTION:identity_unavailable",
-        "CAUTION:delivery_unavailable"
+        "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
-        "GET https://shutdown-clerk.pages.dev/agent-manifest.json -> 200",
         "GET https://shutdown-clerk.pages.dev/.well-known/agent-registration.json -> 200",
+        "GET https://shutdown-clerk.pages.dev/agent-manifest.json -> 200",
         "GET https://shutdown-clerk.pages.dev/shutdown_clerk -> 200",
         "GET https://shutdown-clerk.pages.dev/shutdown_clerk.network.json -> 200"
       ]
@@ -97,11 +97,11 @@
       "codes": [
         "ALLOW:live_as_declared",
         "CAUTION:identity_unavailable",
-        "CAUTION:delivery_unavailable"
+        "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
-        "GET https://cocvn157.github.io/nanda-seal/agent-manifest.json -> 200",
         "GET https://cocvn157.github.io/.well-known/agent-registration.json -> 404",
+        "GET https://cocvn157.github.io/nanda-seal/agent-manifest.json -> 200",
         "GET https://cocvn157.github.io/nanda-seal/nanda_seal_verifier -> 404",
         "GET https://cocvn157.github.io/nanda-seal/nanda_seal_verifier.network.json -> 200"
       ]
@@ -116,8 +116,8 @@
         "CAUTION:delivery_unavailable"
       ],
       "http": [
-        "GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json -> TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790",
         "GET https://worldwideagenticweb.org/.well-known/agent-registration.json -> TypeError: CORS refused: GET https://worldwideagenticweb.org/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json -> TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/agent-manifest.json answered 200 without an Access-Control-Allow-Origin for http://localhost:8790",
         "GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget -> TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
       ]
     },
@@ -128,7 +128,7 @@
       "codes": [
         "ALLOW:live_as_declared",
         "CAUTION:identity_no_declared_payee",
-        "CAUTION:delivery_unavailable"
+        "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
         "GET https://vet402.com/.well-known/agent-registration.json -> 200",
@@ -144,8 +144,8 @@
       "verdict": "BLOCK",
       "codes": [
         "BLOCK:live_not_as_declared",
-        "CAUTION:identity_declared_only",
-        "CAUTION:delivery_unavailable"
+        "BLOCK:identity_payee_mismatch",
+        "BLOCK:delivery_validation_low"
       ],
       "http": [
         "GET http://127.0.0.1:8791/.well-known/agent-registration.json -> 200",
@@ -160,11 +160,11 @@
     {
       "file": "127_0_0_1_8792_verified_stay.json",
       "url": "http://127.0.0.1:8792/verified_stay",
-      "verdict": "CAUTION",
+      "verdict": "ALLOW",
       "codes": [
         "ALLOW:live_as_declared",
-        "CAUTION:identity_declared_only",
-        "CAUTION:delivery_unavailable"
+        "ALLOW:identity_match",
+        "ALLOW:delivery_validated"
       ],
       "http": [
         "GET http://127.0.0.1:8792/agent-manifest.json -> 200",

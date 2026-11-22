@@ -83,9 +83,12 @@ test("pickRegistration takes the first official registry on a supported chain an
     ],
   });
   assert.deepEqual(picked.chosen, { chainId: 8453, agentId: "94639" });
-  assert.equal(picked.skipped.length, 1);
-  assert.match(picked.skipped[0], /not the official IdentityRegistry/);
+  assert.equal(picked.skipped.length, 0);
+  assert.equal(picked.unofficial.length, 1);
+  assert.match(picked.unofficial[0].note, /not the official ERC-8004 IdentityRegistry/);
   assert.equal(pickRegistration(null).chosen, null);
+  const other = pickRegistration({ registrations: [{ agentId: 1, agentRegistry: "eip155:1:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" }] });
+  assert.match(other.skipped[0], /chain 1 is not one FactGate reads/);
 });
 
 test("decodeDataUriJson reads base64 and plain JSON data URIs", () => {
@@ -174,6 +177,9 @@ function rpcFake(answers) {
   const calls = [];
   const fetchImpl = async (url, init) => {
     const body = JSON.parse(init.body);
+    if (body.method === "eth_blockNumber") {
+      return new Response(JSON.stringify({ jsonrpc: "2.0", id: 1, result: "0x3b2e1a0" }), { status: 200 });
+    }
     calls.push({ url, data: body.params[0].data, to: body.params[0].to });
     const sel = body.params[0].data.slice(0, 10);
     const a = answers[sel];
@@ -201,6 +207,8 @@ test("readAgent reads owner, agentWallet and tokenURI with eth_call only", async
   assert.equal(r.tokenURI, uri);
   assert.ok(calls.every((c) => c.url === "https://mainnet.base.org" && c.to === IDENTITY_REGISTRY.mainnet));
   assert.equal(r.rpc.length, 3);
+  assert.equal(r.block, 0x3b2e1a0);
+  assert.ok(r.rpc.every((x) => x.block === "0x3b2e1a0"));
 });
 
 test("readAgent: a revert on ownerOf means the agent does not exist", async () => {
@@ -227,4 +235,20 @@ test("readAgent: an unsupported chain or a network error is unavailable", async 
   const r = await readAgent({ chainId: 8453, agentId: "1" }, fetchImpl);
   assert.equal(r.ok, false);
   assert.match(r.error, /Failed to fetch/);
+});
+
+test("pickRegistration: a registration only in an unofficial registry (vet402's Self Agent ID 194) is shown, not judged", () => {
+  const picked = pickRegistration({
+    registrations: [
+      { agentId: 9907, agentRegistry: "eip155:42220:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" },
+      { agentId: 194, agentRegistry: "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944" },
+    ],
+  });
+  assert.deepEqual(picked.chosen, { chainId: 42220, agentId: "9907" });
+  assert.deepEqual(picked.skipped, []);
+  assert.equal(picked.unofficial[0].agentId, 194);
+  const onlyUnofficial = pickRegistration({ registrations: [{ agentId: 194, agentRegistry: "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944" }] });
+  assert.equal(onlyUnofficial.chosen, null);
+  assert.equal(onlyUnofficial.skipped.length, 0);
+  assert.equal(onlyUnofficial.unofficial.length, 1);
 });

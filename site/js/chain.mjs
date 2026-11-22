@@ -120,10 +120,11 @@ export function parseAgentRegistry(value) {
 
 /**
  * From a registration file's "registrations", take the first entry on a chain FactGate reads
- * whose agentRegistry is the official IdentityRegistry. Name every entry it skips and why.
+ * whose agentRegistry is the official IdentityRegistry. Entries in another registry go to
+ * "unofficial" (shown, never judged); other entries it cannot read go to "skipped" with why.
  */
 export function pickRegistration(file) {
-  const out = { chosen: null, skipped: [], declared: 0 };
+  const out = { chosen: null, skipped: [], unofficial: [], declared: 0 };
   const list = file && Array.isArray(file.registrations) ? file.registrations : [];
   out.declared = list.length;
   for (const r of list) {
@@ -139,7 +140,8 @@ export function pickRegistration(file) {
       continue;
     }
     if (reg.address !== chain.registry.toLowerCase()) {
-      out.skipped.push(`${label}: not the official IdentityRegistry on ${chain.name} (${chain.registry})`);
+      // Another registry (for example Self Agent ID on Celo): shown, never judged.
+      out.unofficial.push({ agentId: r.agentId, agentRegistry: r.agentRegistry, note: `not the official ERC-8004 IdentityRegistry on ${chain.name} (${chain.registry}); shown only, not used in the verdict` });
       continue;
     }
     let agentId;
@@ -270,12 +272,21 @@ export function identityPillar({ payTos, chainRead, binding, noAgentReason, decl
   const wallet = chainRead.agentWallet && !isZeroAddress(chainRead.agentWallet) ? chainRead.agentWallet : null;
   return {
     status: "ok",
-    data: { ...base, registered: { owner: chainRead.owner, agentWallet: wallet, payTo: null, bound: binding ? binding.bound : false } },
+    data: {
+      ...base,
+      registered: {
+        owner: chainRead.owner,
+        agentWallet: wallet,
+        payTo: null,
+        bound: binding ? binding.bound : false,
+        readAt: `eth_call at ${chainRead.chain || `chain ${chainRead.chainId}`} block ${chainRead.block ?? "latest"}, IdentityRegistry ${chainRead.registry}, agentId ${chainRead.agentId}`,
+      },
+    },
   };
 }
 
-async function ethCall(fetchImpl, chain, data, timeoutMs) {
-  const body = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: chain.registry, data }, "latest"] });
+async function ethCall(fetchImpl, chain, data, timeoutMs, blockTag = "latest") {
+  const body = JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_call", params: [{ to: chain.registry, data }, blockTag] });
   const got = await timedFetch(fetchImpl, chain.rpc, { method: "POST", headers: { "Content-Type": "application/json" }, body }, timeoutMs);
   if (!got.ok) {
     return { ok: false, error: got.error };
@@ -314,8 +325,22 @@ export async function readAgent({ chainId, agentId }, fetchImpl, timeoutMs = DEF
   } catch (error) {
     return { ok: false, error: error.message, rpc: [] };
   }
-  const answers = await Promise.all(calls.map(([, data]) => ethCall(fetchImpl, chain, data, timeoutMs)));
-  const rpc = calls.map(([fn, data], i) => ({ url: chain.rpc, method: `eth_call ${fn}`, to: chain.registry, data, ...answers[i] }));
+  // Pin every read to one block, so the evidence names where it was read.
+  let blockTag = "latest";
+  const head = await timedFetch(fetchImpl, chain.rpc, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_blockNumber", params: [] }) }, timeoutMs);
+  if (head.ok && head.response.status === 200) {
+    try {
+      const j = await head.response.json();
+      if (typeof j.result === "string" && /^0x[0-9a-f]+$/i.test(j.result)) {
+        blockTag = j.result;
+      }
+    } catch {
+      // keep "latest"
+    }
+  }
+  const block = blockTag === "latest" ? null : parseInt(blockTag, 16);
+  const answers = await Promise.all(calls.map(([, data]) => ethCall(fetchImpl, chain, data, timeoutMs, blockTag)));
+  const rpc = calls.map(([fn, data], i) => ({ url: chain.rpc, method: `eth_call ${fn}`, to: chain.registry, data, block: blockTag, ...answers[i] }));
   const byFn = Object.fromEntries(calls.map(([fn], i) => [fn, answers[i]]));
   const owner = byFn.ownerOf;
   if (!owner.ok) {
@@ -335,5 +360,5 @@ export async function readAgent({ chainId, agentId }, fetchImpl, timeoutMs = DEF
   const wallet = walletAnswer.ok && walletAnswer.result ? decodeAddress(walletAnswer.result) : null;
   const uriAnswer = byFn.tokenURI;
   const tokenURI = uriAnswer.ok && uriAnswer.result ? decodeString(uriAnswer.result) : null;
-  return { ok: true, exists: true, chainId: Number(chainId), agentId: String(agentId), registry: chain.registry, owner: ownerAddr, agentWallet: wallet, tokenURI, rpc };
+  return { ok: true, exists: true, chainId: Number(chainId), chain: chain.name, agentId: String(agentId), registry: chain.registry, block, owner: ownerAddr, agentWallet: wallet, tokenURI, rpc };
 }

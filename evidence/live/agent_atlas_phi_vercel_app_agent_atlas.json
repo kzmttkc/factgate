@@ -1,6 +1,6 @@
 {
   "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
-  "checkedAt": "2026-11-22T04:38:15.447Z",
+  "checkedAt": "2026-11-22T04:51:43.005Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -17,9 +17,10 @@
     },
     {
       "pillar": "delivery",
-      "code": "delivery_unavailable",
-      "effect": "CAUTION",
-      "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+      "code": "delivery_not_applicable",
+      "effect": "NOT_APPLICABLE",
+      "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+      "applicable": false
     }
   ],
   "evidence": {
@@ -198,8 +199,10 @@
       "pick": {
         "chosen": null,
         "skipped": [],
+        "unofficial": [],
         "declared": 0
       },
+      "unofficial": [],
       "chainRead": null,
       "registrationFromChain": null,
       "binding": null
@@ -207,10 +210,12 @@
     "delivery": {
       "pillar": {
         "status": "unavailable",
-        "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+        "error": "not applicable: no 402"
       },
+      "paid": false,
       "target": null,
-      "http": null
+      "http": null,
+      "validation": null
     }
   },
   "agentFacts": {
@@ -240,7 +245,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:38:15.447Z",
+      "lastAudited": "2026-11-22T04:51:43.005Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -260,15 +265,19 @@
         },
         {
           "pillar": "delivery",
-          "code": "delivery_unavailable",
-          "effect": "CAUTION",
-          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+          "code": "delivery_not_applicable",
+          "effect": "NOT_APPLICABLE",
+          "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+          "applicable": false
         }
+      ],
+      "notApplicable": [
+        "delivery: not applicable (not a pass)"
       ]
     },
     "x_factgate_evidence": {
       "target": "https://agent-atlas-phi.vercel.app/agent_atlas",
-      "checkedAt": "2026-11-22T04:38:15.447Z",
+      "checkedAt": "2026-11-22T04:51:43.005Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -444,8 +453,10 @@
         "pick": {
           "chosen": null,
           "skipped": [],
+          "unofficial": [],
           "declared": 0
         },
+        "unofficial": [],
         "chainRead": null,
         "registrationFromChain": null,
         "binding": null
@@ -453,10 +464,12 @@
       "delivery": {
         "pillar": {
           "status": "unavailable",
-          "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+          "error": "not applicable: no 402"
         },
+        "paid": false,
         "target": null,
-        "http": null
+        "http": null,
+        "validation": null
       }
     },
     "x_factgate_signature": {
@@ -469,5 +482,5 @@
     }
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 962
+  "ms": 896
 }

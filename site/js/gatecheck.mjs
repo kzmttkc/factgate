@@ -9,6 +9,7 @@ import { buildAgentFacts } from "./agentfacts.mjs";
 import { CHAINS, bindingOf, decodeDataUriJson, evmPayTos, identityPillar, pickRegistration, readAgent } from "./chain.mjs";
 import { deliveryFromMcp, evaluateGate } from "./gate.mjs";
 import { DEFAULT_TIMEOUT_MS, parseJson, readText, timedFetch } from "./net.mjs";
+import { readValidations } from "./validation.mjs";
 import { parseRpcBody, probeLive } from "./probe.mjs";
 
 export const VET402_MCP = "https://vet402.com/mcp";
@@ -79,7 +80,7 @@ export async function gateCheck(target, options) {
 
   // Pillar 2, in order: the registration the site declares -> the chain -> the 402 payTo.
   const payTos = evmPayTos(live.declared && live.declared.terms);
-  const idEvidence = { payTos, source: null, agent: null, pick: null, chainRead: null, registrationFromChain: null, binding: null };
+  const idEvidence = { payTos, source: null, agent: null, pick: null, unofficial: [], chainRead: null, registrationFromChain: null, binding: null };
   let agent = null;
   let noAgentReason = null;
   let declaredOnlyReason = null;
@@ -90,12 +91,15 @@ export async function gateCheck(target, options) {
   } else {
     const pick = pickRegistration(live.declared && live.declared.registrationFile);
     idEvidence.pick = pick;
+    idEvidence.unofficial = pick.unofficial;
     if (pick.chosen) {
       agent = pick.chosen;
       idEvidence.source = `declared in ${live.declared.registrationUrl}`;
-    } else if (pick.declared > 0) {
+    } else if (pick.skipped.length > 0) {
       declaredOnlyReason = pick.skipped.join("; ");
       idEvidence.source = `declared in ${live.declared.registrationUrl}, not readable on any chain FactGate reads`;
+    } else if (pick.unofficial.length > 0) {
+      noAgentReason = `the counterparty declares no registration in the official ERC-8004 IdentityRegistry (only in another registry, shown separately: ${pick.unofficial.map((u) => `${u.agentId} at ${u.agentRegistry}`).join(", ")})`;
     } else {
       noAgentReason = "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given";
     }
@@ -116,11 +120,16 @@ export async function gateCheck(target, options) {
   }
   const identity = identityPillar({ payTos, chainRead, binding, noAgentReason, declaredOnlyReason });
 
-  // Pillar 3.
+  // Pillar 3. Paid = the counterparty answered with x402 terms. A free one is "not applicable".
+  // Unknown (the browser could not read it) is neither.
+  const liveData = live.pillar && live.pillar.data;
+  const paid = live.declared && live.declared.terms ? true : liveData && liveData.corsReachable === true ? false : undefined;
   let delivery;
   const dt = deliveryTargetOf(url, live);
-  const delEvidence = { target: dt.target, http: null };
-  if (options.skipDelivery) {
+  const delEvidence = { paid, target: dt.target, http: null, validation: null };
+  if (paid === false) {
+    delivery = { status: "unavailable", error: "not applicable: no 402" };
+  } else if (options.skipDelivery) {
     delivery = { status: "unavailable", error: "not read in this call" };
   } else if (!dt.target) {
     delivery = { status: "unavailable", error: dt.why };
@@ -131,8 +140,22 @@ export async function gateCheck(target, options) {
     delivery = got.pillar;
     delEvidence.http = got.http;
   }
+  // Second source: ERC-8004 validation scores, only for an agent on chain that claims this URL.
+  let validation;
+  if (paid === false || options.skipDelivery) {
+    validation = undefined;
+  } else if (!agent) {
+    validation = { status: "unavailable", error: noAgentReason || declaredOnlyReason || "no ERC-8004 agent" };
+  } else if (!chainRead || !chainRead.ok || !chainRead.exists) {
+    validation = { status: "unavailable", error: "the agent is not on chain" };
+  } else if (!binding || !binding.bound) {
+    validation = { status: "unavailable", error: "the agent does not claim this URL, so its validations do not speak for it" };
+  } else {
+    validation = await readValidations({ chainId: agent.chainId, agentId: agent.agentId, selfAddresses: [chainRead.owner, chainRead.agentWallet] }, fetchImpl, { timeoutMs });
+  }
+  delEvidence.validation = validation || null;
 
-  const verdict = evaluateGate({ live: live.pillar, identity, delivery });
+  const verdict = evaluateGate({ live: live.pillar, identity, delivery, validation, paid });
   const evidence = {
     live: { pillar: live.pillar, checks: live.checks, declared: live.declared, http: live.http },
     identity: { pillar: identity, ...idEvidence },
@@ -167,6 +190,8 @@ export function summarizeCheck(result) {
       owner: reg ? reg.owner : null,
       agentWallet: reg ? reg.agentWallet : null,
       bound: e.identity.binding ? e.identity.binding.bound : null,
+      readAt: reg ? `${reg.chain} block ${reg.block}` : null,
+      unofficialRegistries: e.identity.unofficial,
       error: e.identity.pillar.error,
     },
     delivery: {
@@ -174,6 +199,10 @@ export function summarizeCheck(result) {
       recommendation: e.delivery.pillar.data ? e.delivery.pillar.data.recommendation : null,
       record: e.delivery.pillar.data && e.delivery.pillar.data.delivery ? e.delivery.pillar.data.delivery : null,
       error: e.delivery.pillar.error,
+      applicable: e.delivery.paid !== false,
+      validation: e.delivery.validation && e.delivery.validation.data
+        ? (({ passed, failed, pending, unresolved, validators, evidence }) => ({ passed, failed, pending, unresolved, validators, evidence: (evidence || []).map((x) => ({ role: x.role, response: x.response, tx: x.log && x.log.tx, block: x.log && x.log.block, logIndex: x.log && x.log.logIndex })) }))(e.delivery.validation.data)
+        : e.delivery.validation,
     },
     agentFacts: "The full AgentFacts JSON with every source URL is on the FactGate page (Download AgentFacts).",
   };

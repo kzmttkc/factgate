@@ -1,6 +1,6 @@
 {
   "url": "https://vet402.com/",
-  "checkedAt": "2026-11-22T04:38:21.882Z",
+  "checkedAt": "2026-11-22T04:51:46.775Z",
   "verdict": "CAUTION",
   "reasons": [
     {
@@ -17,9 +17,10 @@
     },
     {
       "pillar": "delivery",
-      "code": "delivery_unavailable",
-      "effect": "CAUTION",
-      "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+      "code": "delivery_not_applicable",
+      "effect": "NOT_APPLICABLE",
+      "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+      "applicable": false
     }
   ],
   "evidence": {
@@ -179,7 +180,8 @@
             "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
             "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
             "payTo": null,
-            "bound": true
+            "bound": true,
+            "readAt": "eth_call at Celo block 83422348, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
           }
         }
       },
@@ -200,17 +202,31 @@
           "chainId": 42220,
           "agentId": "9907"
         },
-        "skipped": [
-          "agentId 194 at eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944: not the official IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432)"
+        "skipped": [],
+        "unofficial": [
+          {
+            "agentId": 194,
+            "agentRegistry": "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944",
+            "note": "not the official ERC-8004 IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432); shown only, not used in the verdict"
+          }
         ],
         "declared": 2
       },
+      "unofficial": [
+        {
+          "agentId": 194,
+          "agentRegistry": "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944",
+          "note": "not the official ERC-8004 IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432); shown only, not used in the verdict"
+        }
+      ],
       "chainRead": {
         "ok": true,
         "exists": true,
         "chainId": 42220,
+        "chain": "Celo",
         "agentId": "9907",
         "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+        "block": 83422348,
         "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
         "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
         "tokenURI": "https://vet402.com/.well-known/agent-registration.json",
@@ -220,6 +236,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000026b3",
+            "block": "0x4f8ec8c",
             "ok": true,
             "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
           },
@@ -228,6 +245,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x0033950900000000000000000000000000000000000000000000000000000000000026b3",
+            "block": "0x4f8ec8c",
             "ok": true,
             "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
           },
@@ -236,6 +254,7 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000026b3",
+            "block": "0x4f8ec8c",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003668747470733a2f2f7665743430322e636f6d2f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e00000000000000000000"
           }
@@ -253,10 +272,12 @@
     "delivery": {
       "pillar": {
         "status": "unavailable",
-        "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+        "error": "not applicable: no 402"
       },
+      "paid": false,
       "target": null,
-      "http": null
+      "http": null,
+      "validation": null
     }
   },
   "agentFacts": {
@@ -295,7 +316,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T04:38:21.882Z",
+      "lastAudited": "2026-11-22T04:51:46.775Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -315,15 +336,26 @@
         },
         {
           "pillar": "delivery",
-          "code": "delivery_unavailable",
-          "effect": "CAUTION",
-          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+          "code": "delivery_not_applicable",
+          "effect": "NOT_APPLICABLE",
+          "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+          "applicable": false
         }
+      ],
+      "notApplicable": [
+        "delivery: not applicable (not a pass)"
       ]
     },
+    "x_factgate_unofficial_registries": [
+      {
+        "agentId": 194,
+        "agentRegistry": "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944",
+        "note": "not the official ERC-8004 IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432); shown only, not used in the verdict"
+      }
+    ],
     "x_factgate_evidence": {
       "target": "https://vet402.com/",
-      "checkedAt": "2026-11-22T04:38:21.882Z",
+      "checkedAt": "2026-11-22T04:51:46.775Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -480,7 +512,8 @@
               "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
               "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
               "payTo": null,
-              "bound": true
+              "bound": true,
+              "readAt": "eth_call at Celo block 83422348, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
             }
           }
         },
@@ -501,17 +534,31 @@
             "chainId": 42220,
             "agentId": "9907"
           },
-          "skipped": [
-            "agentId 194 at eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944: not the official IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432)"
+          "skipped": [],
+          "unofficial": [
+            {
+              "agentId": 194,
+              "agentRegistry": "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944",
+              "note": "not the official ERC-8004 IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432); shown only, not used in the verdict"
+            }
           ],
           "declared": 2
         },
+        "unofficial": [
+          {
+            "agentId": 194,
+            "agentRegistry": "eip155:42220:0xaC3DF9ABf80d0F5c020C06B04Cced27763355944",
+            "note": "not the official ERC-8004 IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432); shown only, not used in the verdict"
+          }
+        ],
         "chainRead": {
           "ok": true,
           "exists": true,
           "chainId": 42220,
+          "chain": "Celo",
           "agentId": "9907",
           "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+          "block": 83422348,
           "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
           "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
           "tokenURI": "https://vet402.com/.well-known/agent-registration.json",
@@ -521,6 +568,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000026b3",
+              "block": "0x4f8ec8c",
               "ok": true,
               "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
             },
@@ -529,6 +577,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x0033950900000000000000000000000000000000000000000000000000000000000026b3",
+              "block": "0x4f8ec8c",
               "ok": true,
               "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
             },
@@ -537,6 +586,7 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000026b3",
+              "block": "0x4f8ec8c",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003668747470733a2f2f7665743430322e636f6d2f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e00000000000000000000"
             }
@@ -554,10 +604,12 @@
       "delivery": {
         "pillar": {
           "status": "unavailable",
-          "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+          "error": "not applicable: no 402"
         },
+        "paid": false,
         "target": null,
-        "http": null
+        "http": null,
+        "validation": null
       }
     },
     "x_factgate_signature": {
@@ -570,5 +622,5 @@
     }
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 1723
+  "ms": 2251
 }
