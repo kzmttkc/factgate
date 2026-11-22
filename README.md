@@ -6,6 +6,14 @@ Before your agent links to or pays a site, FactGate checks three facts:
 **Live** (does it answer as declared?) · **Identity** (does the ERC-8004 wallet match the x402 payee?) · **Delivery** (did paid calls really return content?).
 Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 
+**Agents:** `gate_coordinator` turns a visitor request into a check and an explanation · `manifest_inspector` reads the counterparty manifest and NANDA listing · `capability_prober` probes live answers and MCP tools · `evidence_verifier` reads ERC-8004 on chain and vet402's delivery record.
+
+FactGate is **not** a runtime egress firewall like ScopeGate Studio: it checks **before** the call, from measured facts, not from a self-declared listing.
+
+**Built new for this challenge:** first commit 2026-11-22. vet402 and the Delivery Court validator are the author's earlier services, read here as external read-only sources.
+
+![Architecture](docs/architecture.png)
+
 ▶ Try it: https://factgate.vercel.app/ — no key needed.  ▶ 2-min video: link added on submission
 
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
@@ -173,7 +181,7 @@ Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/f
 
 ## Rules worth knowing
 
-- **Consent.** Round 1 card: the counterparty's origin and the NANDA Index. Round 2: what reading it showed is needed (chain RPC, vet402.com, MCP servers it declares). Each row is allowed or declined on its own. A declined origin is never contacted, and its pillar becomes CAUTION. "Allow selected for this visit" is remembered per origin until the page closes, only when chosen.
+- **Consent.** Round 1 card: the counterparty's origin and the NANDA Index. Round 2: what reading it showed is needed (chain RPC endpoints — primary and CORS-verified fallback per chain — vet402.com, MCP servers it declares). Each origin is its own row. A declined origin is never contacted, and its pillar becomes CAUTION. "Allow selected for this visit" is remembered per origin until the page closes, only when chosen.
 - **Redirects.** FactGate never lets the fetch follow a redirect. A redirect whose `Location` can be read is a new destination: it goes back through the consent check, so another origin gets its own card and no request before it (`test/redirect.test.mjs`). A browser hides the `Location` of such a redirect, so on the page a redirect is recorded as not followed.
 - **Measurements, not model values.** `website_evaluate_gate` and `website_save_check` take only the `measurementId` that `website_gate_check` (or `website_check_seller`) returned; they never accept pillar values a model wrote. The Developer form's hand-entered verdicts are kept in their own list, marked "hand-entered, not measured".
 - **NANDA Index.** `manifest_inspector` (and every full check) reads `https://api.nandaindex.org/api/v1/index` and shows the one matching record (by URL host, `urn:air:` id, orgId or name). A listing is shown, not counted in the verdict.

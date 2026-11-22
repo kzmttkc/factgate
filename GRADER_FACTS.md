@@ -22,7 +22,7 @@ MVP spec section 6 (each with the test or screen that shows it; details in READM
 | 1 | Two-agent HOCON network + manifest on an ordinary HTTPS host | Four agents, build `--check` OK. Served over HTTPS (Vercel static): https://factgate.vercel.app/agent-manifest.json, 200 with `Access-Control-Allow-Origin: *`; reference `check_partner.mjs` OK for all four sites |
 | 2 | Run with the published default router/model; BYOK path | Otari default + BYOK settings. Real-model run needs a key: manual steps in README |
 | 3 | Internal agent + MCP or local action | Template tests with a scripted model; vet402.com/mcp as the MCP tool |
-| 4 | After approval, load an exact named network from a second origin and run it locally | `factgate-peers/tests/three_sites.e2e.test.mjs` "6-4 ALLOW"; on the deployed sites, Stay Steward's "Check with FactGate" (no key) loads factgate.vercel.app/factgate and verified-stay-demo.vercel.app/verified_stay by name and books in Verified Stay's window |
+| 4 | After approval, load an exact named network from a second origin and run it locally | `factgate-peers/tests/three_sites.e2e.test.mjs` "6-4 ALLOW"; on the deployed sites, Stay Steward's "Check with FactGate" (no key) loads factgate.vercel.app/factgate and verified-stay-demo.vercel.app/verified_stay after consent and books in Verified Stay's window |
 | 5 | Key never reaches the second site; it cannot change the router | Same file, `checkKeyStaysHome` (every run) |
 | 6 | Private context absent at the peer unless a named field is allowed | Same file, `checkPrivateContext`; Stay Steward's gate log |
 | 7 | Invalid network, cycle, over budget, denied origin stop visibly | Same file, five "6-7" tests; Stay Steward's gate log |
@@ -40,13 +40,13 @@ NANDA Index: manifest_inspector and every check read api.nandaindex.org/api/v1/i
 
 Reusable component: `site/factgate-gate.mjs` (one file, three lines to install) puts FactGate's gate in front of any reference-runtime site, with a policy (default: no CAUTION passes).
 
-Composition demo (fictional sites, author-run, disclosed): Stay Steward loads FactGate, Verified Stay and Glossy Stay by name (links.json), asks FactGate first, and its page code never loads a stay FactGate blocked or did not check (policy: CAUTION only for identity_unknown). Its "Check with FactGate" button runs the whole flow with no model and no key.
+Composition demo (fictional sites, author-run, disclosed): Stay Steward calls FactGate, Verified Stay and Glossy Stay as full network URL partner tools (not page-wide link slots), asks FactGate first, and its page code never loads a stay FactGate blocked or did not check (policy: CAUTION only for identity_unknown). Its "Check with FactGate" button runs the whole flow with no model and no key.
 
 Deployed results (2026-11-22 07:12 UTC, page origin https://factgate.vercel.app, `node scripts/probe-live.mjs --public`, `evidence/public/SUMMARY.json`): agent402.tools = ALLOW; Verified Stay (verified-stay-demo.vercel.app) = ALLOW (validations passed 79 / below 70 0); Glossy Stay (glossy-stay-demo.vercel.app) = BLOCK (passed 1 / below 70 1); Stay Steward (stay-steward-demo.vercel.app) = CAUTION (identity_unknown). Same verdicts and reason codes as the local run. In a browser (Chromium, 1440 px and 390 px), the deployed Stay Steward's "Check with FactGate" with no key booked Verified Stay in its own window (VS-0001) and stopped before loading Glossy Stay (BLOCK).
 
 Local results (2026-11-22 06:57 UTC, `evidence/live/SUMMARY.json`): agent402.tools = ALLOW; vet402.com (author's own) = ALLOW via the mutual-binding rule; Verified Stay = ALLOW (validations passed 79 / below 70 0); Glossy Stay = BLOCK (passed 1 / below 70 1); Stay Steward = CAUTION (identity_unknown); five contest-listed sites = CAUTION (identity_unknown); organizer's widget = CAUTION (unreachable: manifest not CORS-readable). None of them is in the NANDA Index (138 records searched 2026-11-22T22:04:45Z; 102 card not validated, 36 with cardValidation set).
 
-Tests: FactGate 160 (153 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions. Demo sites 55 (55 pass), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button).
+Tests: FactGate 162 (155 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions and RPC fallback behaviour. Demo sites 55 (55 pass), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button).
 
 Competitors already listed: Agent Atlas (manifest format check), NandaSeal (browser self-signed facts), Agent Customs (static prompt-injection scan), Agent Crash Test (own-site confirm dialogs), Three Numbers (XRPL escrow counts).
 

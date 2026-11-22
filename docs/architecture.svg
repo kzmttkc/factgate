@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <rect width="1200" height="720" fill="#f5f5f5"/>
+  <text x="600" y="36" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="22" fill="#222">FactGate — browser check before link or pay</text>
+  <rect x="40" y="70" width="140" height="56" rx="6" fill="#ddd" stroke="#666" stroke-width="1.5"/>
+  <text x="110" y="102" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#222">Browser</text>
+  <line x1="180" y1="98" x2="230" y2="98" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="230" y="55" width="720" height="90" rx="6" fill="#e8e8e8" stroke="#666" stroke-width="1.5"/>
+  <text x="590" y="78" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#444">4 HOCON agents (Neuro SAN network)</text>
+  <text x="310" y="108" text-anchor="middle" font-size="12" fill="#333">gate_coordinator</text>
+  <text x="470" y="108" text-anchor="middle" font-size="12" fill="#333">manifest_inspector</text>
+  <text x="630" y="108" text-anchor="middle" font-size="12" fill="#333">capability_prober</text>
+  <text x="820" y="108" text-anchor="middle" font-size="12" fill="#333">evidence_verifier</text>
+  <line x1="590" y1="145" x2="590" y2="175" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="120" y="175" width="200" height="64" rx="6" fill="#ddd" stroke="#666"/>
+  <text x="220" y="200" text-anchor="middle" font-size="13" fill="#222">Manifest /</text>
+  <text x="220" y="220" text-anchor="middle" font-size="13" fill="#222">network JSON</text>
+  <rect x="350" y="175" width="200" height="64" rx="6" fill="#ddd" stroke="#666"/>
+  <text x="450" y="200" text-anchor="middle" font-size="13" fill="#222">MCP tools/list</text>
+  <text x="450" y="220" text-anchor="middle" font-size="12" fill="#555">(counterparty)</text>
+  <rect x="580" y="175" width="240" height="64" rx="6" fill="#ddd" stroke="#666"/>
+  <text x="700" y="200" text-anchor="middle" font-size="13" fill="#222">ERC-8004 RPCs</text>
+  <text x="700" y="220" text-anchor="middle" font-size="11" fill="#555">Base · Base Sepolia · Celo</text>
+  <rect x="850" y="175" width="180" height="64" rx="6" fill="#ddd" stroke="#666"/>
+  <text x="940" y="200" text-anchor="middle" font-size="13" fill="#222">vet402 MCP</text>
+  <text x="940" y="220" text-anchor="middle" font-size="11" fill="#555">delivery record</text>
+  <rect x="80" y="265" width="200" height="56" rx="6" fill="#ddd" stroke="#666"/>
+  <text x="180" y="298" text-anchor="middle" font-size="13" fill="#222">NANDA Index</text>
+  <text x="180" y="314" text-anchor="middle" font-size="11" fill="#555">(shown, not judged)</text>
+  <line x1="400" y1="239" x2="400" y2="290" stroke="#888" stroke-width="1.5"/>
+  <line x1="590" y1="239" x2="590" y2="330" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="180" y1="321" x2="180" y2="360" stroke="#888" stroke-width="1.5"/>
+  <line x1="450" y1="239" x2="450" y2="290" stroke="#888" stroke-width="1.5"/>
+  <line x1="700" y1="239" x2="700" y2="290" stroke="#888" stroke-width="1.5"/>
+  <line x1="940" y1="239" x2="940" y2="290" stroke="#888" stroke-width="1.5"/>
+  <rect x="420" y="360" width="340" height="72" rx="6" fill="#cfcfcf" stroke="#444" stroke-width="2"/>
+  <text x="590" y="392" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#111">site/js/gate.mjs</text>
+  <text x="590" y="414" text-anchor="middle" font-size="13" fill="#333">code decides verdict</text>
+  <line x1="590" y1="432" x2="590" y2="470" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="300" y="470" width="160" height="52" rx="6" fill="#bdbdbd" stroke="#333"/>
+  <text x="380" y="502" text-anchor="middle" font-size="15" fill="#111">ALLOW</text>
+  <rect x="520" y="470" width="160" height="52" rx="6" fill="#bdbdbd" stroke="#333"/>
+  <text x="600" y="502" text-anchor="middle" font-size="15" fill="#111">CAUTION</text>
+  <rect x="740" y="470" width="160" height="52" rx="6" fill="#bdbdbd" stroke="#333"/>
+  <text x="820" y="502" text-anchor="middle" font-size="15" fill="#111">BLOCK</text>
+  <line x1="590" y1="522" x2="590" y2="560" stroke="#666" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="380" y="560" width="420" height="56" rx="6" fill="#e0e0e0" stroke="#666"/>
+  <text x="590" y="594" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#222">LLM explains (cannot change verdict)</text>
+  <rect x="40" y="640" width="1120" height="56" rx="4" fill="#ececec" stroke="#aaa"/>
+  <text x="600" y="674" text-anchor="middle" font-size="12" fill="#555">Consent card before each origin · request log · AgentFacts JSON</text>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#666"/>
+    </marker>
+  </defs>
+</svg>
