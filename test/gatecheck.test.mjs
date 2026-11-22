@@ -126,6 +126,8 @@ test("a seller whose 402, declared registration, chain record and vet402 record 
   assert.equal(r.evidence.identity.binding.bound, true);
   assert.equal(r.agentFacts.id, "eip155:8453:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432:94639");
   assert.equal(r.agentFacts.x_factgate_verdict.verdict, "ALLOW");
+  assert.equal(r.agentFacts.x_factgate_vet402_last_delivered.line, "Last delivered: 2026-11-07 (vet402 window: 30 days)");
+  assert.equal(r.agentFacts.x_factgate_vet402_last_delivered.tier, "aging");
   // Read-only: only read methods go to the RPC, and nothing but MCP reads is posted to the seller.
   for (const s of seen.filter((x) => x.url === "https://mainnet.base.org")) {
     for (const call of [JSON.parse(s.body)].flat()) {

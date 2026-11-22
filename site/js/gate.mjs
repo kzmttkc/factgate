@@ -380,6 +380,40 @@ export function deliveryFromMcp(rpc) {
 }
 
 /**
+ * From vet402 check_x402_seller structuredContent: one card line and facts for AgentFacts.
+ * Returns null when last_delivered_at is missing (no guess).
+ */
+export function vet402LastDeliveredFromData(data) {
+  if (!data || typeof data !== "object") {
+    return null;
+  }
+  const age = data.evidence_age;
+  if (!age || typeof age !== "object") {
+    return null;
+  }
+  const raw = age.last_delivered_at;
+  if (typeof raw !== "string" || !raw.trim()) {
+    return null;
+  }
+  const m = /^(\d{4}-\d{2}-\d{2})/.exec(raw.trim());
+  if (!m) {
+    return null;
+  }
+  const stale = age.stale_after_days;
+  const windowDays = stale === undefined || stale === null || Number.isNaN(Number(stale)) ? null : Number(stale);
+  let line = `Last delivered: ${m[1]}`;
+  if (windowDays !== null) {
+    line += ` (vet402 window: ${windowDays} days)`;
+  }
+  return {
+    line,
+    last_delivered_at: raw.trim(),
+    stale_after_days: windowDays,
+    tier: typeof age.tier === "string" ? age.tier : undefined,
+  };
+}
+
+/**
  * Turn a browser-side probe of the counterparty into pillar 1.
  *
  * :param probe: { fetchError?, httpStatus?, allowOrigin?, matchesDeclaration? }. In a browser a

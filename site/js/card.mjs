@@ -1,3 +1,5 @@
+import { vet402LastDeliveredFromData } from "./gate.mjs";
+
 // What the verdict card shows, as plain data, so the page and the tests read the same thing.
 // Three pillars side by side, each with its own effect (ALLOW / CAUTION / BLOCK / NOT APPLICABLE)
 // and one line of evidence; three large counts above them (paid calls, delivered calls,
@@ -87,6 +89,9 @@ export function measuredOf(reasons) {
 export function verdictCard(result) {
   const counts = result.counts || {};
   const paid = result.evidence && result.evidence.delivery ? result.evidence.delivery.paid : result.paid;
+  const deliveryPillar = result.evidence && result.evidence.delivery && result.evidence.delivery.pillar;
+  const deliveryData = deliveryPillar && deliveryPillar.status === "ok" ? deliveryPillar.data : null;
+  const lastDelivered = vet402LastDeliveredFromData(deliveryData);
   const reasons = result.reasons || [];
   const cautions = [...new Set(reasons.filter((r) => r.effect === "CAUTION").flatMap((r) => (Array.isArray(r.kinds) && r.kinds.length ? r.kinds : ["unknown"])))];
   const validations = counts.validationsPassed === null || counts.validationsPassed === undefined
@@ -106,7 +111,18 @@ export function verdictCard(result) {
     ],
     pillars: PILLARS.map((p) => {
       const r = reasons.find((x) => x.pillar === p.key) || { effect: "CAUTION", text: "Not measured.", code: `${p.key}_missing` };
-      return { key: p.key, title: p.title, hint: p.hint, note: p.note || "", effect: r.effect, label: label(r.effect), line: r.short || oneLine(r.text), detail: r.text, code: r.code };
+      return {
+        key: p.key,
+        title: p.title,
+        hint: p.hint,
+        note: p.note || "",
+        effect: r.effect,
+        label: label(r.effect),
+        line: r.short || oneLine(r.text),
+        lastDelivered: p.key === "delivery" && lastDelivered ? lastDelivered.line : "",
+        detail: r.text,
+        code: r.code,
+      };
     }),
     nanda: result.nanda || null,
   };

@@ -1,3 +1,5 @@
+import { vet402LastDeliveredFromData } from "./gate.mjs";
+
 // AgentFacts output: what FactGate measured about a counterparty, in the field names of the
 // AgentFacts paper, with the three pillars attached as evidence.
 //
@@ -50,6 +52,21 @@ function urnPart(s) {
  * Which ERC-8004 validators' scores were counted and which were not, with the reason, and the
  * trusted list used. Undefined when no validation record was read.
  */
+function vet402LastDeliveredBlock(input) {
+  const pillar = input.delivery && input.delivery.pillar;
+  const data = pillar && pillar.status === "ok" ? pillar.data : null;
+  const x = vet402LastDeliveredFromData(data);
+  if (!x) {
+    return undefined;
+  }
+  return dropUndefined({
+    last_delivered_at: x.last_delivered_at,
+    stale_after_days: x.stale_after_days,
+    tier: x.tier,
+    line: x.line,
+  });
+}
+
 function validatorsBlock(input) {
   const v = input.delivery && input.delivery.validation;
   const data = v && v.status === "ok" ? v.data : null;
@@ -142,6 +159,7 @@ export function buildAgentFacts(input) {
     },
     x_factgate_unofficial_registries: identity.unofficial && identity.unofficial.length ? clone(identity.unofficial) : undefined,
     x_factgate_validators: validatorsBlock(input),
+    x_factgate_vet402_last_delivered: vet402LastDeliveredBlock(input),
     // One NANDA Index record for this counterparty, as listed (shown, not used in the verdict).
     x_factgate_nanda: input.nanda
       ? (input.nanda.status === "listed"

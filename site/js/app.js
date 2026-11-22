@@ -307,6 +307,12 @@ class GatePage {
       line.className = "pillar-line";
       line.textContent = p.line;
       article.append(hint, title, state, line);
+      if (p.lastDelivered) {
+        const fresh = document.createElement("p");
+        fresh.className = "pillar-note";
+        fresh.textContent = p.lastDelivered;
+        article.append(fresh);
+      }
       if (p.note) {
         const note = document.createElement("p");
         note.className = "pillar-note";

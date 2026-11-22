@@ -93,6 +93,28 @@ test("the output is plain JSON and the input is not changed", () => {
   assert.equal(JSON.stringify(INPUT), before);
 });
 
+test("x_factgate_vet402_last_delivered carries evidence_age when vet402 returned it", () => {
+  const facts = buildAgentFacts({
+    ...INPUT,
+    delivery: {
+      pillar: {
+        status: "ok",
+        data: {
+          recommendation: "ALLOW",
+          evidence_age: {
+            last_delivered_at: "2026-11-07T12:01:04.681Z",
+            stale_after_days: 30,
+            tier: "aging",
+          },
+        },
+      },
+    },
+  });
+  assert.equal(facts.x_factgate_vet402_last_delivered.last_delivered_at, "2026-11-07T12:01:04.681Z");
+  assert.equal(facts.x_factgate_vet402_last_delivered.stale_after_days, 30);
+  assert.equal(facts.x_factgate_vet402_last_delivered.line, "Last delivered: 2026-11-07 (vet402 window: 30 days)");
+});
+
 test("a pillar that does not apply is listed as not applicable, never as a pass; unofficial registries are shown apart", () => {
   const facts = buildAgentFacts({
     ...INPUT,

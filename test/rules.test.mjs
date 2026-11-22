@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { buildAgentFacts } from "../site/js/agentfacts.mjs";
 import { DASH, actionLine, oneLine, verdictCard } from "../site/js/card.mjs";
 import { purposeOf, summarizePurposes, withConsent } from "../site/js/consent.mjs";
-import { cautionKinds, evaluateGate, judgeLive } from "../site/js/gate.mjs";
+import { cautionKinds, deliveryFromMcp, evaluateGate, judgeLive } from "../site/js/gate.mjs";
 import { scanInstructions } from "../site/js/instructions.mjs";
 import { DEFAULT_VALIDATORS, normalizeTrusted, trustedRow } from "../site/js/validators.mjs";
 
@@ -180,6 +180,35 @@ test("D-3: CAUTION is split by kind, and every reason has a short sentence that 
   for (const r of [...steering.reasons, ...down.reasons]) {
     assert.ok(r.short && !r.short.endsWith("…") && r.short.length <= 90, r.short);
   }
+});
+
+test("D-4: pillar 3 shows vet402 last delivered when evidence_age.last_delivered_at is present", async () => {
+  const vet = JSON.parse(await readFile(new URL("./fixtures/vet402_check_x402_seller_allow.json", import.meta.url), "utf8"));
+  const delivery = deliveryFromMcp(vet);
+  const verdict = evaluateGate({
+    live: { status: "ok", data: { corsReachable: true, answersAsDeclared: true } },
+    identity: { status: "ok", data: { declaredPayTo: "0x1", registered: { owner: "0x1", agentWallet: "0x1", bound: true } } },
+    delivery,
+    validation: { status: "unavailable", error: "n/a" },
+    paid: true,
+  });
+  const card = verdictCard({
+    url: "https://seller.example/api/w",
+    checkedAt: "2026-11-22T00:00:00.000Z",
+    ...verdict,
+    evidence: { delivery: { pillar: delivery } },
+    counts: { paid: 3, delivered: 3, validationsPassed: null, validationsFailed: null },
+  });
+  const d = card.pillars.find((p) => p.key === "delivery");
+  assert.equal(d.lastDelivered, "Last delivered: 2026-11-07 (vet402 window: 30 days)");
+  const noAge = verdictCard({
+    url: "https://seller.example/api/w",
+    checkedAt: "t",
+    ...verdict,
+    evidence: { delivery: { pillar: { status: "ok", data: { recommendation: "ALLOW", delivery: { paid_attempts: 1, delivered: 1 } } } } },
+    counts: {},
+  });
+  assert.equal(noAge.pillars.find((p) => p.key === "delivery").lastDelivered, "");
 });
 
 test("E: agent_name keeps host and port apart (127.0.0.1:8792 keeps its colon)", () => {
