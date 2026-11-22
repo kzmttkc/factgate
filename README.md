@@ -1,6 +1,6 @@
 # FactGate
 
-On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded 3 of 3 paid calls delivered. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. Five contest-listed sites were **CAUTION** (identity unknown): unchecked, not safe.
+On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded 3 of 3 paid calls delivered. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
 
 FactGate runs before a partner network loads, measures live answers, on-chain identity, and delivery, then returns **ALLOW**, **CAUTION**, or **BLOCK** in page code; Agent Atlas, NandaSeal, Agent Customs, Agent Crash Test, and Three Numbers each check one slice and do not stop the link. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
 
