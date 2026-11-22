@@ -21,9 +21,9 @@
     <section id="full" class="check" aria-labelledby="full-heading">
       <h2 id="full-heading" class="visually-hidden">Check a counterparty</h2>
       <form id="full-form">
-        <label for="target-url">Agent network URL, x402 endpoint or site address</label>
+        <label for="target-url">Agent network URL, x402 endpoint, site address, or NANDA Index id or name</label>
         <div class="row">
-          <input id="target-url" type="url" required placeholder="https://agent402.tools/api/weather-forecast" value="https://agent402.tools/api/weather-forecast">
+          <input id="target-url" type="text" autocomplete="off" spellcheck="false" required placeholder="https://agent402.tools/api/weather-forecast" value="https://agent402.tools/api/weather-forecast">
           <button id="run-check" type="submit">Check</button>
         </div>
         <details class="inline">
@@ -49,18 +49,29 @@
 
     <section id="full-result" class="result" hidden aria-labelledby="full-verdict">
       <div class="verdict-head">
-        <strong id="full-verdict" class="badge"></strong>
+        <p id="full-action" class="action-line"></p>
         <div class="verdict-meta">
-          <p id="full-target" class="target"></p>
+          <p><strong id="full-verdict" class="badge"></strong> <span id="full-target" class="target"></span></p>
           <p id="full-time" class="note"></p>
+        </div>
+      </div>
+      <div class="measured">
+        <div id="full-not-measured-box" hidden>
+          <h3>Not measured</h3>
+          <ul id="full-not-measured"></ul>
+        </div>
+        <div>
+          <h3>Measured</h3>
+          <ul id="full-measured"></ul>
         </div>
       </div>
       <dl class="counts">
         <div><dt>paid calls (vet402)</dt><dd id="count-paid">—</dd></div>
         <div><dt>came back with content</dt><dd id="count-delivered">—</dd></div>
-        <div><dt>validations passed (trusted)</dt><dd id="count-validationsPassed">—</dd></div>
+        <div><dt>validations, trusted</dt><dd id="count-validationsPassed">—</dd></div>
       </dl>
       <div id="full-pillars" class="pillars"></div>
+      <p id="full-nanda" class="note"></p>
       <p id="full-unofficial" class="note" hidden></p>
       <details>
         <summary>Every request this check made</summary>
@@ -76,6 +87,12 @@
         <button id="download-facts" type="button" class="secondary">Download AgentFacts</button>
         <pre id="agentfacts" tabindex="0"></pre>
       </details>
+    </section>
+
+    <section id="saved" aria-labelledby="saved-heading">
+      <h2 id="saved-heading" class="section-title">Saved checks</h2>
+      <p class="note">Each one is a check FactGate measured in this visit (its measurement ID is shown). Saved when you or the assistant asked.</p>
+      <ul id="checks"></ul>
     </section>
 
     <section id="assistant" class="assistant" aria-labelledby="assistant-heading">
@@ -121,11 +138,12 @@
           <button id="fetch-delivery" type="button" class="secondary">Read the vet402 delivery record</button>
           <label for="pillars">Pillar results (JSON: live, identity, delivery)</label>
           <textarea id="pillars" rows="10">{}</textarea>
-          <button id="judge" type="submit" class="secondary">Judge and save</button>
+          <button id="judge" type="submit" class="secondary">Judge (hand-entered, not measured)</button>
         </form>
         <p id="gate-out" role="status"></p>
-        <h3>Saved checks</h3>
-        <ul id="checks"></ul>
+        <h3>Hand-entered, not measured</h3>
+        <p class="note">Verdicts on pillar values typed here. FactGate did not measure them, so they are kept apart from the saved checks.</p>
+        <ul id="hand-checks"></ul>
       </details>
     </section>
 

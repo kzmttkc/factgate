@@ -1,37 +1,57 @@
 {
   "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
-  "checkedAt": "2026-11-22T05:40:27.525Z",
+  "checkedAt": "2026-11-22T06:57:09.029Z",
   "verdict": "CAUTION",
   "reasons": [
     {
       "pillar": "live",
       "code": "live_cors_unreachable",
       "effect": "CAUTION",
-      "text": "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it."
+      "text": "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it.",
+      "short": "A browser cannot reach it.",
+      "kinds": [
+        "unreachable"
+      ]
     },
     {
       "pillar": "identity",
       "code": "identity_unavailable",
       "effect": "CAUTION",
-      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+      "short": "Not measured: no ERC-8004 registration speaks for it.",
+      "kinds": [
+        "identity_unknown"
+      ]
     },
     {
       "pillar": "delivery",
       "code": "delivery_unavailable",
       "effect": "CAUTION",
       "text": "vet402: Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero. ERC-8004 validation: Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+      "short": "Not measured: no delivery record could be read.",
+      "kinds": [
+        "no_delivery_record"
+      ],
       "sources": [
         {
           "pillar": "delivery",
           "code": "delivery_unavailable",
           "effect": "CAUTION",
-          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+          "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero.",
+          "short": "Not measured: no delivery record could be read.",
+          "kinds": [
+            "no_delivery_record"
+          ]
         },
         {
           "pillar": "validation",
           "code": "validation_unavailable",
           "effect": "CAUTION",
-          "text": "Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+          "text": "Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+          "short": "Not measured: no validation record could be read.",
+          "kinds": [
+            "no_delivery_record"
+          ]
         }
       ]
     }
@@ -130,6 +150,20 @@
         "status": "unavailable",
         "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
       }
+    },
+    "nanda": {
+      "status": "not_listed",
+      "query": {
+        "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget"
+      },
+      "searched": 138,
+      "http": [
+        {
+          "method": "GET",
+          "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+          "status": 200
+        }
+      ]
     }
   },
   "agentFacts": {
@@ -147,7 +181,7 @@
     "capabilities": {},
     "skills": [],
     "evaluations": {
-      "lastAudited": "2026-11-22T05:40:27.525Z",
+      "lastAudited": "2026-11-22T06:57:09.029Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -157,40 +191,65 @@
           "pillar": "live",
           "code": "live_cors_unreachable",
           "effect": "CAUTION",
-          "text": "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it."
+          "text": "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it.",
+          "short": "A browser cannot reach it.",
+          "kinds": [
+            "unreachable"
+          ]
         },
         {
           "pillar": "identity",
           "code": "identity_unavailable",
           "effect": "CAUTION",
-          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+          "short": "Not measured: no ERC-8004 registration speaks for it.",
+          "kinds": [
+            "identity_unknown"
+          ]
         },
         {
           "pillar": "delivery",
           "code": "delivery_unavailable",
           "effect": "CAUTION",
           "text": "vet402: Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero. ERC-8004 validation: Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+          "short": "Not measured: no delivery record could be read.",
+          "kinds": [
+            "no_delivery_record"
+          ],
           "sources": [
             {
               "pillar": "delivery",
               "code": "delivery_unavailable",
               "effect": "CAUTION",
-              "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero."
+              "text": "Could not fetch the vet402 delivery record: no x402 terms, so there is no paid delivery for vet402 to have recorded. Not measured, not counted as zero.",
+              "short": "Not measured: no delivery record could be read.",
+              "kinds": [
+                "no_delivery_record"
+              ]
             },
             {
               "pillar": "validation",
               "code": "validation_unavailable",
               "effect": "CAUTION",
-              "text": "Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+              "text": "Could not fetch the ERC-8004 validation record: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+              "short": "Not measured: no validation record could be read.",
+              "kinds": [
+                "no_delivery_record"
+              ]
             }
           ]
         }
       ],
       "notApplicable": []
     },
+    "x_factgate_nanda": {
+      "status": "not_listed",
+      "source": "https://api.nandaindex.org/api/v1/index",
+      "searched": 138
+    },
     "x_factgate_evidence": {
       "target": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget",
-      "checkedAt": "2026-11-22T05:40:27.525Z",
+      "checkedAt": "2026-11-22T06:57:09.029Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -298,8 +357,46 @@
   "counts": {
     "paid": null,
     "delivered": null,
-    "validationsPassed": null
+    "validationsPassed": null,
+    "validationsFailed": null
+  },
+  "pillars": {
+    "live": {
+      "status": "ok",
+      "data": {
+        "corsReachable": false,
+        "answersAsDeclared": null,
+        "detail": "the browser could not read the counterparty: TypeError: CORS refused: GET https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "unreachable": []
+      }
+    },
+    "identity": {
+      "status": "unavailable",
+      "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+    },
+    "delivery": {
+      "status": "unavailable",
+      "error": "no x402 terms, so there is no paid delivery for vet402 to have recorded"
+    },
+    "validation": {
+      "status": "unavailable",
+      "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+    }
+  },
+  "nanda": {
+    "status": "not_listed",
+    "query": {
+      "url": "https://worldwideagenticweb.org/wp-content/plugins/wwaw-agent-widget/assets/worldwide_agentic_web_widget/v1.0.9/worldwide_agentic_web_widget"
+    },
+    "searched": 138,
+    "http": [
+      {
+        "method": "GET",
+        "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+        "status": 200
+      }
+    ]
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 2242
+  "ms": 2195
 }

@@ -29,19 +29,23 @@ MVP spec section 6 (each with the test or screen that shows it; details in READM
 
 ## What it is
 
-An open agentic website that checks a counterparty (an agentic website, a NANDA-indexed agent, or an x402 seller) before an agent links to it or pays it. Runs entirely in the browser (no server code). Every contact goes through a consent card that lists each destination origin and what it gets. Returns a deterministic ALLOW / CAUTION / BLOCK (code decides, the LLM only explains) and an AgentFacts JSON (field names from arXiv:2507.14263 appendix; extensions prefixed x_factgate_).
+An open agentic website that checks a counterparty (an agentic website, a NANDA-indexed agent, or an x402 seller) before an agent links to it or pays it. For a site with no ERC-8004 registration it still shows, before connecting, whether the site answers as declared, whether its agent instructions are safe and whether it can be reached. Runs entirely in the browser (no server code). Every contact goes through a consent card that lists each destination origin and what it gets, allowed or declined row by row; a redirect to another origin is a new destination that needs its own card. Returns a deterministic ALLOW / CAUTION / BLOCK (code decides, the LLM only explains; evaluate_gate and save_check take only the ID of a check page code measured, never pillar values a model wrote). The card's first line is an action (Link / pay: OK, Do not pay, Do not link, Unchecked — do not treat as safe); CAUTION means unchecked and names what was not measured (identity_unknown, unreachable, steering, no_delivery_record, ...) and an AgentFacts JSON (field names from arXiv:2507.14263 appendix; extensions prefixed x_factgate_).
 
 Three pillars:
 1. Live probe: manifest (spec 3.3), network, declared MCP `initialize`→`tools/list`, x402 terms (never paid), paid resource, and a static scan of the instructions a caller would load (steering = CAUTION, asking for keys = BLOCK). Unreachable over CORS is recorded as such (no proxy).
 2. Identity binding: ERC-8004 IdentityRegistry via eth_call (Base, Base Sepolia, Celo), pinned to one block, compared with the 402 payTo. A free site passes when pillar 1 passes and the site and its registration point at each other.
-3. Delivery evidence: vet402.com production records, and ERC-8004 ValidationRegistry scores from trusted validators only (`validators.json`; default = the Delivery Court judge, the author's own, recomputable with a public script). Others' scores shown, not counted. Free targets: "not applicable", never called a pass.
+3. Delivery evidence: vet402.com production records, and ERC-8004 ValidationRegistry scores from trusted validators only (`validators.json`; today it lists one validator, the Delivery Court judge, which is the author's own, recomputable with a public script). vet402 is also the author's own service; the card says so next to pillar 3. Others' scores shown, not counted. Free targets: "not applicable", never called a pass.
 
-Composition demo (fictional sites, author-run, disclosed): Stay Steward loads FactGate, Verified Stay and Glossy Stay by name (links.json), asks FactGate first, and its page code never loads a stay FactGate blocked or did not check.
+NANDA Index: manifest_inspector and every check read api.nandaindex.org/api/v1/index and show one matching record ("NANDA: listed, card not validated" when its cardValidation is null); input may be a NANDA id or name. Shown, not counted.
 
-Live results (11/22, `evidence/live/SUMMARY.json`): agent402.tools = ALLOW; vet402.com (author's own) = ALLOW via the mutual-binding rule; Verified Stay = ALLOW; Glossy Stay = BLOCK; Stay Steward = CAUTION; five contest-listed sites = CAUTION (no ERC-8004 registration); organizer's widget = CAUTION (manifest not CORS-readable).
+Reusable component: `site/factgate-gate.mjs` (one file, three lines to install) puts FactGate's gate in front of any reference-runtime site, with a policy (default: no CAUTION passes).
 
-Tests: FactGate 146 (139 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable). Demo sites 50 (50 pass), including 7 three-site end-to-end tests with a scripted model (also passed against the real Base Sepolia RPC).
+Composition demo (fictional sites, author-run, disclosed): Stay Steward loads FactGate, Verified Stay and Glossy Stay by name (links.json), asks FactGate first, and its page code never loads a stay FactGate blocked or did not check (policy: CAUTION only for identity_unknown). Its "Check with FactGate" button runs the whole flow with no model and no key.
+
+Live results (2026-11-22 06:57 UTC, `evidence/live/SUMMARY.json`): agent402.tools = ALLOW; vet402.com (author's own) = ALLOW via the mutual-binding rule; Verified Stay = ALLOW (validations passed 79 / below 70 0); Glossy Stay = BLOCK (passed 1 / below 70 1); Stay Steward = CAUTION (identity_unknown); five contest-listed sites = CAUTION (identity_unknown); organizer's widget = CAUTION (unreachable: manifest not CORS-readable). None of them is in the NANDA Index (138 records).
+
+Tests: FactGate 160 (153 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions. Demo sites 55 (55 pass), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button).
 
 Competitors already listed: Agent Atlas (manifest format check), NandaSeal (browser self-signed facts), Agent Customs (static prompt-injection scan), Agent Crash Test (own-site confirm dialogs), Three Numbers (XRPL escrow counts).
 
-Not yet done: deployment, the real-LLM chat run (needs the author's key), NANDA Index lookup in manifest_inspector, video, screenshots, submission text.
+Not yet done: deployment, the real-LLM chat run (needs the author's key), video, screenshots, submission text.

@@ -415,7 +415,8 @@ class AgentifiedSiteTest {
       assert.ok(instructions.includes("is empty or starts with \"The user declined\", \"Skipped\" or \"Error from\", it did not answer: say so."));
     }
     assert.ok(instructions.includes("it cannot pay, sign, send funds, register agents"));
-    assert.ok(instructions.includes("The verdict ALLOW, CAUTION or BLOCK comes only from website_gate_check or website_evaluate_gate."));
+    assert.ok(instructions.includes("The verdict ALLOW, CAUTION or BLOCK comes only from website_gate_check, or from website_evaluate_gate with the measurementId a check returned."));
+    assert.ok(instructions.includes("Never pass pillar values you wrote: evaluate and save take only a measurementId."));
     assert.ok(instructions.includes("Never replace missing data with zeros or with a good result."));
   }
 
@@ -520,11 +521,24 @@ class AgentifiedSiteTest {
     const registry = await AgentifiedSiteTest.registry();
     const ctx = AgentifiedSiteTest.context(loaded, registry, new ScriptedModel([]), AgentifiedSiteTest.approve);
     const entry = await AgentifiedSiteTest.tool(loaded, ctx, WRITE_ACTION);
+    // save_check keeps a measurement page code made, so make one first: a check whose
+    // counterparty the browser cannot reach (fetch stubbed to fail, the card approved).
+    const { App } = await import("../js/app.js");
+    const realFetch = globalThis.fetch;
+    App.page.consentHandler = async () => "once";
+    globalThis.fetch = async () => { throw new TypeError("Failed to fetch"); };
+    let measured;
+    try {
+      measured = await App.page.gateCheck({ url: SELLER });
+    } finally {
+      globalThis.fetch = realFetch;
+      App.page.consentHandler = null;
+    }
     const before = await AgentifiedSiteTest.readState(registry);
     AgentifiedSiteTest.clearFocus();
     const receipt = await dispatchToolCall(ctx, entry, {
       label: SELLER,
-      delivery: {status: "unavailable", error: "test: not fetched"},
+      measurementId: measured.measurementId,
     }, null, []);
     assert.equal(receipt.status, "succeeded");
     assert.notEqual(receipt.result.ok, false, receipt.result.reason);
@@ -535,14 +549,17 @@ class AgentifiedSiteTest {
     assert.equal(after.checks.length, before.checks.length + 1);
     const saved = after.checks.at(-1);
     assert.equal(saved.label, SELLER);
-    // Nothing was measured, so the engine must not say ALLOW.
+    // The counterparty was not reached, so the engine must not say ALLOW.
     assert.equal(saved.verdict, "CAUTION");
-    assert.deepEqual(saved.reasons.map((r) => r.code), ["live_unavailable", "identity_unavailable", "delivery_unavailable"]);
+    assert.equal(saved.reasons[0].code, "live_cors_unreachable");
     assert.equal(after.version, before.version + 1);
+    const unknown = await dispatchToolCall(ctx, entry, { measurementId: "M-404" }, null, []);
+    assert.equal(unknown.result.ok, false);
+    assert.equal(unknown.result.field, "measurementId");
     await assert.rejects(dispatchToolCall(ctx, entry, {
       label: SELLER,
       delivery: {status: "zero"},
-    }, null, []), /Invalid arguments/);
+    }, null, []), /Missing arguments\.measurementId|Unexpected arguments\.delivery/);
     assert.deepEqual(await AgentifiedSiteTest.readState(registry), after);
   }
 
@@ -928,38 +945,30 @@ test("a visitor typing in the page's form keeps focus when a consent card appear
 test("an approved irreversible call stores the record", {skip: NO_IRREVERSIBLE}, AgentifiedSiteTest.testApprovedIrreversibleCall);
 
 // FactGate's own checks through the real runtime.
-test("website_evaluate_gate runs the engine as a tool: a payee mismatch is BLOCK", async () => {
+test("the front agent judges a measurement by its ID and reports the engine's verdict (scripted model, no LLM)", async () => {
   const loaded = await AgentifiedSiteTest.load();
   const registry = await AgentifiedSiteTest.registry();
-  const ctx = AgentifiedSiteTest.context(loaded, registry, new ScriptedModel([]), AgentifiedSiteTest.approve);
-  const entry = await AgentifiedSiteTest.tool(loaded, ctx, "evaluate_gate");
-  assert.ok(entry, "website_evaluate_gate is not offered to the front agent.");
-  const before = await AgentifiedSiteTest.readState(registry);
-  const receipt = await dispatchToolCall(ctx, entry, {
-    live: {status: "ok", corsReachable: true, answersAsDeclared: "yes"},
-    identity: {status: "ok", declaredPayTo: "0x1111111111111111111111111111111111111111", registered: true, owner: "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"},
-    delivery: {status: "unavailable", error: "not fetched in this test"},
-  }, null, []);
-  assert.equal(receipt.status, "succeeded");
-  assert.equal(receipt.result.verdict, "BLOCK");
-  assert.ok(receipt.result.reasons.some((r) => r.code === "identity_payee_mismatch"));
-  // A read changes nothing.
-  assert.deepEqual(await AgentifiedSiteTest.readState(registry), before);
-});
-
-test("the front agent asks the engine and reports its verdict (scripted model, no LLM)", async () => {
-  const loaded = await AgentifiedSiteTest.load();
-  const registry = await AgentifiedSiteTest.registry();
-  const model = new ScriptedModel([
-    {tool: "website_evaluate_gate", arguments: {delivery: {status: "unavailable", error: "vet402 MCP HTTP 503"}}},
-    {text: "FactGate says CAUTION."},
-  ]);
-  const ctx = AgentifiedSiteTest.context(loaded, registry, model, AgentifiedSiteTest.approve);
-  const result = await runAgent(ctx, ctx.frontMan, `Should I pay ${SELLER}?`, null, []);
-  const toolResult = model.toolResults(1)[0];
-  assert.equal(toolResult.status, "succeeded");
-  assert.equal(toolResult.result.verdict, "CAUTION");
-  assert.match(result.text, /CAUTION/);
+  const { App } = await import("../js/app.js");
+  const realFetch = globalThis.fetch;
+  App.page.consentHandler = async () => "once";
+  globalThis.fetch = async () => { throw new TypeError("Failed to fetch"); };
+  try {
+    // The page measured once already in this visit; the model judges that record by its ID.
+    const measured = await App.page.gateCheck({url: SELLER});
+    const model = new ScriptedModel([
+      {tool: "website_evaluate_gate", arguments: {measurementId: measured.measurementId}},
+      {text: "FactGate says CAUTION."},
+    ]);
+    const ctx = AgentifiedSiteTest.context(loaded, registry, model, AgentifiedSiteTest.approve);
+    const result = await runAgent(ctx, ctx.frontMan, `Should I pay ${SELLER}?`, null, []);
+    const toolResult = model.toolResults(1)[0];
+    assert.equal(toolResult.status, "succeeded");
+    assert.equal(toolResult.result.verdict, "CAUTION");
+    assert.match(result.text, /CAUTION/);
+  } finally {
+    globalThis.fetch = realFetch;
+    App.page.consentHandler = null;
+  }
 });
 
 test("evidence_verifier reaches vet402.com/mcp as an MCP tool, and its origin is an allowed peer", async () => {
@@ -974,25 +983,23 @@ test("evidence_verifier reaches vet402.com/mcp as an MCP tool, and its origin is
   assert.ok((front.tools || []).includes("evidence_verifier"));
 });
 
-test("the bridge shares two pure reads, and gate_check, which runs in FactGate's own window after its consent card", async () => {
+test("the bridge shares one pure read, and gate_check, which runs in FactGate's own window after its consent card", async () => {
   const shared = await AgentifiedSiteTest.bridgeActions();
-  // get_gate_state and evaluate_gate contact nothing (hidden frame). gate_check contacts the
-  // counterparty, a chain RPC and vet402.com: it is marked write with confirmsInWindow so the
-  // runtime opens FactGate's window, where the consent card asks first. It changes nothing.
-  assert.deepEqual([...shared.keys()].sort(), ["evaluate_gate", "gate_check", "get_gate_state"]);
+  // get_gate_state contacts nothing (hidden frame). gate_check contacts the counterparty, a chain
+  // RPC and vet402.com: it is marked write with confirmsInWindow so the runtime opens FactGate's
+  // window, where the consent card asks first. It changes nothing. No evaluate_gate is shared:
+  // a caller's model cannot get a verdict from pillar values it wrote (finding 2).
+  assert.deepEqual([...shared.keys()].sort(), ["gate_check", "get_gate_state"]);
   for (const def of shared.values()) {
     assert.deepEqual(def.callerOrigins, ["*"]);
     assert.equal(def.availability, "bridge");
   }
   assert.equal(shared.get("get_gate_state").effect, "read");
-  assert.equal(shared.get("evaluate_gate").effect, "read");
   assert.equal(shared.get("gate_check").effect, "write");
   assert.equal(shared.get("gate_check").confirmsInWindow, true);
   const refused = await shared.get("gate_check").execute({ url: "ftp://x.example/" });
   assert.equal(refused.ok, false);
   assert.equal(refused.field, "url");
-  const r = await shared.get("evaluate_gate").execute({});
-  assert.equal(r.verdict, "CAUTION");
   // Declined in FactGate's window: nothing is sent.
   const { BridgeActions } = await import("../bridge/bridge-actions.js");
   const realConsent = BridgeActions.consent;
@@ -1004,9 +1011,10 @@ test("the bridge shares two pure reads, and gate_check, which runs in FactGate's
   try {
     const out = await shared.get("gate_check").execute({ url: SELLER });
     assert.deepEqual(sent, []);
-    assert.deepEqual(cards, [["agent402.tools"]]);
+    // The first card names the counterparty and the NANDA Index (looked up alongside).
+    assert.deepEqual(cards, [["agent402.tools", "api.nandaindex.org"]]);
     assert.equal(out.verdict, "CAUTION");
-    assert.deepEqual(out.consent.declined, ["agent402.tools"]);
+    assert.deepEqual(out.consent.declined, ["agent402.tools", "api.nandaindex.org"]);
   } finally {
     BridgeActions.consent = realConsent;
     globalThis.fetch = realFetch;
@@ -1085,12 +1093,15 @@ test("website_gate_check measures in page code: a counterparty the browser canno
     assert.equal(receipt.status, "succeeded");
     assert.equal(receipt.result.verdict, "CAUTION");
     assert.equal(receipt.result.reasons[0].code, "live_cors_unreachable");
-    // One card, for the counterparty's own origin, before any request; it says what is read.
+    // One card, for the counterparty's own origin and the NANDA Index, before any request; it
+    // says what each gets.
     assert.equal(cards.length, 1);
-    assert.deepEqual(cards[0].hosts, ["agent402.tools"]);
+    assert.deepEqual(cards[0].hosts, ["agent402.tools", "api.nandaindex.org"]);
     assert.equal(cards[0].sentBefore, 0);
     assert.match(cards[0].purposes[0], /read public files \(GET \/api\/weather-forecast/);
-    assert.deepEqual(receipt.result.consent.approved, ["agent402.tools"]);
+    assert.match(cards[0].purposes[1], /NANDA Index list/);
+    assert.deepEqual(receipt.result.consent.approved, ["agent402.tools", "api.nandaindex.org"]);
+    assert.equal(receipt.result.nanda.status, "unavailable");
     assert.ok(sent.includes(SELLER));
     assert.ok(sent.includes("https://agent402.tools/.well-known/agent-registration.json"));
     const bad = await dispatchToolCall(ctx, entry, {url: SELLER, agentId: "12x"}, null, []);
@@ -1117,9 +1128,91 @@ test("website_gate_check sends nothing when the visitor declines the card", asyn
     const receipt = await dispatchToolCall(ctx, entry, {url: SELLER}, null, []);
     assert.deepEqual(sent, []);
     assert.equal(receipt.result.verdict, "CAUTION");
-    assert.deepEqual(receipt.result.consent.declined, ["agent402.tools"]);
+    assert.deepEqual(receipt.result.consent.declined, ["agent402.tools", "api.nandaindex.org"]);
   } finally {
     globalThis.fetch = realFetch;
     App.page.consentHandler = null;
   }
+});
+
+// Finding 2 (second grading): a model could write the pillar values itself and get ALLOW from
+// website_evaluate_gate, then keep it with website_save_check. Both now take only the ID of a
+// measurement that page code made (website_gate_check or website_check_seller).
+const MADE_UP_ALLOW = {
+  live: {status: "ok", corsReachable: true, answersAsDeclared: "yes"},
+  identity: {status: "ok", declaredPayTo: "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0", registered: true, owner: "0xabf4fabd7c416fb67202e5f9002389fc75e2a9d0"},
+  delivery: {status: "ok", recommendation: "ALLOW", paidAttempts: 3, delivered: 3, settledNotDelivered: 0},
+};
+
+async function callTool(ctx, entry, args) {
+  try {
+    return await dispatchToolCall(ctx, entry, args, null, []);
+  } catch (error) {
+    return {status: "error", error: String(error.message || error)};
+  }
+}
+
+test("finding 2: website_evaluate_gate gives no verdict from pillar values the model wrote", async () => {
+  const loaded = await AgentifiedSiteTest.load();
+  const registry = await AgentifiedSiteTest.registry();
+  const ctx = AgentifiedSiteTest.context(loaded, registry, new ScriptedModel([]), AgentifiedSiteTest.approve);
+  const entry = await AgentifiedSiteTest.tool(loaded, ctx, "evaluate_gate");
+  const receipt = await callTool(ctx, entry, MADE_UP_ALLOW);
+  assert.notEqual(receipt.result && receipt.result.verdict, "ALLOW", `a made-up ALLOW came back: ${JSON.stringify(receipt)}`);
+  assert.ok(receipt.status === "error" || (receipt.result && receipt.result.ok === false), JSON.stringify(receipt));
+});
+
+test("finding 2: website_save_check saves nothing from pillar values the model wrote", async () => {
+  const loaded = await AgentifiedSiteTest.load();
+  const registry = await AgentifiedSiteTest.registry();
+  const ctx = AgentifiedSiteTest.context(loaded, registry, new ScriptedModel([]), AgentifiedSiteTest.approve);
+  const entry = await AgentifiedSiteTest.tool(loaded, ctx, "save_check");
+  const before = await AgentifiedSiteTest.readState(registry);
+  const receipt = await callTool(ctx, entry, {label: SELLER, ...MADE_UP_ALLOW});
+  assert.ok(receipt.status === "error" || (receipt.result && receipt.result.ok === false), JSON.stringify(receipt));
+  assert.deepEqual(await AgentifiedSiteTest.readState(registry), before);
+});
+
+test("finding 2: evaluate_gate and save_check take the measurement ID that website_gate_check returned", async () => {
+  const loaded = await AgentifiedSiteTest.load();
+  const registry = await AgentifiedSiteTest.registry();
+  const ctx = AgentifiedSiteTest.context(loaded, registry, new ScriptedModel([]), AgentifiedSiteTest.approve);
+  const { App } = await import("../js/app.js");
+  const realFetch = globalThis.fetch;
+  App.page.remembered.clear();
+  App.page.consentHandler = async () => "once";
+  globalThis.fetch = async () => { throw new TypeError("Failed to fetch"); };
+  try {
+    const check = await callTool(ctx, await AgentifiedSiteTest.tool(loaded, ctx, "gate_check"), {url: SELLER});
+    const id = check.result.measurementId;
+    assert.match(String(id), /^M-\d+$/, JSON.stringify(check.result));
+    const judged = await callTool(ctx, await AgentifiedSiteTest.tool(loaded, ctx, "evaluate_gate"), {measurementId: id});
+    assert.equal(judged.result.verdict, check.result.verdict);
+    assert.equal(judged.result.measurementId, id);
+    const unknown = await callTool(ctx, await AgentifiedSiteTest.tool(loaded, ctx, "evaluate_gate"), {measurementId: "M-999999"});
+    assert.equal(unknown.result.ok, false);
+    const before = await AgentifiedSiteTest.readState(registry);
+    const saved = await callTool(ctx, await AgentifiedSiteTest.tool(loaded, ctx, "save_check"), {measurementId: id});
+    assert.equal(saved.result.ok, true, JSON.stringify(saved.result));
+    const after = await AgentifiedSiteTest.readState(registry);
+    assert.equal(after.checks.length, before.checks.length + 1);
+    assert.equal(after.checks.at(-1).measurementId, id);
+    assert.equal(after.checks.at(-1).source, "measured");
+    assert.equal(after.checks.at(-1).verdict, check.result.verdict);
+  } finally {
+    globalThis.fetch = realFetch;
+    App.page.consentHandler = null;
+  }
+});
+
+test("finding 2: the Developer form's hand-entered verdicts are kept apart, marked 'hand-entered, not measured'", async () => {
+  const registry = await AgentifiedSiteTest.registry();
+  const { App } = await import("../js/app.js");
+  const before = await AgentifiedSiteTest.readState(registry);
+  const r = App.page.saveHandEntered({label: "typed by hand", live: {status: "ok", data: {corsReachable: true, answersAsDeclared: true}}, paid: false});
+  assert.equal(r.ok, true);
+  const after = await AgentifiedSiteTest.readState(registry);
+  assert.deepEqual(after.checks, before.checks, "a hand-entered verdict went into the measured list");
+  assert.equal(after.handEntered.at(-1).label, "typed by hand");
+  assert.match(after.handEntered.at(-1).note, /hand-entered, not measured/);
 });

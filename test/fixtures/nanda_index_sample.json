@@ -1,0 +1,166 @@
+[
+ {
+  "identifier": "urn:air:travel26.net:catalog:root",
+  "displayName": "Travel26",
+  "type": "application/ai-catalog+json",
+  "tags": [
+   "enterprise",
+   "travel",
+   "ai-catalog",
+   "booking"
+  ],
+  "updatedAt": "2026-06-17T08:08:06.212Z",
+  "extensions": {
+   "org.projectnanda": {
+    "resolutionRole": "nested-ai-catalog",
+    "preferredDiscovery": "ai-catalog",
+    "orgId": "travel26",
+    "status": "active",
+    "ttlSeconds": 86400,
+    "emailVerified": true,
+    "emailVerifiedAt": null,
+    "domainVerifiedAt": "2026-06-17T08:08:06.212Z",
+    "cardValidation": null,
+    "domainVerified": true,
+    "createdAt": "2026-06-17T07:14:35.111Z",
+    "domain": "travel26.net",
+    "representativeQueries": []
+   }
+  },
+  "url": "https://travel26.net/api",
+  "description": "Enterprise AI Catalog for Travel26 booking agents, concierge, and travel tools.",
+  "publisher": {
+   "identifier": "travel26.net",
+   "displayName": "Travel26",
+   "identityType": "dns"
+  }
+ },
+ {
+  "identifier": "urn:air:heron.ing:catalog:root",
+  "displayName": "Heron A2A Checker",
+  "type": "application/ai-catalog+json",
+  "tags": [
+   "trust",
+   "verification",
+   "safety",
+   "a2a",
+   "evidence",
+   "attestation"
+  ],
+  "updatedAt": "2026-07-08T13:50:09.157Z",
+  "extensions": {
+   "org.projectnanda": {
+    "orgId": "heron-a2a",
+    "status": "active",
+    "ttlSeconds": 86400,
+    "emailVerified": true,
+    "emailVerifiedAt": null,
+    "domainVerifiedAt": "2026-07-08T13:50:09.157Z",
+    "cardValidation": null,
+    "domainVerified": true,
+    "createdAt": "2026-07-08T07:54:51.249Z",
+    "domain": "heron.ing",
+    "representativeQueries": []
+   }
+  },
+  "url": "https://heronnanda.up.railway.app/",
+  "description": "Independent, behaviour-earned trust for AI agents. Heron black-box probes an agent over A2A (tasks/send), checks caller-facing safety (prompt-injection, secret-leak, reckless scope) and declared-vs-actual capability from the agent's own card, then emits an Ed25519-signed evidence record into a public registry. Live: https://heronnanda.up.railway.app",
+  "publisher": {
+   "identifier": "heron.ing",
+   "displayName": "Heron A2A Checker",
+   "identityType": "dns"
+  }
+ },
+ {
+  "identifier": "urn:air:faithnet.io:catalog:root",
+  "displayName": "Faithnet estate",
+  "type": "application/ai-catalog+json",
+  "tags": [
+   "estate",
+   "directory",
+   "agents",
+   "a2a",
+   "treasury",
+   "erc-4337",
+   "ISL",
+   "scientists",
+   "semiconductors",
+   "passivation"
+  ],
+  "updatedAt": "2026-11-15T02:05:19.055Z",
+  "extensions": {
+   "org.projectnanda": {
+    "nandaIndexRole": "optional-fallback-entry",
+    "resolutionRole": "nested-ai-catalog",
+    "preferredDiscovery": "ai-catalog",
+    "orgId": "faithnet",
+    "status": "active",
+    "ttlSeconds": 86400,
+    "emailVerified": true,
+    "emailVerifiedAt": null,
+    "domainVerifiedAt": "2026-10-14T10:15:13.552Z",
+    "cardValidation": {
+     "detail": "Card checks apply to A2A and MCP JSON cards. This artifact type has not been checked.",
+     "status": "not_checked",
+     "checkedAt": null
+    },
+    "domainVerified": true,
+    "createdAt": "2026-10-14T10:07:12.307Z",
+    "domain": "faithnet.io",
+    "representativeQueries": []
+   }
+  },
+  "url": "https://discovery.faithnet.io/.well-known/nanda-ai-catalog.json",
+  "description": "The estates on chain 34348, their shared services and agents. Includes the ISL AI scientist team: Elena Torres (evidence review), Ada Chen (electrical assessment), Nikhil Rao (hydrogen assessment), Sofia Marin (ESR assessment), Mira Patel (oxidation assessment), Gabriel Costa (SiGe assessment), Leah Okafor (passivation assessment), Lin Park (model construction), Theo Morgan (validation evaluation), and the ISL demo coordinator (research coordination). Each is a fictional AI scientist with its own harness, skills and vault. Public discovery does not grant invocation authority.",
+  "version": "v1.0.0",
+  "publisher": {
+   "identifier": "faithnet.io",
+   "displayName": "faithnet",
+   "identityType": "dns"
+  }
+ },
+ {
+  "identifier": "urn:air:transparent.ruhr:agent:transparent-ruhr",
+  "displayName": "transparent.ruhr",
+  "type": "application/mcp-server-card+json",
+  "tags": [
+   "mcp",
+   "open-data",
+   "oparl",
+   "civic-tech",
+   "germany",
+   "parliament",
+   "local-government"
+  ],
+  "updatedAt": "2026-11-18T15:38:03.666Z",
+  "extensions": {
+   "org.projectnanda": {
+    "resolutionRole": "smb-agent-card",
+    "preferredDiscovery": "nandaindex",
+    "orgId": "transparent-ruhr",
+    "status": "active",
+    "ttlSeconds": 86400,
+    "emailVerified": true,
+    "emailVerifiedAt": "2026-11-18T15:04:50.656Z",
+    "domainVerifiedAt": "2026-11-18T15:38:03.666Z",
+    "cardValidation": {
+     "detail": "Card fetched and required discovery fields passed structural checks. Runtime availability and optional protocol fields were not tested.",
+     "status": "valid",
+     "checkedAt": "2026-11-18T14:30:14.425Z"
+    },
+    "domainVerified": true,
+    "createdAt": "2026-11-18T14:30:14.932Z",
+    "domain": "transparent.ruhr",
+    "representativeQueries": []
+   }
+  },
+  "url": "https://transparent.ruhr/.well-known/mcp-server-card.json",
+  "description": "Read-only MCP server for council records from Germany's Ruhr area (eleven municipal bodies, mirrored from official OParl/RIS interfaces) and papers of German parliaments (parlamente.org). Results link to the source documents; persons are deliberately not named.",
+  "version": "1.1.0",
+  "publisher": {
+   "identifier": "transparent.ruhr",
+   "displayName": "transparent.ruhr",
+   "identityType": "dns"
+  }
+ }
+]

@@ -11,9 +11,11 @@ import { buildAgentFacts } from "./agentfacts.mjs";
 import { withConsent } from "./consent.mjs";
 import { DEFAULT_VALIDATORS } from "./validators.mjs";
 import { CHAINS, bindingOf, decodeDataUriJson, evmPayTos, identityPillar, pickRegistration, readAgent } from "./chain.mjs";
-import { deliveryFromMcp, evaluateGate } from "./gate.mjs";
+import { cautionKinds, deliveryFromMcp, evaluateGate } from "./gate.mjs";
+import { actionLine } from "./card.mjs";
 import { DEFAULT_TIMEOUT_MS, parseJson, readText, timedFetch } from "./net.mjs";
 import { readValidations } from "./validation.mjs";
+import { lookupNanda } from "./nanda.mjs";
 import { parseRpcBody, probeLive } from "./probe.mjs";
 
 export const VET402_MCP = "https://vet402.com/mcp";
@@ -71,7 +73,8 @@ async function registrationFromUri(fetchImpl, tokenURI, live, timeoutMs) {
 }
 
 /**
- * :param target: { url, agentId?, chainId? }. agentId/chainId override the declared registration.
+ * :param target: { url, agentId?, chainId?, nanda? }. agentId/chainId override the declared
+ *   registration; nanda is a NANDA lookup already made (when the visitor named a NANDA record).
  * :param options: { fetch, ask?, remembered?, trustedValidators?, timeoutMs?, now?, skipDelivery? }
  *   ask: the consent card (js/consent.mjs). With it, nothing is sent to an origin the visitor has
  *   not approved; the result then carries consent: { cards, approved, declined }.
@@ -93,7 +96,12 @@ async function gateCheckOnce(target, options) {
   const checkedAt = options.now ? options.now() : new Date().toISOString();
   const url = String(target.url || "").trim();
 
-  const live = await probeLive(url, { fetch: fetchImpl, timeoutMs });
+  // The live probe and the NANDA Index lookup go out together, so both origins are on the first
+  // consent card (each with its own Allow / Decline). NANDA is shown, never used in the verdict.
+  const [live, nanda] = await Promise.all([
+    probeLive(url, { fetch: fetchImpl, timeoutMs }),
+    target.nanda && typeof target.nanda === "object" ? Promise.resolve(target.nanda) : options.skipNanda ? Promise.resolve(null) : lookupNanda(fetchImpl, { url }, timeoutMs),
+  ]);
 
   // Pillar 2, in order: the registration the site declares -> the chain -> the 402 payTo.
   const payTos = evmPayTos(live.declared && live.declared.terms);
@@ -186,8 +194,12 @@ async function gateCheckOnce(target, options) {
     identity: { pillar: identity, ...idEvidence },
     delivery: { pillar: delivery, ...delEvidence },
   };
-  const agentFacts = buildAgentFacts({ url, checkedAt, verdict, live: evidence.live, identity: evidence.identity, delivery: evidence.delivery, trustedValidators: trusted });
-  return { url, checkedAt, verdict: verdict.verdict, reasons: verdict.reasons, evidence, agentFacts, counts: countsOf(evidence) };
+  evidence.nanda = nanda;
+  const agentFacts = buildAgentFacts({ url, checkedAt, verdict, live: evidence.live, identity: evidence.identity, delivery: evidence.delivery, trustedValidators: trusted, nanda });
+  // The pillar results exactly as page code measured them, so the page can keep this check as a
+  // measurement record and judge or save it later by its ID (never from values a model wrote).
+  const pillars = { live: live.pillar, identity, delivery, validation, paid };
+  return { url, checkedAt, verdict: verdict.verdict, reasons: verdict.reasons, evidence, agentFacts, counts: countsOf(evidence), pillars, nanda };
 }
 
 /**
@@ -203,6 +215,7 @@ export function countsOf(evidence) {
     paid: stats ? num(stats.paid_attempts) : null,
     delivered: stats ? num(stats.delivered) : null,
     validationsPassed: v ? num(v.passed) : null,
+    validationsFailed: v ? num(v.failed) : null,
   };
 }
 
@@ -215,6 +228,10 @@ export function summarizeCheck(result) {
     url: result.url,
     checkedAt: result.checkedAt,
     verdict: result.verdict,
+    action: actionLine(result.verdict, e.delivery.paid),
+    // What a CAUTION is about (gate.mjs SHORT): identity_unknown, unreachable, steering,
+    // no_delivery_record, declined, not_compared, delivery_warn. Empty for ALLOW and BLOCK.
+    cautions: cautionKinds(result.reasons),
     reasons: result.reasons,
     live: {
       corsReachable: e.live.pillar.data ? e.live.pillar.data.corsReachable : null,
@@ -246,6 +263,7 @@ export function summarizeCheck(result) {
         : e.delivery.validation,
     },
     counts: result.counts,
+    nanda: result.nanda ? (result.nanda.status === "listed" ? { status: "listed", line: result.nanda.record.line, identifier: result.nanda.record.identifier, displayName: result.nanda.record.displayName, url: result.nanda.record.url } : { status: result.nanda.status, error: result.nanda.error }) : null,
     consent: result.consent ? { approved: result.consent.approved.map((o) => new URL(o).host), declined: result.consent.declined.map((o) => new URL(o).host) } : undefined,
     agentFacts: "The full AgentFacts JSON with every source URL is on the FactGate page (Download AgentFacts).",
   };

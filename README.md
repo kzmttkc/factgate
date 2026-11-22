@@ -2,6 +2,8 @@
 
 **Check a counterparty before your agent links to it or pays it.**
 
+For a site with no ERC-8004 registration, FactGate still tells you before you connect whether it answers the way it declares, whether its agent instructions are safe to load, and whether it can be reached at all.
+
 FactGate is an open agentic website (Worldwide Agentic Web MVP spec) that answers one question for an agent builder or a visitor: *is it safe to connect to this agent site, NANDA-listed agent or x402 seller?* It measures three things from the browser and returns a deterministic **ALLOW / CAUTION / BLOCK** with the evidence, plus an AgentFacts JSON.
 
 | Pillar | What FactGate measures | Source |
@@ -10,7 +12,11 @@ FactGate is an open agentic website (Worldwide Agentic Web MVP spec) that answer
 | 2. Identity on chain | The ERC-8004 registration the site declares, read with `eth_call` and pinned to one block; its owner and agentWallet compared with the 402 `payTo`. A free site passes when the site and its registration point at each other | Base, Base Sepolia, Celo |
 | 3. Delivered after payment | vet402's production record of paid calls that came back with content, and ERC-8004 ValidationRegistry scores from **trusted** validators only | vet402.com/mcp, ValidationRegistry |
 
-The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that could not be read is CAUTION (never zero, never good), and the language model only explains. Nothing is paid or signed, and **nothing is contacted before the visitor approves a card that lists each destination origin and what it gets** (spec 3.2 Consent, section 5).
+The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that could not be read is CAUTION (never zero, never good), and the language model only explains.
+
+**CAUTION means "unchecked", not "a little risky":** something could not be measured, and the card lists exactly what (who it is, whether it answers, whether paid calls came back) next to what was measured, so a CAUTION is never treated as safe.
+
+**Only validators in `site/validators.json` are counted, and today that list holds one: the Delivery Court judge, which is the author's own validator** (its scores can be recomputed from public records; others' scores are shown, never counted). Nothing is paid or signed, and **nothing is contacted before the visitor approves a card that lists each destination origin and what it gets** (spec 3.2 Consent, section 5).
 
 **How FactGate breaks self-declaration:** a site's own manifest, AgentFacts and signature only say who wrote the claims, so FactGate compares every claim with something the site does not control — what its endpoints actually answer, what the chain says its registered wallet is, and what came back when someone paid it.
 
@@ -32,19 +38,21 @@ The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that c
 
 ## Try it
 
-Open the page, press one of **Try these** (agent402.tools, Verified Stay, Glossy Stay) or paste a URL, approve the cards, and read the verdict card: three pillars side by side with one line of evidence each, three counts on top (paid calls, calls that came back with content, passing validations; "—" when not measured), and the full request log, the approved origins and the AgentFacts under the fold.
+Open the page, press one of **Try these** (agent402.tools, Verified Stay, Glossy Stay) or paste a URL, or a NANDA Index id or name (for example `Heron A2A Checker`), approve the cards row by row, and read the verdict card. Its first line is what to do: **Link / pay: OK**, **Do not pay** (a paid counterparty FactGate blocked), **Do not link** (a free one it blocked) or **Unchecked — do not treat as safe** (CAUTION). Below it: what was measured and what was not; three counts (paid calls and calls that came back with content in vet402's record, and trusted validations as "passed n / below 70 m"; "—" when not measured); three pillars side by side, each with one short sentence (the full reason under Details; pillar 3 says that vet402 is the author's own service); the NANDA Index record if the counterparty is listed ("NANDA: listed, card not validated" when NANDA has not validated its card); and the full request log, the approved origins and the AgentFacts under the fold.
 
-Verdicts measured on 2026-11-22 (`node scripts/probe-live.mjs --peers`, `evidence/live/SUMMARY.json`):
+Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`, `evidence/live/SUMMARY.json`). The first word on the card is in brackets:
 
 | Counterparty | Verdict | Why |
 | --- | --- | --- |
-| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; vet402 delivered 3 of 3 paid calls |
-| vet402.com (the author's own service) | ALLOW | No payment asked; the site and its ERC-8004 registration point at each other (rule C-1) |
-| Verified Stay (fictional demo, local) | ALLOW | payTo = agent 10798's wallet on Base Sepolia; 79 scores of 70 or more from the trusted Delivery Court judge |
-| Glossy Stay (fictional demo, local) | BLOCK | payTo is not its own declared wallet nor agent 10799's; the paid resource answers an empty body; a trusted score of 3 |
-| Stay Steward (fictional demo, local) | CAUTION | Answers as declared; declares no ERC-8004 registration |
-| Five agentic websites from the contest's list | CAUTION | Answer as declared; none declares an ERC-8004 registration, so identity is not measured |
-| The contest organizer's widget | CAUTION | Its manifest answers without `Access-Control-Allow-Origin`, so a browser cannot read it |
+| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW (Link / pay: OK) | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; vet402 delivered 3 of 3 paid calls |
+| vet402.com (the author's own service) | ALLOW (Link / pay: OK) | No payment asked; the site and its ERC-8004 registration point at each other (rule C-1) |
+| Verified Stay (fictional demo, local) | ALLOW (Link / pay: OK) | payTo = agent 10798's wallet on Base Sepolia; trusted validations passed 79 / below 70 0 (the Delivery Court judge) |
+| Glossy Stay (fictional demo, local) | BLOCK (Do not pay) | payTo is not its own declared wallet nor agent 10799's; the paid resource answers an empty body; trusted validations passed 1 / below 70 1 (a score of 3) |
+| Stay Steward (fictional demo, local) | CAUTION: identity_unknown | Answers as declared; declares no ERC-8004 registration |
+| Five agentic websites from the contest's list | CAUTION: identity_unknown | Answer as declared; none declares an ERC-8004 registration, so identity is not measured |
+| The contest organizer's widget | CAUTION: unreachable, identity_unknown, no_delivery_record | Its manifest answers without `Access-Control-Allow-Origin`, so a browser cannot read it |
+
+None of these is in the NANDA Index (138 records searched). A listed example: `Heron A2A Checker` (`urn:air:heron.ing:catalog:root`) shows "NANDA: listed, card not validated" on the card; its own site did not answer the browser, so it is CAUTION (unreachable, identity_unknown, no_delivery_record).
 
 ## Run it
 
@@ -77,7 +85,7 @@ node serve.mjs verified-stay --port 8792                # http://127.0.0.1:8792/
 node serve.mjs stay-steward --host ::1 --port 8793      # http://[::1]:8793/
 ```
 
-Open Stay Steward, pick a stay, and ask the assistant to book it. Stay Steward asks FactGate first (a card), FactGate's window asks before each origin it reads, and only then is the stay's network loaded (another card) and the booking made in the stay's own window. With Glossy Stay the gate stops at FactGate's BLOCK and shows why.
+Open Stay Steward, pick a stay, and press **Check with FactGate** (no AI key needed: page code runs the gate), or ask the assistant to book it. Stay Steward asks FactGate first (a card), FactGate's window asks before each origin it reads, and only then is the stay's network loaded (another card) and the booking made in the stay's own window. With Glossy Stay the gate stops at FactGate's BLOCK and shows why.
 
 ### Check with a real model
 
@@ -103,11 +111,28 @@ The tests use a scripted model. To check the same flows with a real LLM, use you
 
 ## How a partner site uses FactGate
 
-FactGate shares three actions through its bridge (`site/bridge/bridge-actions.js`) with every site: `get_gate_state` and `evaluate_gate` (pure, in a hidden frame) and `gate_check(url)`. `gate_check` contacts other origins, so it runs in FactGate's own window, where the visitor approves each origin first. The reference runtime opens a partner's window only for actions marked `write`, so `gate_check` is marked `write` with `confirmsInWindow`; it changes nothing. A caller that wants a hard gate does what Stay Steward does: read FactGate's verdict from the action receipt and decline the card for a stay that was blocked or never checked (`~/factgate-peers/stay-steward/js/gate-keeper.mjs`).
+FactGate shares two actions through its bridge (`site/bridge/bridge-actions.js`) with every site: `get_gate_state` (pure, in a hidden frame) and `gate_check(url)`. `gate_check` contacts other origins, so it runs in FactGate's own window, where the visitor approves each origin first. The reference runtime opens a partner's window only for actions marked `write`, so `gate_check` is marked `write` with `confirmsInWindow`; it changes nothing. There is no shared `evaluate_gate`: a verdict comes only from a check FactGate measured.
+
+### Put the gate in your own site (three lines)
+
+`site/factgate-gate.mjs` is one file with no imports, for any site that runs the reference runtime. Copy it next to your page, then:
+
+```js
+import { FactGateGate } from "./factgate-gate.mjs";
+const gate = new FactGateGate({ factgateUrl: "https://<factgate host>/factgate", pageOrigin: location.origin, policy: { passCaution: ["identity_unknown"] } });
+gate.install(engine); // engine = boot(...).engine; gate.check(engine, url) runs a check from your own button, no model needed
+```
+
+The gate is page code in front of the runtime's consent step: a partner network is declined before its card (and nothing is fetched from it) unless FactGate checked it in this visit and the verdict passes the policy. ALLOW always passes, BLOCK never does, and a CAUTION passes only when every kind in it is listed in `passCaution` (`identity_unknown`, `unreachable`, `steering`, `no_delivery_record`, `declined`, `not_compared`, `delivery_warn`). **The default passes no CAUTION.** Stay Steward uses `["identity_unknown"]`: a stay that answers as declared but has no ERC-8004 registration may be linked; one that did not answer, steers the caller, or was blocked is not. Every stop is a line passed to `record`.
+
+Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/factgate-gate.mjs`, checked by its tests) and has a **Check with FactGate** button that runs the whole flow without a model or key: the card for FactGate, FactGate's network loaded by name, `gate_check` in FactGate's window, then either Verified Stay's card, its network and its booking window, or a stop with the reasons.
 
 ## Rules worth knowing
 
-- **Consent.** Round 1 card: the counterparty's origin only. Round 2: what reading it showed is needed (chain RPC, vet402.com, MCP servers it declares). A declined origin is never contacted, and its pillar becomes CAUTION. "Allow for this visit" is remembered per origin until the page closes, only when chosen.
+- **Consent.** Round 1 card: the counterparty's origin and the NANDA Index. Round 2: what reading it showed is needed (chain RPC, vet402.com, MCP servers it declares). Each row is allowed or declined on its own. A declined origin is never contacted, and its pillar becomes CAUTION. "Allow selected for this visit" is remembered per origin until the page closes, only when chosen.
+- **Redirects.** FactGate never lets the fetch follow a redirect. A redirect whose `Location` can be read is a new destination: it goes back through the consent check, so another origin gets its own card and no request before it (`test/redirect.test.mjs`). A browser hides the `Location` of such a redirect, so on the page a redirect is recorded as not followed.
+- **Measurements, not model values.** `website_evaluate_gate` and `website_save_check` take only the `measurementId` that `website_gate_check` (or `website_check_seller`) returned; they never accept pillar values a model wrote. The Developer form's hand-entered verdicts are kept in their own list, marked "hand-entered, not measured".
+- **NANDA Index.** `manifest_inspector` (and every full check) reads `https://api.nandaindex.org/api/v1/index` and shows the one matching record (by URL host, `urn:air:` id, orgId or name). A listing is shown, not counted in the verdict.
 - **Trusted validators.** A validation score counts only when its validator is on the list for that chain (`site/validators.json`, editable on the page; stored in the visitor's browser). The default lists only validators whose every score anyone can recompute from public records: the Delivery Court judge, which is **the author's own** validator (recompute with `offchain/src/rejudge.mjs` in github.com/kzmttkc/reactive-delivery-court). Other validators' scores are shown with the reason, never counted; self-scores never count. AgentFacts carries `x_factgate_validators`.
 - **Free sites.** A site that asks for no payment passes pillar 2 when pillar 1 passed and the site and its ERC-8004 registration point at each other (the site's `/.well-known/agent-registration.json` names the agentId; the registration's `services` or agentURI names the site). One direction only stays CAUTION.
 - **Instructions scan.** Text that tells the caller's model to ignore its rules, reveal its prompt or context, or go to an undeclared site is CAUTION; text that asks for a key, password or seed phrase is BLOCK. A sentence that forbids the thing ("Never ask for passwords") is not a finding; the published networks of FactGate, the demo sites and the reference examples produce none (`test/rules.test.mjs`). It is a static check and can be evaded by rewording.
@@ -122,23 +147,25 @@ FactGate shares three actions through its bridge (`site/bridge/bridge-actions.js
 | `site/js/chain.mjs` | Pillar 2 (ERC-8004 IdentityRegistry reads, binding in both directions) |
 | `site/js/validation.mjs`, `validators.mjs`, `site/validators.json` | Pillar 3's ValidationRegistry source and the trusted list |
 | `site/js/gatecheck.mjs`, `reads.mjs` | One full check, shared by the page, the bridge and the probe script |
-| `site/js/consent.mjs`, `consent-card.mjs` | Consent rounds and the card |
+| `site/js/consent.mjs`, `consent-card.mjs` | Consent rounds, redirects as new destinations, and the per-row card |
+| `site/js/nanda.mjs` | NANDA Index lookup |
+| `site/factgate-gate.mjs` | The gate other sites load (policy, page-code check) |
 | `site/js/card.mjs`, `app.js`, `index.html`, `styles.css` | The page |
 | `site/factgate.hocon`, `agent-manifest.json`, `site-actions.js`, `bridge/` | The agentic website (network, manifest, actions, bridge) |
 | `site/runtime/` | The reference runtime, unchanged |
 | `scripts/probe-live.mjs`, `cors-fetch.mjs` | Live measurement with the browser's CORS rules |
 | `evidence/live/` | Measured results |
-| `NOTES_ja.md` | Work log in Japanese |
 
 ## Tests
 
-| Suite | Tests (2026-11-22) |
+| Suite | Tests (2026-11-22, after the second grading's fixes) |
 | --- | --- |
-| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` | 146: 139 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
-| `~/factgate-peers`: `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` | 50: 50 pass, 0 fail (7 of them are the three-site end-to-end tests) |
+| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` | 160: 153 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
+| `~/factgate-peers`: `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` | 55: 55 pass, 0 fail (10 of them are three-site end-to-end tests, 2 of those run the no-model button) |
 
 ## Limits
 
+- Redirects are not followed in a browser (the browser hides where they point); a counterparty whose files sit behind a redirect reads as unreachable until it serves them directly.
 - Not deployed yet. Before hosting, the demo URLs (`127.0.0.1`, `localhost`, `[::1]`) in `site/js/examples.mjs` and in the demo sites must change to https URLs.
 - The real-model path is not covered by the tests (it needs a key); the steps above check it by hand.
 - The reference runtime applies one private-context allow rule per calling network, so Verified Stay also receives `target_url` (its own URL). Destination-scoped rules are a spec section 5 extension.

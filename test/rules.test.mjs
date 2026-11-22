@@ -6,9 +6,9 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { buildAgentFacts } from "../site/js/agentfacts.mjs";
-import { DASH, oneLine, verdictCard } from "../site/js/card.mjs";
+import { DASH, actionLine, oneLine, verdictCard } from "../site/js/card.mjs";
 import { purposeOf, summarizePurposes, withConsent } from "../site/js/consent.mjs";
-import { evaluateGate, judgeLive } from "../site/js/gate.mjs";
+import { cautionKinds, evaluateGate, judgeLive } from "../site/js/gate.mjs";
 import { scanInstructions } from "../site/js/instructions.mjs";
 import { DEFAULT_VALIDATORS, normalizeTrusted, trustedRow } from "../site/js/validators.mjs";
 
@@ -145,12 +145,41 @@ test("B: withConsent never calls fetch for an origin before its card, remembers 
 
 test("D-1: the verdict card has three pillars and three counts; an unmeasured count is a dash, never 0", () => {
   const verdict = evaluateGate({ live: { status: "ok", data: { corsReachable: true, answersAsDeclared: true } }, paid: false });
-  const card = verdictCard({ url: "https://x.example/n", checkedAt: "2026-11-22T00:00:00.000Z", ...verdict, counts: { paid: null, delivered: 3, validationsPassed: 0 } });
+  const card = verdictCard({ url: "https://x.example/n", checkedAt: "2026-11-22T00:00:00.000Z", ...verdict, counts: { paid: null, delivered: 3, validationsPassed: 0, validationsFailed: 0 } });
   assert.deepEqual(card.pillars.map((p) => p.key), ["live", "identity", "delivery"]);
   assert.deepEqual(card.pillars.map((p) => p.label), ["ALLOW", "CAUTION", "NOT APPLICABLE"]);
-  assert.deepEqual(card.counts.map((c) => c.value), [DASH, "3", "0"]);
+  assert.deepEqual(card.counts.map((c) => c.value), [DASH, "3", "passed 0 / below 70 0"]);
   assert.ok(card.pillars.every((p) => p.line.length <= 140));
+  // Second grading: the first line is what to do; CAUTION names what could not be measured.
+  assert.equal(card.action, "Unchecked — do not treat as safe");
+  assert.deepEqual(card.cautions.map((c) => c.kind), ["identity_unknown"]);
+  assert.equal(card.measured.notMeasured.length, 1);
+  assert.match(card.measured.notMeasured[0], /^Identity on chain: who it is/);
+  assert.deepEqual(card.measured.notApplicable, ["Delivered after payment"]);
+  assert.equal(card.pillars[0].line, "Answers as it declares.");
+  assert.match(card.pillars[2].note, /author's own service/);
+  const unmeasured = verdictCard({ url: "https://x.example/n", checkedAt: "t", ...verdict, counts: {} });
+  assert.equal(unmeasured.counts[2].value, DASH);
   assert.equal(oneLine("First sentence. Second sentence."), "First sentence.");
+});
+
+test("D-2: the first line is an action: Link / pay: OK, Do not pay (paid), Do not link (free), Unchecked", () => {
+  assert.equal(actionLine("ALLOW", true), "Link / pay: OK");
+  assert.equal(actionLine("BLOCK", true), "Do not pay");
+  assert.equal(actionLine("BLOCK", false), "Do not link");
+  assert.equal(actionLine("CAUTION", true), "Unchecked — do not treat as safe");
+});
+
+test("D-3: CAUTION is split by kind, and every reason has a short sentence that is never cut", () => {
+  const steering = evaluateGate({ live: { status: "ok", data: { corsReachable: true, answersAsDeclared: true, instructionFindings: [{ severity: "caution", agent: "a", excerpt: "ignore", rule: "override" }] } }, paid: false });
+  assert.deepEqual(cautionKinds(steering.reasons), ["steering", "identity_unknown"]);
+  const down = evaluateGate({ live: { status: "ok", data: { corsReachable: false } }, delivery: { status: "unavailable", error: "x" }, validation: { status: "unavailable", error: "y" } });
+  assert.deepEqual(cautionKinds(down.reasons), ["unreachable", "identity_unknown", "no_delivery_record"]);
+  const declined = evaluateGate({ live: { status: "unavailable", error: "TypeError: not contacted: the visitor declined a.example" } });
+  assert.deepEqual(cautionKinds(declined.reasons).slice(0, 1), ["declined"]);
+  for (const r of [...steering.reasons, ...down.reasons]) {
+    assert.ok(r.short && !r.short.endsWith("…") && r.short.length <= 90, r.short);
+  }
 });
 
 test("E: agent_name keeps host and port apart (127.0.0.1:8792 keeps its colon)", () => {

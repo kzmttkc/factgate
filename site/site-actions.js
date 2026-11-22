@@ -3,9 +3,10 @@
 // "actions.agentTools" become model tools, called website_<name>.
 // The verdict rules live in js/gate.mjs. This file only wraps the page object.
 import { App } from "./js/app.js";
-import { pillarsFromArgs } from "./js/gate.mjs";
 import { DESCRIPTIONS, SCHEMAS } from "./js/reads.mjs";
-import { PILLAR_PROPS } from "./js/schema.mjs";
+
+// A measurement record made by page code in this visit (website_gate_check, website_check_seller).
+const MEASUREMENT_ID = { type: "string", minLength: 3, maxLength: 20, description: "measurementId from website_gate_check or website_check_seller" };
 
 class SiteActions {
   static registerActions(actions) {
@@ -64,33 +65,34 @@ class SiteActions {
   static evaluateAction() {
     return {
       name: "evaluate_gate",
-      description: "Run the verdict engine on pillar results you already have; prefer website_gate_check, which measures them. Copy fields exactly; a pillar not fetched is {status: \"unavailable\", error}. Returns {verdict, reasons}. Changes nothing.",
+      description: "Run the verdict engine again on one measurement page code made (the measurementId from website_gate_check or website_check_seller). It takes no pillar values. Returns {verdict, reasons}. Changes nothing.",
       effect: "read",
       inputSchema: {
         type: "object",
         additionalProperties: false,
-        properties: PILLAR_PROPS,
+        required: ["measurementId"],
+        properties: { measurementId: MEASUREMENT_ID },
       },
       execute: SiteActions.evaluate,
     };
   }
 
   static evaluate(args) {
-    return App.page.evaluate(pillarsFromArgs(args));
+    return App.page.evaluate(args);
   }
 
   static saveCheckAction() {
     return {
       name: "save_check",
-      description: "Call it only when the visitor asks to keep a check. Re-runs the verdict engine on the given pillars and adds the result to the page's saved checks under a label. The visitor can remove it on the page. Returns the saved check and the new version, or ok false with a reason.",
+      description: "Call it only when the visitor asks to keep a check. Saves the verdict of one measurement (measurementId from website_gate_check or website_check_seller) in the page's saved checks; label defaults to its URL. The visitor can remove it on the page. Returns the saved check and the new version, or ok false with a reason.",
       effect: "write",
       inputSchema: {
         type: "object",
         additionalProperties: false,
-        required: ["label"],
+        required: ["measurementId"],
         properties: {
-          label: { type: "string", minLength: 1, maxLength: 200, description: "The counterparty's URL or name." },
-          ...PILLAR_PROPS,
+          measurementId: MEASUREMENT_ID,
+          label: { type: "string", minLength: 1, maxLength: 200, description: "Optional name for the saved check." },
         },
       },
       execute: SiteActions.saveCheck,
@@ -98,7 +100,7 @@ class SiteActions {
   }
 
   static saveCheck(args) {
-    return App.page.saveCheck({ label: args.label, ...pillarsFromArgs(args) });
+    return App.page.saveCheck(args);
   }
 }
 

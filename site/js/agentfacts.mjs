@@ -142,6 +142,12 @@ export function buildAgentFacts(input) {
     },
     x_factgate_unofficial_registries: identity.unofficial && identity.unofficial.length ? clone(identity.unofficial) : undefined,
     x_factgate_validators: validatorsBlock(input),
+    // One NANDA Index record for this counterparty, as listed (shown, not used in the verdict).
+    x_factgate_nanda: input.nanda
+      ? (input.nanda.status === "listed"
+        ? { status: "listed", source: "https://api.nandaindex.org/api/v1/index", line: input.nanda.record.line, record: clone(input.nanda.record) }
+        : { status: input.nanda.status, source: "https://api.nandaindex.org/api/v1/index", error: input.nanda.error, searched: input.nanda.searched })
+      : undefined,
     x_factgate_evidence: {
       target: url,
       checkedAt: input.checkedAt,

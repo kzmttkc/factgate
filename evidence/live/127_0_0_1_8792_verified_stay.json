@@ -1,37 +1,49 @@
 {
   "url": "http://127.0.0.1:8792/verified_stay",
-  "checkedAt": "2026-11-22T05:40:39.746Z",
+  "checkedAt": "2026-11-22T06:57:20.808Z",
   "verdict": "ALLOW",
   "reasons": [
     {
       "pillar": "live",
       "code": "live_as_declared",
       "effect": "ALLOW",
-      "text": "The live answer matches the declaration."
+      "text": "The live answer matches the declaration.",
+      "short": "Answers as it declares.",
+      "kinds": []
     },
     {
       "pillar": "identity",
       "code": "identity_match",
       "effect": "ALLOW",
-      "text": "The declared payee matches the ERC-8004 registration [eth_call at Base Sepolia block 62020856, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798: owner 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31, agentWallet 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31]."
+      "text": "The declared payee matches the ERC-8004 registration [eth_call at Base Sepolia block 62043864, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798: owner 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31, agentWallet 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31].",
+      "short": "Its payee is the wallet of its ERC-8004 registration.",
+      "kinds": []
     },
     {
       "pillar": "delivery",
       "code": "delivery_validated",
       "effect": "ALLOW",
       "text": "vet402: Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8792/api/book.json is not one. Not measured, not counted as zero. ERC-8004 validation: Trusted ERC-8004 validators (0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc) scored agent 10798 on chain 84532 70 or more 79 time(s) and never below 70 (tx 0xba1afa1920e4929c8a2f0df8ca418c289cf59bc7c10707576fbc3df9d0bc5902, block 61922196, log 15).",
+      "short": "Trusted validators scored its deliveries 70 or more.",
+      "kinds": [],
       "sources": [
         {
           "pillar": "delivery",
           "code": "delivery_unavailable",
           "effect": "CAUTION",
-          "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8792/api/book.json is not one. Not measured, not counted as zero."
+          "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8792/api/book.json is not one. Not measured, not counted as zero.",
+          "short": "Not measured: no delivery record could be read.",
+          "kinds": [
+            "no_delivery_record"
+          ]
         },
         {
           "pillar": "validation",
           "code": "validation_passed",
           "effect": "ALLOW",
-          "text": "Trusted ERC-8004 validators (0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc) scored agent 10798 on chain 84532 70 or more 79 time(s) and never below 70 (tx 0xba1afa1920e4929c8a2f0df8ca418c289cf59bc7c10707576fbc3df9d0bc5902, block 61922196, log 15)."
+          "text": "Trusted ERC-8004 validators (0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc) scored agent 10798 on chain 84532 70 or more 79 time(s) and never below 70 (tx 0xba1afa1920e4929c8a2f0df8ca418c289cf59bc7c10707576fbc3df9d0bc5902, block 61922196, log 15).",
+          "short": "Trusted validators scored its deliveries 70 or more.",
+          "kinds": []
         }
       ]
     }
@@ -229,7 +241,7 @@
             "bound": true,
             "mutual": false,
             "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
-            "readAt": "eth_call at Base Sepolia block 62020856, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798"
+            "readAt": "eth_call at Base Sepolia block 62043864, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798"
           }
         }
       },
@@ -268,7 +280,7 @@
         "chain": "Base Sepolia",
         "agentId": "10798",
         "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-        "block": 62020856,
+        "block": 62043864,
         "owner": "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31",
         "agentWallet": "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31",
         "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-deliver.json",
@@ -278,7 +290,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2e",
-            "block": "0x3b25cf8",
+            "block": "0x3b2b6d8",
             "ok": true,
             "result": "0x000000000000000000000000f98f6b4d8f1a5a03271bbf2bee23236737d9ec31"
           },
@@ -287,7 +299,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2e",
-            "block": "0x3b25cf8",
+            "block": "0x3b2b6d8",
             "ok": true,
             "result": "0x000000000000000000000000f98f6b4d8f1a5a03271bbf2bee23236737d9ec31"
           },
@@ -296,7 +308,7 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2e",
-            "block": "0x3b25cf8",
+            "block": "0x3b2b6d8",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006168747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d64656c697665722e6a736f6e00000000000000000000000000000000000000000000000000000000000000"
           }
@@ -384,6 +396,20 @@
           ]
         }
       }
+    },
+    "nanda": {
+      "status": "not_listed",
+      "query": {
+        "url": "http://127.0.0.1:8792/verified_stay"
+      },
+      "searched": 138,
+      "http": [
+        {
+          "method": "GET",
+          "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+          "status": 200
+        }
+      ]
     }
   },
   "agentFacts": {
@@ -413,7 +439,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T05:40:39.746Z",
+      "lastAudited": "2026-11-22T06:57:20.808Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -423,31 +449,43 @@
           "pillar": "live",
           "code": "live_as_declared",
           "effect": "ALLOW",
-          "text": "The live answer matches the declaration."
+          "text": "The live answer matches the declaration.",
+          "short": "Answers as it declares.",
+          "kinds": []
         },
         {
           "pillar": "identity",
           "code": "identity_match",
           "effect": "ALLOW",
-          "text": "The declared payee matches the ERC-8004 registration [eth_call at Base Sepolia block 62020856, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798: owner 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31, agentWallet 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31]."
+          "text": "The declared payee matches the ERC-8004 registration [eth_call at Base Sepolia block 62043864, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798: owner 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31, agentWallet 0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31].",
+          "short": "Its payee is the wallet of its ERC-8004 registration.",
+          "kinds": []
         },
         {
           "pillar": "delivery",
           "code": "delivery_validated",
           "effect": "ALLOW",
           "text": "vet402: Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8792/api/book.json is not one. Not measured, not counted as zero. ERC-8004 validation: Trusted ERC-8004 validators (0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc) scored agent 10798 on chain 84532 70 or more 79 time(s) and never below 70 (tx 0xba1afa1920e4929c8a2f0df8ca418c289cf59bc7c10707576fbc3df9d0bc5902, block 61922196, log 15).",
+          "short": "Trusted validators scored its deliveries 70 or more.",
+          "kinds": [],
           "sources": [
             {
               "pillar": "delivery",
               "code": "delivery_unavailable",
               "effect": "CAUTION",
-              "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8792/api/book.json is not one. Not measured, not counted as zero."
+              "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8792/api/book.json is not one. Not measured, not counted as zero.",
+              "short": "Not measured: no delivery record could be read.",
+              "kinds": [
+                "no_delivery_record"
+              ]
             },
             {
               "pillar": "validation",
               "code": "validation_passed",
               "effect": "ALLOW",
-              "text": "Trusted ERC-8004 validators (0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc) scored agent 10798 on chain 84532 70 or more 79 time(s) and never below 70 (tx 0xba1afa1920e4929c8a2f0df8ca418c289cf59bc7c10707576fbc3df9d0bc5902, block 61922196, log 15)."
+              "text": "Trusted ERC-8004 validators (0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc) scored agent 10798 on chain 84532 70 or more 79 time(s) and never below 70 (tx 0xba1afa1920e4929c8a2f0df8ca418c289cf59bc7c10707576fbc3df9d0bc5902, block 61922196, log 15).",
+              "short": "Trusted validators scored its deliveries 70 or more.",
+              "kinds": []
             }
           ]
         }
@@ -482,9 +520,14 @@
         }
       ]
     },
+    "x_factgate_nanda": {
+      "status": "not_listed",
+      "source": "https://api.nandaindex.org/api/v1/index",
+      "searched": 138
+    },
     "x_factgate_evidence": {
       "target": "http://127.0.0.1:8792/verified_stay",
-      "checkedAt": "2026-11-22T05:40:39.746Z",
+      "checkedAt": "2026-11-22T06:57:20.808Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -677,7 +720,7 @@
               "bound": true,
               "mutual": false,
               "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
-              "readAt": "eth_call at Base Sepolia block 62020856, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798"
+              "readAt": "eth_call at Base Sepolia block 62043864, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798"
             }
           }
         },
@@ -716,7 +759,7 @@
           "chain": "Base Sepolia",
           "agentId": "10798",
           "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-          "block": 62020856,
+          "block": 62043864,
           "owner": "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31",
           "agentWallet": "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31",
           "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-deliver.json",
@@ -726,7 +769,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2e",
-              "block": "0x3b25cf8",
+              "block": "0x3b2b6d8",
               "ok": true,
               "result": "0x000000000000000000000000f98f6b4d8f1a5a03271bbf2bee23236737d9ec31"
             },
@@ -735,7 +778,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2e",
-              "block": "0x3b25cf8",
+              "block": "0x3b2b6d8",
               "ok": true,
               "result": "0x000000000000000000000000f98f6b4d8f1a5a03271bbf2bee23236737d9ec31"
             },
@@ -744,7 +787,7 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2e",
-              "block": "0x3b25cf8",
+              "block": "0x3b2b6d8",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000006168747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d64656c697665722e6a736f6e00000000000000000000000000000000000000000000000000000000000000"
             }
@@ -846,8 +889,120 @@
   "counts": {
     "paid": null,
     "delivered": null,
-    "validationsPassed": 79
+    "validationsPassed": 79,
+    "validationsFailed": 0
+  },
+  "pillars": {
+    "live": {
+      "status": "ok",
+      "data": {
+        "corsReachable": true,
+        "answersAsDeclared": true,
+        "detail": "as declared: manifest, network, x402 terms, declared wallet, paid resource",
+        "unreachable": [],
+        "instructionFindings": []
+      }
+    },
+    "identity": {
+      "status": "ok",
+      "data": {
+        "declaredPayTo": "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31",
+        "declaredPayTos": [
+          "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31"
+        ],
+        "registered": {
+          "owner": "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31",
+          "agentWallet": "0xf98f6b4d8f1a5a03271bbf2bee23236737d9ec31",
+          "payTo": null,
+          "bound": true,
+          "mutual": false,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
+          "readAt": "eth_call at Base Sepolia block 62043864, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10798"
+        }
+      }
+    },
+    "delivery": {
+      "status": "unavailable",
+      "error": "vet402 records public https sellers only; http://127.0.0.1:8792/api/book.json is not one"
+    },
+    "validation": {
+      "status": "ok",
+      "data": {
+        "registry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+        "chainId": 84532,
+        "agentId": "10798",
+        "total": 80,
+        "passed": 79,
+        "failed": 0,
+        "pending": 1,
+        "unresolved": 0,
+        "selfExcluded": 0,
+        "untrusted": 0,
+        "validators": [
+          "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc"
+        ],
+        "lowest": null,
+        "counted": [
+          {
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "count": 79,
+            "reason": "on the trusted validator list",
+            "name": "Delivery Court judge"
+          }
+        ],
+        "notCounted": [
+          {
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "count": 1,
+            "reason": "request never answered",
+            "name": "Delivery Court judge"
+          }
+        ],
+        "evidence": [
+          {
+            "role": "request never answered (not counted)",
+            "response": 0,
+            "requestHash": "0xed51fb99683f3ef41188b4cfea5fd4c13e85c87ce523ffd6ef5c15ddb4045b29",
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "log": {
+              "kind": "request",
+              "block": 61917521,
+              "tx": "0x8f4d03ff388a0df33d9974e8b16e6be0fb48b632ba72f7e46a4849de8a3478d5",
+              "logIndex": 18
+            }
+          },
+          {
+            "role": "latest passing score",
+            "response": 99,
+            "requestHash": "0x539fad3da16a001b06da4a0b4adb7ee85c8417c1f33d94f390e1021fb1328baf",
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "log": {
+              "kind": "response",
+              "block": 61922196,
+              "tx": "0xba1afa1920e4929c8a2f0df8ca418c289cf59bc7c10707576fbc3df9d0bc5902",
+              "logIndex": 15,
+              "response": 99
+            }
+          }
+        ]
+      }
+    },
+    "paid": true
+  },
+  "nanda": {
+    "status": "not_listed",
+    "query": {
+      "url": "http://127.0.0.1:8792/verified_stay"
+    },
+    "searched": 138,
+    "http": [
+      {
+        "method": "GET",
+        "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+        "status": 200
+      }
+    ]
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 11038
+  "ms": 11073
 }

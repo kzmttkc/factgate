@@ -344,10 +344,10 @@ test("consent rounds: the first card names only the counterparty's origin; the s
     },
   });
   assert.equal(r.verdict, "ALLOW");
-  assert.deepEqual(cards[0].hosts, ["free.example"]);
+  assert.deepEqual(cards[0].hosts, ["free.example", "api.nandaindex.org"]);
   assert.deepEqual(cards[0].sent, []);
   assert.deepEqual(cards[1].hosts, ["mainnet.base.org"]);
-  assert.ok(cards[1].sent.every((h) => h === "free.example"), JSON.stringify(cards[1].sent));
+  assert.ok(cards[1].sent.every((h) => h === "free.example" || h === "api.nandaindex.org"), JSON.stringify(cards[1].sent));
   assert.deepEqual(cards[2].hosts, ["registry-files.example"]);
   assert.equal(cards.length, 3);
   assert.deepEqual(r.consent.declined, []);

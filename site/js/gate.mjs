@@ -33,8 +33,88 @@ export function gateRules() {
   };
 }
 
+// One short sentence per reason code, for the verdict card (never cut). The full text stays in
+// `text`. kinds name what a CAUTION is about, so a caller can choose which ones it accepts:
+//   identity_unknown   = who it is could not be measured (no ERC-8004 registration that speaks for it)
+//   unreachable        = it, or a capability it declares, did not answer the browser
+//   steering           = its agent instructions try to steer the caller's model
+//   no_delivery_record = no record that a paid call came back with content
+//   declined           = the visitor declined an origin, so that part was not measured
+//   not_compared       = reached, but not compared with its declaration
+//   delivery_warn      = vet402 answers WARN
+export const SHORT = Object.freeze({
+  live_as_declared: "Answers as it declares.",
+  live_not_as_declared: "Its live answer contradicts its declaration.",
+  live_instructions_ask_for_secrets: "Its instructions ask the caller for a key or password.",
+  live_cors_unreachable: "A browser cannot reach it.",
+  live_capability_unreachable: "A capability it declares did not answer.",
+  live_instructions_suspicious: "Its instructions try to steer the caller's model.",
+  live_unmeasured: "Reached, but not compared with its declaration.",
+  live_unavailable: "Not measured: it could not be read.",
+  identity_match: "Its payee is the wallet of its ERC-8004 registration.",
+  identity_payee_mismatch: "Its payee is not the wallet of its ERC-8004 registration.",
+  identity_bound_no_payment: "Site and ERC-8004 registration point at each other.",
+  identity_bound_live_not_passed: "Bound on chain, but pillar 1 did not pass.",
+  identity_not_mutual: "Its ERC-8004 registration does not point back to it.",
+  identity_no_declared_payee: "It names no payee address to compare.",
+  identity_declared_only: "Its declared registration is not on chain.",
+  identity_unregistered: "No ERC-8004 registration found.",
+  identity_unbound: "The registered agent does not claim this URL.",
+  identity_unavailable: "Not measured: no ERC-8004 registration speaks for it.",
+  delivery_delivered: "vet402 saw content come back after payment.",
+  delivery_validated: "Trusted validators scored its deliveries 70 or more.",
+  delivery_paid_empty: "A paid call came back empty.",
+  delivery_vet402_block: "vet402 answers BLOCK.",
+  delivery_validation_low: "A trusted validator scored a delivery below 70.",
+  delivery_no_record: "No record of a paid call coming back yet.",
+  delivery_vet402_warn: "vet402 answers WARN.",
+  delivery_inconclusive: "The delivery record does not settle it.",
+  delivery_unavailable: "Not measured: no delivery record could be read.",
+  delivery_not_applicable: "Not applicable: it asks for no payment.",
+  validation_low_score: "A trusted validator scored a delivery below 70.",
+  validation_inconclusive: "Scores of 0 could not be told from unanswered requests.",
+  validation_passed: "Trusted validators scored its deliveries 70 or more.",
+  validation_no_record: "No score from a trusted validator.",
+  validation_unavailable: "Not measured: no validation record could be read.",
+});
+
+const KIND = Object.freeze({
+  live_cors_unreachable: "unreachable",
+  live_capability_unreachable: "unreachable",
+  live_unavailable: "unreachable",
+  live_instructions_suspicious: "steering",
+  live_unmeasured: "not_compared",
+  delivery_vet402_warn: "delivery_warn",
+});
+
+function kindsOf(pillar, code, effect, text) {
+  if (effect !== "CAUTION") {
+    return [];
+  }
+  if (/_unavailable$/.test(code) && /declined/.test(text)) {
+    return ["declined"];
+  }
+  if (KIND[code]) {
+    return [KIND[code]];
+  }
+  if (pillar === "identity") {
+    return ["identity_unknown"];
+  }
+  if (pillar === "delivery" || pillar === "validation") {
+    return ["no_delivery_record"];
+  }
+  return ["unknown"];
+}
+
 function reason(pillar, code, effect, text) {
-  return { pillar, code, effect, text };
+  return { pillar, code, effect, text, short: SHORT[code] || `${effect}.`, kinds: kindsOf(pillar, code, effect, text) };
+}
+
+/**
+ * The kinds of CAUTION in a verdict, without repeats (see SHORT above for the names).
+ */
+export function cautionKinds(reasons) {
+  return [...new Set((reasons || []).filter((r) => r.effect === "CAUTION").flatMap((r) => (Array.isArray(r.kinds) && r.kinds.length ? r.kinds : ["unknown"])))];
 }
 
 function isOk(pillar) {
@@ -89,7 +169,8 @@ export function judgeLive(live) {
   const unreachable = Array.isArray(d.unreachable) ? d.unreachable : [];
   if (unreachable.length > 0) {
     const extra = cautions.length ? ` Its instructions also try to steer the caller: ${findingText(cautions)}.` : "";
-    return reason("live", "live_capability_unreachable", "CAUTION", `A declared capability did not answer the browser: ${unreachable.join("; ")}. Not measured, not counted as a mismatch.${extra}`);
+    const r = reason("live", "live_capability_unreachable", "CAUTION", `A declared capability did not answer the browser: ${unreachable.join("; ")}. Not measured, not counted as a mismatch.${extra}`);
+    return cautions.length ? { ...r, kinds: ["unreachable", "steering"], short: "A declared capability did not answer, and its instructions steer the caller." } : r;
   }
   if (cautions.length) {
     return reason("live", "live_instructions_suspicious", "CAUTION", `Its agent instructions try to steer the caller's model: ${findingText(cautions)}. A caller would load these instructions as untrusted input (spec section 5).`);
@@ -317,60 +398,4 @@ export function liveFromProbe(probe) {
   }
   const matches = typeof probe.matchesDeclaration === "boolean" ? probe.matchesDeclaration : null;
   return { status: "ok", data: { corsReachable: true, answersAsDeclared: matches, detail: `HTTP ${probe.httpStatus}` } };
-}
-
-const LIVE_ANSWER = { yes: true, no: false, not_compared: null };
-
-function missing(fields, obj) {
-  return fields.filter((f) => obj[f] === undefined || obj[f] === null);
-}
-
-/**
- * Turn flat, typed action arguments into the engine's pillar results.
- * The runtime's action schemas allow only fixed fields, so a pillar arrives as
- *   live:     { status, error?, corsReachable, answersAsDeclared: "yes"|"no"|"not_compared", detail? }
- *   identity: { status, error?, declaredPayTo, registered, owner?, agentWallet?, payTo? }
- *   delivery: { status, error?, recommendation, reasonCodes, paidAttempts, delivered, settledNotDelivered, notInCatalog }
- * A pillar marked "ok" but missing a field the engine needs becomes "unavailable" with the
- * missing fields named. It is never filled in with zeros.
- */
-export function pillarsFromArgs(args) {
-  const a = args && typeof args === "object" ? args : {};
-  const out = {};
-  for (const name of ["live", "identity", "delivery"]) {
-    const p = a[name];
-    if (!p || typeof p !== "object") {
-      continue;
-    }
-    if (p.status !== "ok") {
-      out[name] = { status: "unavailable", error: p.error || "not fetched" };
-      continue;
-    }
-    let need;
-    let data;
-    if (name === "live") {
-      need = missing(["corsReachable"], p);
-      data = { corsReachable: p.corsReachable, answersAsDeclared: Object.hasOwn(LIVE_ANSWER, p.answersAsDeclared) ? LIVE_ANSWER[p.answersAsDeclared] : null, detail: p.detail, unreachable: Array.isArray(p.unreachable) ? p.unreachable : [] };
-    } else if (name === "identity") {
-      need = missing(["declaredPayTo", "registered"], p);
-      data = {
-        declaredPayTo: p.declaredPayTo,
-        declaredOnly: p.declaredOnly === true,
-        registered: p.registered ? { owner: p.owner, agentWallet: p.agentWallet, payTo: p.payTo, bound: typeof p.bound === "boolean" ? p.bound : undefined } : null,
-      };
-    } else if (p.notInCatalog === true) {
-      need = [];
-      data = { not_in_catalog: true, recommendation: p.recommendation, reason_codes: p.reasonCodes || [] };
-    } else {
-      need = missing(["recommendation", "paidAttempts", "delivered", "settledNotDelivered"], p);
-      data = {
-        recommendation: p.recommendation,
-        reason_codes: p.reasonCodes || [],
-        delivery: { paid_attempts: p.paidAttempts, delivered: p.delivered, settled_not_delivered: p.settledNotDelivered },
-        not_in_catalog: false,
-      };
-    }
-    out[name] = need.length ? { status: "unavailable", error: `marked ok but missing ${need.join(", ")}` } : { status: "ok", data };
-  }
-  return out;
 }

@@ -2,7 +2,9 @@
 // The build names this file in bridge/agent-manifest.json. Only names in the manifest's
 // "actions.agentTools" reach a partner's agents. Saved checks stay on FactGate's own page.
 //
-// get_gate_state and evaluate_gate contact nothing, so they run in the bridge's hidden frame.
+// get_gate_state contacts nothing, so it runs in the bridge's hidden frame. There is no shared
+// evaluate_gate: a verdict comes only from a measurement page code made (gate_check), never from
+// pillar values a caller's model wrote.
 // gate_check contacts the counterparty, a chain RPC and vet402.com. It must ask the visitor first
 // (MVP spec 3.2 Consent, section 5), and a hidden frame cannot ask. The reference runtime opens a
 // partner's own window only for an action marked "write" (runtime/action-transport.js), so
@@ -10,9 +12,8 @@
 // (its chat asks the visitor first), and there FactGate shows its consent card listing each
 // origin and what it would send there. gate_check changes nothing anywhere.
 import { askInPage } from "../js/consent-card.mjs";
-import { evaluateGate, gateRules, pillarsFromArgs } from "../js/gate.mjs";
+import { gateRules } from "../js/gate.mjs";
 import { DESCRIPTIONS, SCHEMAS, gateCheckRead } from "../js/reads.mjs";
-import { PILLAR_PROPS } from "../js/schema.mjs";
 import { DEFAULT_VALIDATORS, normalizeTrusted } from "../js/validators.mjs";
 
 function bridgeFetch(url, init) {
@@ -35,7 +36,6 @@ class BridgeActions {
   static registerActions(actions) {
     actions.register(BridgeActions.readStateAction());
     actions.register(BridgeActions.gateCheckAction());
-    actions.register(BridgeActions.evaluateAction());
   }
 
   static gateCheckAction() {
@@ -88,27 +88,6 @@ class BridgeActions {
 
   static readState() {
     return { ...gateRules(), checks: [] };
-  }
-
-  static evaluateAction() {
-    return {
-      name: "evaluate_gate",
-      description: "Run FactGate's deterministic verdict engine on three pillar results you already have and return {verdict: ALLOW|CAUTION|BLOCK, reasons}. Prefer gate_check, which measures the pillars itself. A pillar you could not fetch is {status: \"unavailable\", error}. Changes nothing.",
-      effect: "read",
-      availability: "bridge",
-      callerOrigins: BridgeActions.CALLERS,
-      inputSchema: {
-        type: "object",
-        additionalProperties: false,
-        properties: PILLAR_PROPS,
-      },
-      execute: BridgeActions.evaluate,
-    };
-  }
-
-  static evaluate(args) {
-    const result = evaluateGate(pillarsFromArgs(args));
-    return { ok: true, verdict: result.verdict, reasons: result.reasons };
   }
 }
 

@@ -158,25 +158,9 @@ test("liveFromProbe maps a browser fetch TypeError to CORS-unreachable", () => {
   assert.equal(liveFromProbe(undefined).status, "unavailable");
 });
 
-test("pillarsFromArgs maps flat action arguments and never fills missing fields with zeros", async () => {
-  const { pillarsFromArgs } = await import("../site/js/gate.mjs");
-  const p = pillarsFromArgs({
-    live: { status: "ok", corsReachable: true, answersAsDeclared: "yes" },
-    identity: { status: "ok", declaredPayTo: PAYEE, registered: true, owner: PAYEE },
-    delivery: { status: "ok", recommendation: "ALLOW", reasonCodes: ["l1_delivered"], paidAttempts: 3, delivered: 3, settledNotDelivered: 0 },
-  });
-  assert.equal(evaluateGate(p).verdict, "ALLOW");
-  const partial = pillarsFromArgs({ delivery: { status: "ok", recommendation: "ALLOW" } });
-  assert.equal(partial.delivery.status, "unavailable");
-  assert.match(partial.delivery.error, /paidAttempts/);
-  assert.equal(evaluateGate(partial).reasons[2].code, "delivery_unavailable");
-  const nic = pillarsFromArgs({ delivery: { status: "ok", notInCatalog: true } });
-  assert.equal(evaluateGate(nic).reasons[2].code, "delivery_no_record");
-  const unreg = pillarsFromArgs({ identity: { status: "ok", declaredPayTo: PAYEE, registered: false } });
-  assert.equal(evaluateGate(unreg).reasons[1].code, "identity_unregistered");
-  const down = pillarsFromArgs({ live: { status: "unavailable", error: "timeout" } });
-  assert.equal(down.live.status, "unavailable");
-  assert.equal(pillarsFromArgs({ live: { status: "ok", corsReachable: true, answersAsDeclared: "not_compared" } }).live.data.answersAsDeclared, null);
+test("finding 2: the engine has no parser for pillar values written by a model (pillarsFromArgs was removed)", async () => {
+  const gate = await import("../site/js/gate.mjs");
+  assert.equal(gate.pillarsFromArgs, undefined);
 });
 
 // ---- Stage 2 (2026-11-22): rules added with pillars 1 and 2 ----

@@ -1,25 +1,31 @@
 {
   "url": "https://vet402.com/",
-  "checkedAt": "2026-11-22T05:40:29.775Z",
+  "checkedAt": "2026-11-22T06:57:11.230Z",
   "verdict": "ALLOW",
   "reasons": [
     {
       "pillar": "live",
       "code": "live_as_declared",
       "effect": "ALLOW",
-      "text": "The live answer matches the declaration."
+      "text": "The live answer matches the declaration.",
+      "short": "Answers as it declares.",
+      "kinds": []
     },
     {
       "pillar": "identity",
       "code": "identity_bound_no_payment",
       "effect": "ALLOW",
-      "text": "No payment is asked, so there is no payee to compare. The site declares this ERC-8004 agent and the agent's registration points back to the site (the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin) [eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907]."
+      "text": "No payment is asked, so there is no payee to compare. The site declares this ERC-8004 agent and the agent's registration points back to the site (the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin) [eth_call at Celo block 83429873, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907].",
+      "short": "Site and ERC-8004 registration point at each other.",
+      "kinds": []
     },
     {
       "pillar": "delivery",
       "code": "delivery_not_applicable",
       "effect": "NOT_APPLICABLE",
       "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+      "short": "Not applicable: it asks for no payment.",
+      "kinds": [],
       "applicable": false
     }
   ],
@@ -53,6 +59,7 @@
           "state": "not_compared",
           "detail": "no EVM payTo to compare",
           "wallets": [
+            "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
             "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670"
           ]
         },
@@ -114,6 +121,10 @@
             },
             {
               "name": "wallet",
+              "endpoint": "eip155:42220:0x970b37b3c58edc62cccb7beeab5972bc7c6b0435"
+            },
+            {
+              "name": "wallet",
               "endpoint": "eip155:42220:0xc9c7b38C0942914fC8EA12063BC92dcd3b581670"
             }
           ],
@@ -138,16 +149,16 @@
       },
       "http": [
         {
+          "url": "https://vet402.com/agent-manifest.json",
+          "method": "GET",
+          "error": "TypeError: CORS refused: GET https://vet402.com/agent-manifest.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+        },
+        {
           "url": "https://vet402.com/.well-known/agent-registration.json",
           "method": "GET",
           "status": 200,
           "contentType": "application/json; charset=utf-8",
-          "bytes": 999
-        },
-        {
-          "url": "https://vet402.com/agent-manifest.json",
-          "method": "GET",
-          "error": "TypeError: CORS refused: GET https://vet402.com/agent-manifest.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          "bytes": 1112
         },
         {
           "url": "https://vet402.com/",
@@ -183,7 +194,7 @@
             "bound": true,
             "mutual": true,
             "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin",
-            "readAt": "eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
+            "readAt": "eth_call at Celo block 83429873, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
           }
         }
       },
@@ -228,7 +239,7 @@
         "chain": "Celo",
         "agentId": "9907",
         "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
-        "block": 83425271,
+        "block": 83429873,
         "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
         "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
         "tokenURI": "https://vet402.com/.well-known/agent-registration.json",
@@ -238,7 +249,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000026b3",
-            "block": "0x4f8f7f7",
+            "block": "0x4f909f1",
             "ok": true,
             "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
           },
@@ -247,7 +258,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0x0033950900000000000000000000000000000000000000000000000000000000000026b3",
-            "block": "0x4f8f7f7",
+            "block": "0x4f909f1",
             "ok": true,
             "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
           },
@@ -256,7 +267,7 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
             "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000026b3",
-            "block": "0x4f8f7f7",
+            "block": "0x4f909f1",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003668747470733a2f2f7665743430322e636f6d2f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e00000000000000000000"
           }
@@ -283,6 +294,20 @@
       "target": null,
       "http": null,
       "validation": null
+    },
+    "nanda": {
+      "status": "not_listed",
+      "query": {
+        "url": "https://vet402.com/"
+      },
+      "searched": 138,
+      "http": [
+        {
+          "method": "GET",
+          "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+          "status": 200
+        }
+      ]
     }
   },
   "agentFacts": {
@@ -321,7 +346,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T05:40:29.775Z",
+      "lastAudited": "2026-11-22T06:57:11.230Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -331,19 +356,25 @@
           "pillar": "live",
           "code": "live_as_declared",
           "effect": "ALLOW",
-          "text": "The live answer matches the declaration."
+          "text": "The live answer matches the declaration.",
+          "short": "Answers as it declares.",
+          "kinds": []
         },
         {
           "pillar": "identity",
           "code": "identity_bound_no_payment",
           "effect": "ALLOW",
-          "text": "No payment is asked, so there is no payee to compare. The site declares this ERC-8004 agent and the agent's registration points back to the site (the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin) [eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907]."
+          "text": "No payment is asked, so there is no payee to compare. The site declares this ERC-8004 agent and the agent's registration points back to the site (the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin) [eth_call at Celo block 83429873, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907].",
+          "short": "Site and ERC-8004 registration point at each other.",
+          "kinds": []
         },
         {
           "pillar": "delivery",
           "code": "delivery_not_applicable",
           "effect": "NOT_APPLICABLE",
           "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+          "short": "Not applicable: it asks for no payment.",
+          "kinds": [],
           "applicable": false
         }
       ],
@@ -358,9 +389,14 @@
         "note": "not the official ERC-8004 IdentityRegistry on Celo (0x8004A169FB4a3325136EB29fA0ceB6D2e539a432); shown only, not used in the verdict"
       }
     ],
+    "x_factgate_nanda": {
+      "status": "not_listed",
+      "source": "https://api.nandaindex.org/api/v1/index",
+      "searched": 138
+    },
     "x_factgate_evidence": {
       "target": "https://vet402.com/",
-      "checkedAt": "2026-11-22T05:40:29.775Z",
+      "checkedAt": "2026-11-22T06:57:11.230Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -390,6 +426,7 @@
             "state": "not_compared",
             "detail": "no EVM payTo to compare",
             "wallets": [
+              "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
               "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670"
             ]
           },
@@ -451,6 +488,10 @@
               },
               {
                 "name": "wallet",
+                "endpoint": "eip155:42220:0x970b37b3c58edc62cccb7beeab5972bc7c6b0435"
+              },
+              {
+                "name": "wallet",
                 "endpoint": "eip155:42220:0xc9c7b38C0942914fC8EA12063BC92dcd3b581670"
               }
             ],
@@ -475,16 +516,16 @@
         },
         "http": [
           {
+            "url": "https://vet402.com/agent-manifest.json",
+            "method": "GET",
+            "error": "TypeError: CORS refused: GET https://vet402.com/agent-manifest.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+          },
+          {
             "url": "https://vet402.com/.well-known/agent-registration.json",
             "method": "GET",
             "status": 200,
             "contentType": "application/json; charset=utf-8",
-            "bytes": 999
-          },
-          {
-            "url": "https://vet402.com/agent-manifest.json",
-            "method": "GET",
-            "error": "TypeError: CORS refused: GET https://vet402.com/agent-manifest.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790"
+            "bytes": 1112
           },
           {
             "url": "https://vet402.com/",
@@ -520,7 +561,7 @@
               "bound": true,
               "mutual": true,
               "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin",
-              "readAt": "eth_call at Celo block 83425271, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
+              "readAt": "eth_call at Celo block 83429873, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
             }
           }
         },
@@ -565,7 +606,7 @@
           "chain": "Celo",
           "agentId": "9907",
           "registry": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
-          "block": 83425271,
+          "block": 83429873,
           "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
           "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
           "tokenURI": "https://vet402.com/.well-known/agent-registration.json",
@@ -575,7 +616,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x6352211e00000000000000000000000000000000000000000000000000000000000026b3",
-              "block": "0x4f8f7f7",
+              "block": "0x4f909f1",
               "ok": true,
               "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
             },
@@ -584,7 +625,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0x0033950900000000000000000000000000000000000000000000000000000000000026b3",
-              "block": "0x4f8f7f7",
+              "block": "0x4f909f1",
               "ok": true,
               "result": "0x000000000000000000000000970b37b3c58edc62cccb7beeab5972bc7c6b0435"
             },
@@ -593,7 +634,7 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
               "data": "0xc87b56dd00000000000000000000000000000000000000000000000000000000000026b3",
-              "block": "0x4f8f7f7",
+              "block": "0x4f909f1",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003668747470733a2f2f7665743430322e636f6d2f2e77656c6c2d6b6e6f776e2f6167656e742d726567697374726174696f6e2e6a736f6e00000000000000000000"
             }
@@ -634,8 +675,55 @@
   "counts": {
     "paid": null,
     "delivered": null,
-    "validationsPassed": null
+    "validationsPassed": null,
+    "validationsFailed": null
+  },
+  "pillars": {
+    "live": {
+      "status": "ok",
+      "data": {
+        "corsReachable": true,
+        "answersAsDeclared": true,
+        "detail": "as declared: MCP https://vet402.com/mcp",
+        "unreachable": []
+      }
+    },
+    "identity": {
+      "status": "ok",
+      "data": {
+        "declaredPayTo": null,
+        "declaredPayTos": [],
+        "registered": {
+          "owner": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
+          "agentWallet": "0x970b37b3c58edc62cccb7beeab5972bc7c6b0435",
+          "payTo": null,
+          "bound": true,
+          "mutual": true,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry; and the on-chain agentURI is on the site's origin",
+          "readAt": "eth_call at Celo block 83429873, IdentityRegistry 0x8004A169FB4a3325136EB29fA0ceB6D2e539a432, agentId 9907"
+        }
+      }
+    },
+    "delivery": {
+      "status": "unavailable",
+      "error": "not applicable: no 402"
+    },
+    "paid": false
+  },
+  "nanda": {
+    "status": "not_listed",
+    "query": {
+      "url": "https://vet402.com/"
+    },
+    "searched": 138,
+    "http": [
+      {
+        "method": "GET",
+        "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+        "status": 200
+      }
+    ]
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 2078
+  "ms": 2371
 }

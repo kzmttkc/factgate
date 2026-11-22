@@ -49,6 +49,10 @@ function originAllowed(res, origin) {
   return acao === "*" || acao === origin;
 }
 
+function opaqueRedirect() {
+  return { type: "opaqueredirect", status: 0, statusText: "", ok: false, url: "", headers: new Headers(), text: async () => "", json: async () => null, arrayBuffer: async () => new ArrayBuffer(0) };
+}
+
 /**
  * :param origin: the page origin to act as, such as "http://localhost:8790".
  * :param baseFetch: the real fetch (Node's global fetch by default).
@@ -60,7 +64,8 @@ export function corsFetch({ origin, baseFetch = globalThis.fetch }) {
     const headers = lowerHeaders(init.headers);
     delete headers.origin;
     if (target.origin === origin) {
-      return baseFetch(url, { ...init, headers });
+      const same = await baseFetch(url, { ...init, headers });
+      return init.redirect === "manual" && same.status >= 300 && same.status < 400 ? opaqueRedirect() : same;
     }
     const unsafe = unsafeRequestHeaders(headers);
     if (!SAFE_METHODS.has(method) || unsafe.length > 0) {
@@ -83,6 +88,11 @@ export function corsFetch({ origin, baseFetch = globalThis.fetch }) {
       }
     }
     const res = await baseFetch(url, { ...init, headers: { ...headers, origin } });
+    if (init.redirect === "manual" && res.status >= 300 && res.status < 400) {
+      // A browser gives a page an "opaqueredirect" for a manual redirect: status 0, no headers,
+      // no Location. FactGate's page then does not follow it, and neither does this measure.
+      return opaqueRedirect();
+    }
     if (!originAllowed(res, origin)) {
       throw new TypeError(`CORS refused: ${method} ${url} answered ${res.status} without an Access-Control-Allow-Origin for ${origin}`);
     }

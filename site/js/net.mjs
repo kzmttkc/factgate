@@ -5,7 +5,7 @@
 export const DEFAULT_TIMEOUT_MS = 10000;
 
 /**
- * fetch with a timeout and without credentials. Never throws: returns
+ * fetch with a timeout, without credentials and without following redirects. Never throws: returns
  * { ok: true, response } or { ok: false, error } (a CORS refusal, a DNS failure and a timeout
  * all look like a TypeError to a browser page, and all mean "the browser cannot reach it").
  */
@@ -13,9 +13,17 @@ export async function timedFetch(fetchImpl, url, init = {}, timeoutMs = DEFAULT_
   const controller = typeof AbortController === "function" ? new AbortController() : null;
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
   try {
-    const response = await fetchImpl(url, { credentials: "omit", redirect: "follow", ...init, signal: controller ? controller.signal : undefined });
+    // Never follow a redirect here: its target is a new destination that needs its own
+    // approval (js/consent.mjs re-checks a readable Location; spec section 5).
+    const response = await fetchImpl(url, { credentials: "omit", ...init, redirect: "manual", signal: controller ? controller.signal : undefined });
     if (!response || typeof response.status !== "number") {
       return { ok: false, error: "no response" };
+    }
+    if (response.type === "opaqueredirect" || response.status === 0) {
+      return { ok: false, error: "redirected; the browser hides the target, so it was not followed" };
+    }
+    if (response.status >= 300 && response.status < 400 && response.headers && typeof response.headers.get === "function" && response.headers.get("location")) {
+      return { ok: false, error: `redirected to ${response.headers.get("location")}; not followed without approval` };
     }
     return { ok: true, response };
   } catch (error) {

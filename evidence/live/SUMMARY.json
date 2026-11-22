@@ -1,5 +1,5 @@
 {
-  "measuredAt": "2026-11-22T05:40:20.793Z",
+  "measuredAt": "2026-11-22T06:57:00.053Z",
   "pageOrigin": "http://localhost:8790",
   "method": "gateCheck() with scripts/cors-fetch.mjs (browser CORS rules applied to real answers)",
   "targets": [
@@ -13,8 +13,8 @@
         "ALLOW:delivery_delivered"
       ],
       "http": [
-        "GET https://agent402.tools/api/agent-manifest.json -> 404",
         "GET https://agent402.tools/.well-known/agent-registration.json -> 200",
+        "GET https://agent402.tools/api/agent-manifest.json -> 404",
         "GET https://agent402.tools/api/weather-forecast -> 402",
         "POST initialize https://agent402.tools/mcp -> 200",
         "POST tools/list https://agent402.tools/mcp -> 200"
@@ -30,8 +30,8 @@
         "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
-        "GET https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json -> 404",
         "GET https://agent-atlas-phi.vercel.app/agent-manifest.json -> 200",
+        "GET https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json -> 404",
         "GET https://agent-atlas-phi.vercel.app/agent_atlas -> TypeError: CORS refused: GET https://agent-atlas-phi.vercel.app/agent_atlas answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
         "GET https://agent-atlas-phi.vercel.app/agent_atlas.network.json -> 200",
         "POST initialize https://agent-atlas-phi.vercel.app/api/mcp -> 200",
@@ -66,8 +66,8 @@
         "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
-        "GET https://ledenti.github.io/trois-nombres/agent-manifest.json -> 200",
         "GET https://ledenti.github.io/.well-known/agent-registration.json -> TypeError: CORS refused: GET https://ledenti.github.io/.well-known/agent-registration.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://ledenti.github.io/trois-nombres/agent-manifest.json -> 200",
         "GET https://ledenti.github.io/trois-nombres/three_numbers -> 404",
         "GET https://ledenti.github.io/trois-nombres/three_numbers.network.json -> 200",
         "POST initialize https://three-numbers-mcp.onrender.com/mcp -> 200",
@@ -131,8 +131,8 @@
         "NOT_APPLICABLE:delivery_not_applicable"
       ],
       "http": [
-        "GET https://vet402.com/.well-known/agent-registration.json -> 200",
         "GET https://vet402.com/agent-manifest.json -> TypeError: CORS refused: GET https://vet402.com/agent-manifest.json answered 404 without an Access-Control-Allow-Origin for http://localhost:8790",
+        "GET https://vet402.com/.well-known/agent-registration.json -> 200",
         "GET https://vet402.com/ -> TypeError: CORS refused: GET https://vet402.com/ answered 200 without an Access-Control-Allow-Origin for http://localhost:8790",
         "POST initialize https://vet402.com/mcp -> 200",
         "POST tools/list https://vet402.com/mcp -> 200"

@@ -5,6 +5,7 @@ import { withConsent } from "./consent.mjs";
 import { TRY_THESE } from "./examples.mjs";
 import { evaluateGate, gateRules } from "./gate.mjs";
 import { fetchVet402Delivery } from "./gatecheck.mjs";
+import { nandaLine } from "./nanda.mjs";
 import { gateCheckRead, inspectManifestRead, probeCapabilitiesRead, readIdentityRead } from "./reads.mjs";
 import { DEFAULT_VALIDATORS, normalizeTrusted } from "./validators.mjs";
 
@@ -30,8 +31,16 @@ function storage() {
 class GatePage {
   constructor() {
     this.version = 0;
+    // Saved checks, each from a measurement record that page code made.
     this.checks = [];
     this.nextId = 1;
+    // Measurement records: what page code measured in this visit, by ID ("M-1"). The assistant
+    // can judge or save a check only by one of these IDs, never from pillar values it wrote.
+    this.measurements = new Map();
+    this.nextMeasurement = 1;
+    // Verdicts from pillar values typed into the Developer form: kept apart, never "measured".
+    this.handEntered = [];
+    this.nextHand = 1;
     this.lastResult = null;
     // Origins the visitor allowed "for this visit" on a consent card. Lost when the page closes.
     this.remembered = new Set();
@@ -102,37 +111,68 @@ class GatePage {
   }
 
   /**
-   * Return a copy of the page state: the rules, the saved checks and the version.
+   * Return a copy of the page state: the rules, the saved checks (measured) and, apart from them,
+   * the hand-entered verdicts, with the version.
    */
   getState() {
+    const copy = (c) => ({ ...c, reasons: c.reasons.map((r) => ({ ...r })) });
     return {
       version: this.version,
       ...gateRules(),
-      checks: this.checks.map((c) => ({ ...c, reasons: c.reasons.map((r) => ({ ...r })) })),
+      checks: this.checks.map(copy),
+      handEntered: this.handEntered.map(copy),
+      measurements: [...this.measurements.values()].map((m) => ({ measurementId: m.id, kind: m.kind, url: m.url, checkedAt: m.checkedAt, verdict: m.verdict })),
     };
   }
 
   /**
-   * Run the engine on the three pillar results. Changes nothing.
+   * Keep what page code measured, under a new ID.
+   *
+   * :param record: { kind, url, checkedAt, pillars, verdict }.
+   * :return: The ID, such as "M-1".
    */
-  evaluate(pillars) {
-    if (!pillars || typeof pillars !== "object") {
-      return { ok: false, reason: "Give the three pillar results as live, identity and delivery." };
-    }
-    const result = evaluateGate(pillars);
-    return { ok: true, verdict: result.verdict, reasons: result.reasons };
+  recordMeasurement(record) {
+    const id = `M-${this.nextMeasurement}`;
+    this.nextMeasurement += 1;
+    this.measurements.set(id, { id, ...record });
+    return id;
+  }
+
+  measurement(id) {
+    return typeof id === "string" ? this.measurements.get(id.trim()) || null : null;
+  }
+
+  static unknownMeasurement(id) {
+    return { ok: false, reason: `No measurement ${String(id || "")} in this visit. Run website_gate_check (or website_check_seller) first and use the measurementId it returns.`, field: "measurementId" };
   }
 
   /**
-   * Evaluate and add the result to the visible list. The visitor can remove it on the page.
+   * Run the engine again on one measurement record. Changes nothing.
+   *
+   * :param args: { measurementId }.
+   */
+  evaluate(args) {
+    const m = this.measurement(args && args.measurementId);
+    if (!m) {
+      return GatePage.unknownMeasurement(args && args.measurementId);
+    }
+    const result = evaluateGate(m.pillars);
+    return { ok: true, measurementId: m.id, url: m.url, checkedAt: m.checkedAt, verdict: result.verdict, reasons: result.reasons };
+  }
+
+  /**
+   * Save the verdict of one measurement record in the visible list. The visitor can remove it.
+   *
+   * :param args: { measurementId, label? }.
    */
   saveCheck(args) {
-    const label = typeof args?.label === "string" ? args.label.trim() : "";
-    if (!label) {
-      return { ok: false, reason: "Give a label, such as the counterparty's URL.", field: "label" };
+    const m = this.measurement(args && args.measurementId);
+    if (!m) {
+      return GatePage.unknownMeasurement(args && args.measurementId);
     }
-    const result = evaluateGate(args);
-    const check = { id: `FG-${this.nextId}`, label, verdict: result.verdict, reasons: result.reasons };
+    const label = typeof args.label === "string" && args.label.trim() ? args.label.trim() : m.url;
+    const result = evaluateGate(m.pillars);
+    const check = { id: `FG-${this.nextId}`, label, verdict: result.verdict, reasons: result.reasons, measurementId: m.id, checkedAt: m.checkedAt, source: "measured" };
     this.nextId += 1;
     this.checks.push(check);
     this.version += 1;
@@ -141,12 +181,31 @@ class GatePage {
   }
 
   /**
-   * Remove a saved check. Undoes saveCheck.
+   * The Developer form: judge pillar results typed by hand. Kept apart from measured checks and
+   * marked "hand-entered, not measured". Not offered to the assistant.
+   */
+  saveHandEntered(args) {
+    const label = typeof args?.label === "string" ? args.label.trim() : "";
+    if (!label) {
+      return { ok: false, reason: "Give a label, such as the counterparty's URL.", field: "label" };
+    }
+    const result = evaluateGate(args);
+    const check = { id: `HAND-${this.nextHand}`, label, verdict: result.verdict, reasons: result.reasons, source: "hand-entered", note: "hand-entered, not measured" };
+    this.nextHand += 1;
+    this.handEntered.push(check);
+    this.version += 1;
+    GatePage.render(this);
+    return { ok: true, check, version: this.version };
+  }
+
+  /**
+   * Remove a saved check or a hand-entered verdict. Undoes saveCheck and saveHandEntered.
    */
   removeCheck(id) {
-    const before = this.checks.length;
+    const before = this.checks.length + this.handEntered.length;
     this.checks = this.checks.filter((c) => c.id !== id);
-    if (this.checks.length === before) {
+    this.handEntered = this.handEntered.filter((c) => c.id !== id);
+    if (this.checks.length + this.handEntered.length === before) {
       return { ok: false, reason: `No saved check ${id}.`, field: "id" };
     }
     this.version += 1;
@@ -173,8 +232,9 @@ class GatePage {
       return r;
     }
     this.lastResult = r.result;
+    const measurementId = this.recordMeasurement({ kind: "gate_check", url: r.result.url, checkedAt: r.result.checkedAt, pillars: r.result.pillars, verdict: r.result.verdict });
     GatePage.renderResult(r.result);
-    return r.summary;
+    return { ...r.summary, measurementId };
   }
 
   inspectManifest(args) {
@@ -204,15 +264,31 @@ class GatePage {
     const card = verdictCard(result);
     box.hidden = false;
     box.className = `result result-${card.verdict.toLowerCase()}`;
+    // First line: what to do. The verdict word and the target follow.
+    document.querySelector("#full-action").textContent = card.action;
     const verdict = document.querySelector("#full-verdict");
     verdict.textContent = card.verdict;
     verdict.className = `badge badge-${card.verdict.toLowerCase()}`;
     document.querySelector("#full-target").textContent = card.target;
     document.querySelector("#full-time").textContent = `checked ${card.checkedAt.replace("T", " ").slice(0, 19)} UTC`;
+    const fill = (selector, items) => {
+      const ul = document.querySelector(selector);
+      ul.replaceChildren();
+      for (const text of items) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        ul.append(li);
+      }
+    };
+    fill("#full-not-measured", card.measured.notMeasured);
+    document.querySelector("#full-not-measured-box").hidden = card.measured.notMeasured.length === 0;
+    fill("#full-measured", [...card.measured.measured, ...card.measured.notApplicable.map((t) => `${t}: not applicable (asks for no payment; not a pass)`)]);
     for (const c of card.counts) {
       const el = document.querySelector(`#count-${c.key}`);
-      el.textContent = c.value;
+      // Keep "passed n" and "below 70 m" each on one line when the box is narrow.
+      el.textContent = c.value.replace(/^passed (\S+) \/ below 70 (\S+)$/, "passed\u00a0$1\u00a0/ below\u00a070\u00a0$2");
       el.classList.toggle("is-empty", c.value === DASH);
+      el.classList.toggle("is-pair", c.key === "validationsPassed" && c.value !== DASH);
     }
     const pillars = document.querySelector("#full-pillars");
     pillars.replaceChildren();
@@ -230,6 +306,13 @@ class GatePage {
       const line = document.createElement("p");
       line.className = "pillar-line";
       line.textContent = p.line;
+      article.append(hint, title, state, line);
+      if (p.note) {
+        const note = document.createElement("p");
+        note.className = "pillar-note";
+        note.textContent = p.note;
+        article.append(note);
+      }
       const more = document.createElement("details");
       const summary = document.createElement("summary");
       summary.textContent = "Details";
@@ -238,9 +321,10 @@ class GatePage {
       const code = document.createElement("code");
       code.textContent = p.code;
       more.append(summary, full, code);
-      article.append(hint, title, state, line, more);
+      article.append(more);
       pillars.append(article);
     }
+    document.querySelector("#full-nanda").textContent = `${nandaLine(result.nanda)}${result.nanda && result.nanda.status === "listed" && result.nanda.record.identifier ? ` (${result.nanda.record.identifier})` : ""}. Shown, not used in the verdict.`;
     const unofficial = document.querySelector("#full-unofficial");
     const others = result.evidence.identity.unofficial || [];
     unofficial.hidden = others.length === 0;
@@ -312,7 +396,8 @@ class GatePage {
       delivery,
     };
     const result = evaluateGate(pillars);
-    return { ok: true, url, verdict: result.verdict, reasons: result.reasons, delivery: delivery.status === "ok" ? GatePage.deliverySummary(delivery.data) : delivery };
+    const measurementId = this.recordMeasurement({ kind: "check_seller", url, checkedAt: new Date().toISOString(), pillars, verdict: result.verdict });
+    return { ok: true, url, measurementId, verdict: result.verdict, reasons: result.reasons, delivery: delivery.status === "ok" ? GatePage.deliverySummary(delivery.data) : delivery };
   }
 
   /**
@@ -331,35 +416,40 @@ class GatePage {
   }
 
   /**
-   * Draw the saved checks. Does nothing outside a browser.
+   * Draw the saved checks (measured) and, in their own list, the hand-entered verdicts. Does
+   * nothing outside a browser.
    */
   static render(page) {
     if (typeof window === "undefined") {
       return;
     }
-    const list = document.querySelector("#checks");
-    if (!list) {
-      return;
-    }
-    list.replaceChildren();
-    for (const c of page.checks) {
-      const li = document.createElement("li");
-      li.className = `check-item verdict-${c.verdict.toLowerCase()}`;
-      const head = document.createElement("strong");
-      head.textContent = `${c.verdict} — ${c.label} (${c.id})`;
-      const reasons = document.createElement("ul");
-      for (const r of c.reasons) {
-        const item = document.createElement("li");
-        item.textContent = `[${r.effect}] ${r.pillar}: ${r.text}`;
-        reasons.append(item);
+    const draw = (selector, items, tag) => {
+      const list = document.querySelector(selector);
+      if (!list) {
+        return;
       }
-      const remove = document.createElement("button");
-      remove.type = "button";
-      remove.textContent = "Remove";
-      remove.addEventListener("click", () => page.removeCheck(c.id));
-      li.append(head, reasons, remove);
-      list.append(li);
-    }
+      list.replaceChildren();
+      for (const c of items) {
+        const li = document.createElement("li");
+        li.className = `check-item verdict-${c.verdict.toLowerCase()}`;
+        const head = document.createElement("strong");
+        head.textContent = `${c.verdict} — ${c.label} (${c.id}${tag(c)})`;
+        const reasons = document.createElement("ul");
+        for (const r of c.reasons) {
+          const item = document.createElement("li");
+          item.textContent = `[${r.effect}] ${r.pillar}: ${r.short || r.text}`;
+          reasons.append(item);
+        }
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.textContent = "Remove";
+        remove.addEventListener("click", () => page.removeCheck(c.id));
+        li.append(head, reasons, remove);
+        list.append(li);
+      }
+    };
+    draw("#checks", page.checks, (c) => `, measured as ${c.measurementId}`);
+    draw("#hand-checks", page.handEntered, () => ", hand-entered, not measured");
   }
 }
 
@@ -394,8 +484,8 @@ export class App {
         return;
       }
       const label = document.querySelector("#seller-url").value.trim() || "unnamed counterparty";
-      const saved = App.page.saveCheck({ label, ...pillars });
-      out.textContent = saved.ok ? `Verdict: ${saved.check.verdict}` : saved.reason;
+      const saved = App.page.saveHandEntered({ label, ...pillars });
+      out.textContent = saved.ok ? `Verdict: ${saved.check.verdict} (hand-entered, not measured)` : saved.reason;
     });
   }
 
@@ -410,14 +500,16 @@ export class App {
     const status = document.querySelector("#full-status");
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const url = document.querySelector("#target-url").value.trim();
+      const typed = document.querySelector("#target-url").value.trim();
       const agentId = document.querySelector("#agent-id").value.trim();
       const chainId = Number(document.querySelector("#chain-id").value);
+      // A URL is checked as is; anything else is a NANDA Index id, orgId or name to look up.
+      const target = /^https?:\/\//i.test(typed) ? { url: typed } : { nanda: typed };
       status.textContent = "Waiting for your approval before anything is contacted…";
       document.querySelector("#run-check").disabled = true;
       try {
-        const out = await App.page.gateCheck(agentId ? { url, agentId, chainId } : { url });
-        status.textContent = out.ok === false ? out.reason : `Done: ${out.verdict}.`;
+        const out = await App.page.gateCheck(agentId ? { ...target, agentId, chainId } : target);
+        status.textContent = out.ok === false ? out.reason : `Done: ${out.action} (${out.verdict}).`;
       } finally {
         document.querySelector("#run-check").disabled = false;
       }

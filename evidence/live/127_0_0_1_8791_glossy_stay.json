@@ -1,37 +1,49 @@
 {
   "url": "http://127.0.0.1:8791/glossy_stay",
-  "checkedAt": "2026-11-22T05:40:31.854Z",
+  "checkedAt": "2026-11-22T06:57:13.601Z",
   "verdict": "BLOCK",
   "reasons": [
     {
       "pillar": "live",
       "code": "live_not_as_declared",
       "effect": "BLOCK",
-      "text": "The live answer does not match what the counterparty declares (402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource http://127.0.0.1:8791/api/book.json answers with an empty body)."
+      "text": "The live answer does not match what the counterparty declares (402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource http://127.0.0.1:8791/api/book.json answers with an empty body).",
+      "short": "Its live answer contradicts its declaration.",
+      "kinds": []
     },
     {
       "pillar": "identity",
       "code": "identity_payee_mismatch",
       "effect": "BLOCK",
-      "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f]."
+      "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62043829, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f].",
+      "short": "Its payee is not the wallet of its ERC-8004 registration.",
+      "kinds": []
     },
     {
       "pillar": "delivery",
       "code": "delivery_validation_low",
       "effect": "BLOCK",
       "text": "vet402: Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8791/api/book.json is not one. Not measured, not counted as zero. ERC-8004 validation: ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+      "short": "A trusted validator scored a delivery below 70.",
+      "kinds": [],
       "sources": [
         {
           "pillar": "delivery",
           "code": "delivery_unavailable",
           "effect": "CAUTION",
-          "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8791/api/book.json is not one. Not measured, not counted as zero."
+          "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8791/api/book.json is not one. Not measured, not counted as zero.",
+          "short": "Not measured: no delivery record could be read.",
+          "kinds": [
+            "no_delivery_record"
+          ]
         },
         {
           "pillar": "validation",
           "code": "validation_low_score",
           "effect": "BLOCK",
-          "text": "ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty."
+          "text": "ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+          "short": "A trusted validator scored a delivery below 70.",
+          "kinds": []
         }
       ]
     }
@@ -278,7 +290,7 @@
             "bound": true,
             "mutual": false,
             "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
-            "readAt": "eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+            "readAt": "eth_call at Base Sepolia block 62043829, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
           }
         }
       },
@@ -317,7 +329,7 @@
         "chain": "Base Sepolia",
         "agentId": "10799",
         "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-        "block": 62020817,
+        "block": 62043829,
         "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
         "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
         "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-empty.json",
@@ -327,7 +339,7 @@
             "method": "eth_call ownerOf",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2f",
-            "block": "0x3b25cd1",
+            "block": "0x3b2b6b5",
             "ok": true,
             "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
           },
@@ -336,7 +348,7 @@
             "method": "eth_call getAgentWallet",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2f",
-            "block": "0x3b25cd1",
+            "block": "0x3b2b6b5",
             "ok": true,
             "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
           },
@@ -345,7 +357,7 @@
             "method": "eth_call tokenURI",
             "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
             "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2f",
-            "block": "0x3b25cd1",
+            "block": "0x3b2b6b5",
             "ok": true,
             "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005f68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d656d7074792e6a736f6e00"
           }
@@ -427,6 +439,20 @@
           ]
         }
       }
+    },
+    "nanda": {
+      "status": "not_listed",
+      "query": {
+        "url": "http://127.0.0.1:8791/glossy_stay"
+      },
+      "searched": 138,
+      "http": [
+        {
+          "method": "GET",
+          "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+          "status": 200
+        }
+      ]
     }
   },
   "agentFacts": {
@@ -456,7 +482,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T05:40:31.854Z",
+      "lastAudited": "2026-11-22T06:57:13.601Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -466,31 +492,43 @@
           "pillar": "live",
           "code": "live_not_as_declared",
           "effect": "BLOCK",
-          "text": "The live answer does not match what the counterparty declares (402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource http://127.0.0.1:8791/api/book.json answers with an empty body)."
+          "text": "The live answer does not match what the counterparty declares (402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource http://127.0.0.1:8791/api/book.json answers with an empty body).",
+          "short": "Its live answer contradicts its declaration.",
+          "kinds": []
         },
         {
           "pillar": "identity",
           "code": "identity_payee_mismatch",
           "effect": "BLOCK",
-          "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f]."
+          "text": "The declared payee 0x2222222222222222222222222222222222222222 is not the ERC-8004 owner, agentWallet or payTo [eth_call at Base Sepolia block 62043829, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799: owner 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f, agentWallet 0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f].",
+          "short": "Its payee is not the wallet of its ERC-8004 registration.",
+          "kinds": []
         },
         {
           "pillar": "delivery",
           "code": "delivery_validation_low",
           "effect": "BLOCK",
           "text": "vet402: Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8791/api/book.json is not one. Not measured, not counted as zero. ERC-8004 validation: ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+          "short": "A trusted validator scored a delivery below 70.",
+          "kinds": [],
           "sources": [
             {
               "pillar": "delivery",
               "code": "delivery_unavailable",
               "effect": "CAUTION",
-              "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8791/api/book.json is not one. Not measured, not counted as zero."
+              "text": "Could not fetch the vet402 delivery record: vet402 records public https sellers only; http://127.0.0.1:8791/api/book.json is not one. Not measured, not counted as zero.",
+              "short": "Not measured: no delivery record could be read.",
+              "kinds": [
+                "no_delivery_record"
+              ]
             },
             {
               "pillar": "validation",
               "code": "validation_low_score",
               "effect": "BLOCK",
-              "text": "ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty."
+              "text": "ERC-8004 validators scored agent 10799 on chain 84532 below 70 1 time(s), lowest 3 (tx 0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a, block 61711651, log 6). Same as a paid answer that came back empty.",
+              "short": "A trusted validator scored a delivery below 70.",
+              "kinds": []
             }
           ]
         }
@@ -518,9 +556,14 @@
       ],
       "notCounted": []
     },
+    "x_factgate_nanda": {
+      "status": "not_listed",
+      "source": "https://api.nandaindex.org/api/v1/index",
+      "searched": 138
+    },
     "x_factgate_evidence": {
       "target": "http://127.0.0.1:8791/glossy_stay",
-      "checkedAt": "2026-11-22T05:40:31.854Z",
+      "checkedAt": "2026-11-22T06:57:13.601Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -762,7 +805,7 @@
               "bound": true,
               "mutual": false,
               "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
-              "readAt": "eth_call at Base Sepolia block 62020817, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+              "readAt": "eth_call at Base Sepolia block 62043829, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
             }
           }
         },
@@ -801,7 +844,7 @@
           "chain": "Base Sepolia",
           "agentId": "10799",
           "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-          "block": 62020817,
+          "block": 62043829,
           "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
           "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
           "tokenURI": "https://raw.githubusercontent.com/kzmttkc/reactive-delivery-court/main/agents/seller-empty.json",
@@ -811,7 +854,7 @@
               "method": "eth_call ownerOf",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0x6352211e0000000000000000000000000000000000000000000000000000000000002a2f",
-              "block": "0x3b25cd1",
+              "block": "0x3b2b6b5",
               "ok": true,
               "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
             },
@@ -820,7 +863,7 @@
               "method": "eth_call getAgentWallet",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0x003395090000000000000000000000000000000000000000000000000000000000002a2f",
-              "block": "0x3b25cd1",
+              "block": "0x3b2b6b5",
               "ok": true,
               "result": "0x0000000000000000000000008dba1a8aed6ab7f1e2037bfc295f3a0a00be072f"
             },
@@ -829,7 +872,7 @@
               "method": "eth_call tokenURI",
               "to": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
               "data": "0xc87b56dd0000000000000000000000000000000000000000000000000000000000002a2f",
-              "block": "0x3b25cd1",
+              "block": "0x3b2b6b5",
               "ok": true,
               "result": "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000005f68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6b7a6d74746b632f72656163746976652d64656c69766572792d636f7572742f6d61696e2f6167656e74732f73656c6c65722d656d7074792e6a736f6e00"
             }
@@ -925,8 +968,116 @@
   "counts": {
     "paid": null,
     "delivered": null,
-    "validationsPassed": 1
+    "validationsPassed": 1,
+    "validationsFailed": 1
+  },
+  "pillars": {
+    "live": {
+      "status": "ok",
+      "data": {
+        "corsReachable": true,
+        "answersAsDeclared": false,
+        "detail": "402 payTo 0x2222222222222222222222222222222222222222 is not among the wallets the site declares (0x1111111111111111111111111111111111111111); paid resource http://127.0.0.1:8791/api/book.json answers with an empty body",
+        "unreachable": [
+          "MCP https://mcp.glossy-stay.invalid/mcp: TypeError: fetch failed"
+        ],
+        "instructionFindings": []
+      }
+    },
+    "identity": {
+      "status": "ok",
+      "data": {
+        "declaredPayTo": "0x2222222222222222222222222222222222222222",
+        "declaredPayTos": [
+          "0x2222222222222222222222222222222222222222"
+        ],
+        "registered": {
+          "owner": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+          "agentWallet": "0x8dba1a8aed6ab7f1e2037bfc295f3a0a00be072f",
+          "payTo": null,
+          "bound": true,
+          "mutual": false,
+          "how": "the site's /.well-known/agent-registration.json lists this agentId and registry",
+          "readAt": "eth_call at Base Sepolia block 62043829, IdentityRegistry 0x8004A818BFB912233c491871b3d84c89A494BD9e, agentId 10799"
+        }
+      }
+    },
+    "delivery": {
+      "status": "unavailable",
+      "error": "vet402 records public https sellers only; http://127.0.0.1:8791/api/book.json is not one"
+    },
+    "validation": {
+      "status": "ok",
+      "data": {
+        "registry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+        "chainId": 84532,
+        "agentId": "10799",
+        "total": 8,
+        "passed": 1,
+        "failed": 1,
+        "pending": 0,
+        "unresolved": 6,
+        "selfExcluded": 0,
+        "untrusted": 0,
+        "validators": [
+          "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc"
+        ],
+        "lowest": 3,
+        "counted": [
+          {
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "count": 2,
+            "reason": "on the trusted validator list",
+            "name": "Delivery Court judge"
+          }
+        ],
+        "notCounted": [],
+        "evidence": [
+          {
+            "role": "lowest answered score",
+            "response": 3,
+            "requestHash": "0x4c815331b96bae8a3597f2c1531ec1d2a42f5de1b2c360e9904ec59a351ee31c",
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "log": {
+              "kind": "response",
+              "block": 61711651,
+              "tx": "0x02ed4f88de0165cc72082a69663dbfff8c98801cc80d053b2a7de6827cadb60a",
+              "logIndex": 6,
+              "response": 3
+            }
+          },
+          {
+            "role": "latest passing score",
+            "response": 99,
+            "requestHash": "0x2ba811bb0288161003b766018051105bc396620db61a6886a5fc258e33f8142a",
+            "validator": "0x5ec4599a438fa0559ade8b8551b369d5c5adf0bc",
+            "log": {
+              "kind": "response",
+              "block": 61921492,
+              "tx": "0x6eb358f6f6034a73db554e9b60937eb3add0796af34dad7c22faeeeba463255e",
+              "logIndex": 3,
+              "response": 99
+            }
+          }
+        ]
+      }
+    },
+    "paid": true
+  },
+  "nanda": {
+    "status": "not_listed",
+    "query": {
+      "url": "http://127.0.0.1:8791/glossy_stay"
+    },
+    "searched": 138,
+    "http": [
+      {
+        "method": "GET",
+        "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+        "status": 200
+      }
+    ]
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 7891
+  "ms": 7205
 }

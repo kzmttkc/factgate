@@ -1,25 +1,33 @@
 {
   "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
-  "checkedAt": "2026-11-22T05:40:23.661Z",
+  "checkedAt": "2026-11-22T06:57:04.160Z",
   "verdict": "CAUTION",
   "reasons": [
     {
       "pillar": "live",
       "code": "live_as_declared",
       "effect": "ALLOW",
-      "text": "The live answer matches the declaration."
+      "text": "The live answer matches the declaration.",
+      "short": "Answers as it declares.",
+      "kinds": []
     },
     {
       "pillar": "identity",
       "code": "identity_unavailable",
       "effect": "CAUTION",
-      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+      "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+      "short": "Not measured: no ERC-8004 registration speaks for it.",
+      "kinds": [
+        "identity_unknown"
+      ]
     },
     {
       "pillar": "delivery",
       "code": "delivery_not_applicable",
       "effect": "NOT_APPLICABLE",
       "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+      "short": "Not applicable: it asks for no payment.",
+      "kinds": [],
       "applicable": false
     }
   ],
@@ -151,18 +159,18 @@
       },
       "http": [
         {
-          "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
-          "method": "GET",
-          "status": 404,
-          "contentType": "application/json",
-          "bytes": 68
-        },
-        {
           "url": "https://agent-atlas-phi.vercel.app/agent-manifest.json",
           "method": "GET",
           "status": 200,
           "contentType": "application/json; charset=utf-8",
           "bytes": 2464
+        },
+        {
+          "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
+          "method": "GET",
+          "status": 404,
+          "contentType": "application/json",
+          "bytes": 68
         },
         {
           "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
@@ -223,6 +231,20 @@
       "target": null,
       "http": null,
       "validation": null
+    },
+    "nanda": {
+      "status": "not_listed",
+      "query": {
+        "url": "https://agent-atlas-phi.vercel.app/agent_atlas"
+      },
+      "searched": 138,
+      "http": [
+        {
+          "method": "GET",
+          "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+          "status": 200
+        }
+      ]
     }
   },
   "agentFacts": {
@@ -252,7 +274,7 @@
       }
     ],
     "evaluations": {
-      "lastAudited": "2026-11-22T05:40:23.661Z",
+      "lastAudited": "2026-11-22T06:57:04.160Z",
       "auditorID": "FactGate verdict engine (site/js/gate.mjs): deterministic, no LLM, unsigned"
     },
     "x_factgate_verdict": {
@@ -262,19 +284,27 @@
           "pillar": "live",
           "code": "live_as_declared",
           "effect": "ALLOW",
-          "text": "The live answer matches the declaration."
+          "text": "The live answer matches the declaration.",
+          "short": "Answers as it declares.",
+          "kinds": []
         },
         {
           "pillar": "identity",
           "code": "identity_unavailable",
           "effect": "CAUTION",
-          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero."
+          "text": "Could not fetch the identity registration: the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given. Not measured, not counted as zero.",
+          "short": "Not measured: no ERC-8004 registration speaks for it.",
+          "kinds": [
+            "identity_unknown"
+          ]
         },
         {
           "pillar": "delivery",
           "code": "delivery_not_applicable",
           "effect": "NOT_APPLICABLE",
           "text": "Not applicable: the counterparty asks for no payment, so there is no paid delivery to record. This is not a pass.",
+          "short": "Not applicable: it asks for no payment.",
+          "kinds": [],
           "applicable": false
         }
       ],
@@ -282,9 +312,14 @@
         "delivery: not applicable (not a pass)"
       ]
     },
+    "x_factgate_nanda": {
+      "status": "not_listed",
+      "source": "https://api.nandaindex.org/api/v1/index",
+      "searched": 138
+    },
     "x_factgate_evidence": {
       "target": "https://agent-atlas-phi.vercel.app/agent_atlas",
-      "checkedAt": "2026-11-22T05:40:23.661Z",
+      "checkedAt": "2026-11-22T06:57:04.160Z",
       "live": {
         "pillar": {
           "status": "ok",
@@ -412,18 +447,18 @@
         },
         "http": [
           {
-            "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
-            "method": "GET",
-            "status": 404,
-            "contentType": "application/json",
-            "bytes": 68
-          },
-          {
             "url": "https://agent-atlas-phi.vercel.app/agent-manifest.json",
             "method": "GET",
             "status": 200,
             "contentType": "application/json; charset=utf-8",
             "bytes": 2464
+          },
+          {
+            "url": "https://agent-atlas-phi.vercel.app/.well-known/agent-registration.json",
+            "method": "GET",
+            "status": 404,
+            "contentType": "application/json",
+            "bytes": 68
           },
           {
             "url": "https://agent-atlas-phi.vercel.app/agent_atlas",
@@ -498,8 +533,44 @@
   "counts": {
     "paid": null,
     "delivered": null,
-    "validationsPassed": null
+    "validationsPassed": null,
+    "validationsFailed": null
+  },
+  "pillars": {
+    "live": {
+      "status": "ok",
+      "data": {
+        "corsReachable": true,
+        "answersAsDeclared": true,
+        "detail": "as declared: manifest, network, MCP https://agent-atlas-phi.vercel.app/api/mcp",
+        "unreachable": [],
+        "instructionFindings": []
+      }
+    },
+    "identity": {
+      "status": "unavailable",
+      "error": "the counterparty declares no ERC-8004 registration (no readable /.well-known/agent-registration.json) and none was given"
+    },
+    "delivery": {
+      "status": "unavailable",
+      "error": "not applicable: no 402"
+    },
+    "paid": false
+  },
+  "nanda": {
+    "status": "not_listed",
+    "query": {
+      "url": "https://agent-atlas-phi.vercel.app/agent_atlas"
+    },
+    "searched": 138,
+    "http": [
+      {
+        "method": "GET",
+        "url": "https://api.nandaindex.org/api/v1/index?limit=200&offset=0",
+        "status": 200
+      }
+    ]
   },
   "pageOrigin": "http://localhost:8790",
-  "ms": 958
+  "ms": 1438
 }
