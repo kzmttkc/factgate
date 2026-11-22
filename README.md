@@ -100,8 +100,8 @@ None of these is in the NANDA Index (138 records searched on 2026-11-22T22:04:45
 ## Run it
 
 ```shell
-SKILL=~/factgate-ref/agentic-web/skills/agentify-website
-cd ~/factgate
+SKILL=../agentic-web/skills/agentify-website   # or set AGENTIFY_SKILL
+cd factgate                                    # your clone of github.com/kzmttkc/factgate
 
 # Build the network from the .hocon (after any change to it or the manifest)
 node $SKILL/scripts/build_network.mjs site/factgate.hocon --manifest site/agent-manifest.json --check
@@ -120,10 +120,10 @@ node scripts/probe-live.mjs --public   # as the deployed page: agent402 and the 
 
 ### Run the three-site demo
 
-The demo sites live in `~/factgate-peers` (README there). Serve all four on different host names, so a key saved on one page is never sent to another (runtime/byok.js mirrors keys to a cookie per host name):
+The demo sites live in sibling `factgate-peers` (README there). Serve all four on different host names, so a key saved on one page is never sent to another (runtime/byok.js mirrors keys to a cookie per host name):
 
 ```shell
-cd ~/factgate-peers
+cd ../factgate-peers
 node serve.mjs glossy-stay --port 8791                  # http://127.0.0.1:8791/
 node serve.mjs verified-stay --port 8792                # http://127.0.0.1:8792/
 node serve.mjs stay-steward --host ::1 --port 8793      # http://[::1]:8793/
@@ -202,10 +202,29 @@ Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/f
 
 ## Tests
 
-| Suite | Tests (2026-11-22, after the second grading's fixes) |
+### Run the tests from a fresh clone
+
+```shell
+mkdir -p ~/demo && cd ~/demo
+git clone https://github.com/kzmttkc/factgate
+git clone https://github.com/kzmttkc/factgate-peers
+git clone https://github.com/cognizant-ai-labs/agentic-web
+```
+
+From each checkout (sibling layout; optional `AGENTIFY_SKILL=../agentic-web/skills/agentify-website` when building networks):
+
+```shell
+cd factgate
+node --test "test/*.test.mjs" "site/tests/*.test.mjs"
+
+cd ../factgate-peers
+node --test "*/tests/*.test.mjs" "tests/*.test.mjs"
+```
+
+| Suite | Expected (2026-11-22) |
 | --- | --- |
-| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` | 160: 153 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
-| `~/factgate-peers`: `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` | 55: 55 pass, 0 fail (10 of them are three-site end-to-end tests, 2 of those run the no-model button) |
+| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 160: 153 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
+| `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` (in `factgate-peers`, with `../factgate`) | 55: 55 pass, 0 fail (10 three-site end-to-end tests, 2 of those run the no-model button) |
 
 ## Limits
 
