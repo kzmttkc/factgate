@@ -38,10 +38,11 @@ test("index.html masthead: hotel fail story only", async () => {
   assert.doesNotMatch(masthead, /none of them stops the link/i);
 });
 
-test("docs/devpost.md: only fictional BLOCK through judging", async () => {
+test("docs/devpost.md: fictional Glossy BLOCK through judging", async () => {
   const body = await mustRead("docs/devpost.md");
-  assert.match(body, /only BLOCK.*2027-01-18.*fictional Glossy Stay/is);
-  assert.match(body, /Five real contest sites.*CAUTION.*not blocked/is);
+  assert.match(body, /Glossy Stay's BLOCK through 2027-01-18/);
+  assert.match(body, /Glossy Stay is a fictional demo/);
+  assert.match(body, /five contest sites measured CAUTION for identity unknown/i);
 });
 
 test("stay-steward index: Glossy as the planted fail hotel", async () => {

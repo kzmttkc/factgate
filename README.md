@@ -2,9 +2,9 @@
 
 My agent was about to book the nicer hotel. I had built that hotel to fail. FactGate caught it.
 
-ScopeGate Studio guards calls as they leave, Agent Customs scans prompts, Agent Atlas checks the format; FactGate decides before the link, from measured live answers, on-chain identity and delivery.
+Agent Customs scans prompts. Agent Atlas checks the format. FactGate decides before a partner network loads, from measured live answers, on-chain identity and delivery.
 
-In Cognizant's [2026-11-19 blog](https://www.cognizant.com/us/en/ai-lab/blog/ai-agent-negotiation-open-agentic-web), a deterministic Arbiter negotiates hotel bookings between a private steward and a hotel's agentic website. FactGate sits before that step: it checks whether the hotel answers as declared, whether its ERC-8004 registration matches the payee it names, and whether paid calls returned content—without negotiating price.
+Cognizant's [2026-11-19 blog](https://www.cognizant.com/us/en/ai-lab/blog/ai-agent-negotiation-open-agentic-web) says a working agent economy needs a way to establish trust between parties with no prior relationship. FactGate is that check before Stay Steward loads a hotel network: live answers, the ERC-8004 wallet against the x402 payee, and delivery after payment.
 
 Before your agent links to or pays a site, FactGate checks three facts:
 **Live** (does it answer as declared?) · **Identity** (does the ERC-8004 wallet match the x402 payee?) · **Delivery** (did paid calls really return content?).
@@ -14,11 +14,13 @@ Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 
 ![Architecture](docs/architecture.png)
 
-▶ Try it: https://factgate.vercel.app/ — no key needed.  ▶ 2-min video: link added on submission
+▶ Try it: https://factgate.vercel.app/ (no key needed).  ▶ 2-min video: link added on submission
 
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
 |---|---|---|
-| ALLOW → booked VS-0001 — [Stay Steward](https://stay-steward-demo.vercel.app/) | BLOCK → never loaded | ALLOW (every paid call delivered, vet402 record, checked 2026-11-22) |
+| ALLOW → booked VS-0001 ([Stay Steward](https://stay-steward-demo.vercel.app/)) | BLOCK → never loaded | ALLOW (every paid call delivered, vet402 record, checked 2026-11-22) |
+
+On 2026-11-23, 17 sites from the public list measured CAUTION. None measured ALLOW or BLOCK (`node scripts/ecosystem-snapshot.mjs`).
 
 ### Measured on 2026-11-23 (third-party ERC-8004, pillars 1–2 without vet402)
 
@@ -28,7 +30,7 @@ On 2026-11-23 FactGate measured **https://agent402.tools/api/weather-forecast** 
 
 On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded every paid call delivered (vet402 record; the card shows the last delivery date). **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
 
-The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. vet402 re-checks this seller before judging; the card shows the last delivery date. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
+The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. The paid seller is **https://agent402.tools/api/weather-forecast**. On 2026-11-22 **vet402**, the author's own service, recorded every paid call delivered (last delivered 2026-11-07, 30-day window). vet402 is scheduled to buy that URL once on 2027-01-10 UTC (see GRADER_FACTS.md). The card shows that date. Delivery counts come only from the author's **vet402** and the author's recomputable validator.
 
 **Screenshots** (deployed sites, captured 2026-11-22):
 
@@ -67,10 +69,10 @@ The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that c
 
 | Site | URL | Source |
 | --- | --- | --- |
-| FactGate | https://factgate.vercel.app/ (network: `https://factgate.vercel.app/factgate`) | https://github.com/kzmttkc/factgate |
+| FactGate | https://factgate.vercel.app/ (network name `https://factgate.vercel.app/factgate`, file `https://factgate.vercel.app/factgate.network.json`; a bare GET on `/factgate` may 404 while Stay Steward still loads the network after consent, see `site/factgate-gate.mjs`) | https://github.com/kzmttkc/factgate |
 | Stay Steward (demo booking agent) | https://stay-steward-demo.vercel.app/ | https://github.com/kzmttkc/factgate-peers |
 | Verified Stay (demo, expected ALLOW) | https://verified-stay-demo.vercel.app/ (`/verified_stay`) | same |
-| Glossy Stay (demo, expected BLOCK) | https://glossy-stay-demo.vercel.app/ (`/glossy_stay`) | same |
+| Glossy Stay (demo, expected BLOCK) | https://glossy-stay-demo.vercel.app/ (network file `https://glossy-stay-demo.vercel.app/glossy_stay.network.json`) | same |
 
 On Stay Steward, pick a stay and press **Check with FactGate**. No AI key is needed: page code runs the gate. Allow the cards and the windows it opens. Verified Stay ends with a booking made in Verified Stay's own window. Glossy Stay stops at FactGate's BLOCK, and the page shows why. The demo stays are fictional, and no money moves.
 
@@ -102,7 +104,7 @@ Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`
 | Five agentic websites from the contest's list | CAUTION: identity_unknown | Answer as declared; none declares an ERC-8004 registration, so identity is not measured |
 | The contest organizer's widget | CAUTION: unreachable, identity_unknown, no_delivery_record | Its manifest answers without `Access-Control-Allow-Origin`, so a browser cannot read it |
 
-None of these is in the NANDA Index (when checked on 2026-11-22: 102 of 138 had no card validation, via `api.nandaindex.org/api/v1/index`, limit 200, offset paging). A listed example: `Heron A2A Checker` (`urn:air:heron.ing:catalog:root`) shows "NANDA: listed, card not validated" on the card; its own site did not answer the browser, so it is CAUTION (unreachable, identity_unknown, no_delivery_record).
+None of these is in the NANDA Index (when checked on 2026-11-22: 102 of 138 had no card validation, via `api.nandaindex.org/api/v1/index`, limit 200, offset paging). A listed example: `Heron A2A Checker` (`urn:air:heron.ing:catalog:root`) names a public index entry only. It shows "NANDA: listed, card not validated" on the card. Its own site did not answer the browser, so it is CAUTION (unreachable, identity_unknown, no_delivery_record). CAUTION here means the browser could not complete checks, not that the operator committed fraud.
 
 ## Run it
 
@@ -160,14 +162,14 @@ The tests use a scripted model. To check the same flows with a real LLM, use you
 | 1 | Two-agent HOCON network and manifest on an ordinary host | `site/factgate.hocon` (four agents) → `site/factgate.network.json`, `site/agent-manifest.json`; build `--check` passes. Hosting: https://factgate.vercel.app/ (static, HTTPS; the manifest answers 200 with `Access-Control-Allow-Origin: *`) |
 | 2 | Run with the site's default router and model; BYOK path | Default router Otari, model `alibaba/qwen3.8-flash`; BYOK in "AI model settings". Real-model run: steps above (needs a key) |
 | 3 | Internal agent plus a grounded capability | `site/tests/agentified.test.mjs`: "the front agent asks the engine…" (website action), "evidence_verifier reaches vet402.com/mcp as an MCP tool" |
-| 4 | After approval, load an exact named network from a second origin and run it locally | `~/factgate-peers/tests/three_sites.e2e.test.mjs`: "6-4 ALLOW: Stay Steward asks FactGate, then loads Verified Stay by name…" (cards before contact, `remote_fetch` of `factgate` and `verified_stay`, both networks run on the caller's page) |
+| 4 | After approval, load an exact named network from a second origin and run it locally | `factgate-peers/tests/three_sites.e2e.test.mjs` (sibling repo [github.com/kzmttkc/factgate-peers](https://github.com/kzmttkc/factgate-peers)): "6-4 ALLOW: Stay Steward asks FactGate, then loads Verified Stay by name…" (cards before contact, `remote_fetch` of `factgate` and `verified_stay`, both networks run on the caller's page) |
 | 5 | The second site never receives the key and cannot change the router | Same tests, `checkKeyStaysHome`: no request to any site carries the key or `Authorization`; every model call goes to the caller's router; a stay manifest that names its own router gets no request |
 | 6 | Private context absent at the peer unless a named field is allowed | Same tests, `checkPrivateContext`: partners receive only `target_url`; the trip dates and guest name appear in no model call and no request. Screen: Stay Steward's gate log ("Private context sent to FactGate: target_url") |
 | 7 | Invalid network, cycle, over budget, denied origin stop with visible errors | e2e tests "6-7 over budget", "6-7 denied origin (policy)", "6-7 denied origin (visitor)", "6-7 invalid network", "6-7 cycle"; each stop is a line in Stay Steward's gate log |
 
 ## How a partner site uses FactGate
 
-FactGate shares two actions through its bridge (`site/bridge/bridge-actions.js`) with every site: `get_gate_state` (pure, in a hidden frame) and `gate_check(url)`. `gate_check` contacts other origins, so it runs in FactGate's own window, where the visitor approves each origin first. The reference runtime opens a partner's window only for actions marked `write`, so `gate_check` is marked `write` with `confirmsInWindow`; it changes nothing. There is no shared `evaluate_gate`: a verdict comes only from a check FactGate measured.
+FactGate shares two actions through its bridge (`site/bridge/bridge-actions.js`) with every site: `get_gate_state` (pure, in a hidden frame) and `gate_check(url)`. `gate_check` contacts other origins, so it runs in FactGate's own window, where the visitor approves each origin first. The reference runtime opens a partner's window only for actions marked `write`, so `gate_check` is marked `write` with `confirmsInWindow`; it changes nothing. There is no shared `evaluate_gate`: a verdict comes only from a check FactGate measured. `install()` wraps `engine.requestConsent`, `actions.execute` and the trace listener (`site/factgate-gate.mjs`) so a blocked partner is not fetched.
 
 ### Put the gate in your own site (three lines)
 
@@ -181,7 +183,7 @@ gate.install(engine); // engine = boot(...).engine; gate.check(engine, url) runs
 
 The gate is page code in front of the runtime's consent step: a partner network is declined before its card (and nothing is fetched from it) unless FactGate checked it in this visit and the verdict passes the policy. ALLOW always passes, BLOCK never does, and a CAUTION passes only when every kind in it is listed in `passCaution` (`identity_unknown`, `unreachable`, `steering`, `no_delivery_record`, `declined`, `not_compared`, `delivery_warn`). **The default passes no CAUTION.** Stay Steward uses `["identity_unknown"]`: a stay that answers as declared but has no ERC-8004 registration may be linked; one that did not answer, steers the caller, or was blocked is not. Every stop is a line passed to `record`.
 
-Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/factgate-gate.mjs`, checked by its tests) and has a **Check with FactGate** button that runs the whole flow without a model or key: the card for FactGate, FactGate's network loaded by name, `gate_check` in FactGate's window, then either Verified Stay's card, its network and its booking window, or a stop with the reasons.
+Stay Steward ([factgate-peers](https://github.com/kzmttkc/factgate-peers)) uses a byte-identical copy (`stay-steward/js/factgate-gate.mjs`, checked by its tests) and has a **Check with FactGate** button that runs the whole flow without a model or key: the card for FactGate, FactGate's network loaded by name, `gate_check` in FactGate's window, then either Verified Stay's card, its network and its booking window, or a stop with the reasons.
 
 ## Rules worth knowing
 
@@ -208,7 +210,7 @@ Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/f
 | `site/factgate-gate.mjs` | The gate other sites load (policy, page-code check); see [docs/GATE.md](docs/GATE.md) |
 | `site/js/card.mjs`, `app.js`, `index.html`, `styles.css` | The page |
 | `site/factgate.hocon`, `agent-manifest.json`, `site-actions.js`, `bridge/` | The agentic website (network, manifest, actions, bridge) |
-| `site/runtime/` | Reference runtime with `settingsDefaultClosed` in `ui.js` (AI model settings start closed on the page) |
+| `site/runtime/` | Reference runtime with `settingsDefaultClosed` in `ui.js` (AI model settings start closed on the page). Apache-2.0 from the Open Agentic Web reference runtime (see `site/runtime/LICENSE.txt`) |
 | `scripts/probe-live.mjs`, `cors-fetch.mjs` | Live measurement with the browser's CORS rules |
 | `evidence/live/` | Measured results |
 
@@ -235,8 +237,10 @@ node --test "*/tests/*.test.mjs" "tests/*.test.mjs"
 
 | Suite | Expected (2026-11-22) |
 | --- | --- |
-| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 192: 185 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
+| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`, counted 2026-11-23) | 193: 186 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
 | `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` (in `factgate-peers`, with `../factgate`) | 56: 56 pass, 0 fail (10 three-site end-to-end tests, 2 of those run the no-model button) |
+
+CI smoke in evidence packs: `node --test test/*.test.mjs` only (166 tests as of 2026-11-23). Use the full factgate command above for 193.
 
 ## Limits
 

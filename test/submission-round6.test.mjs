@@ -18,7 +18,7 @@ function linesBefore(haystack, needle, maxLines = 40) {
 }
 
 const NEUTRAL_COMPARISON =
-  "ScopeGate Studio guards calls as they leave, Agent Customs scans prompts, Agent Atlas checks the format; FactGate decides before the link, from measured live answers, on-chain identity and delivery.";
+  "Agent Customs scans prompts. Agent Atlas checks the format. FactGate decides before a partner network loads, from measured live answers, on-chain identity and delivery.";
 
 test("README opening: distinction under the hotel hook, Agents roster below screenshots", async () => {
   const readme = await mustRead("README.md");
@@ -52,8 +52,9 @@ test("README hero table: agent402 ALLOW with vet402 record wording, no fixed pai
 test("README Measured: judging-period story and vet402 re-check", async () => {
   const readme = await mustRead("README.md");
   assert.match(readme, /through judging.*Verified Stay booked \(VS-0001\).*Glossy Stay not loaded/s);
-  assert.match(readme, /vet402 re-checks this seller before judging/);
-  assert.match(readme, /the card shows the last delivery date/);
+  assert.match(readme, /agent402\.tools\/api\/weather-forecast/);
+  assert.match(readme, /scheduled to buy that URL once on 2027-01-10 UTC/);
+  assert.match(readme, /the card shows that date/i);
   assert.doesNotMatch(readme, /agent402\.tools will not repeat ALLOW/);
   assert.doesNotMatch(readme, /2026-12-07/);
 });
@@ -76,7 +77,8 @@ test("docs/devpost.md is a short paste-only opening", async () => {
   assert.doesNotMatch(body, /none of them stops the link/i);
   assert.match(body, /Verified Stay booked/);
   assert.match(body, /allow pop-ups for stay-steward-demo\.vercel\.app/i);
-  assert.match(body, /vet402 re-checks this seller before judging/);
+  assert.match(body, /agent402\.tools\/api\/weather-forecast/);
+  assert.match(body, /2027-01-10 UTC/);
   assert.doesNotMatch(body, /2026-12-07/);
   assert.doesNotMatch(body, /\| Pillar \|/);
 });
