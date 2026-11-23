@@ -86,6 +86,8 @@ button.try small { font-weight: 400; color: var(--muted); font-size: 12px; }
 .result-allow .action-line { color: var(--allow); }
 .result-caution .action-line { color: var(--caution); }
 .result-block .action-line { color: var(--block); }
+.result-superseded { opacity: 0.45; pointer-events: none; }
+.result-superseded-note { font-size: 0.9rem; color: var(--muted); margin: 0 0 12px; }
 .measured { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0 0; }
 .measured > div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; background: var(--bg); min-width: 0; }
 .measured > div[hidden] { display: none; }

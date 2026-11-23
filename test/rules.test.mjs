@@ -1,7 +1,7 @@
 // The smaller pieces added in stage 3: the instruction scan (C-3), the trusted-validator list
 // (C-2), the consent helper (B), the verdict card data (D-1) and AgentFacts agent_name (E).
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -52,17 +52,62 @@ test("C-3: rules that forbid the thing, and links the network declares, are not 
   }
 });
 
-test("C-3: no finding in FactGate's, the demo sites' and the reference examples' published networks", async () => {
+async function referenceExampleDirs() {
+  const candidates = [
+    process.env.AGENTIFY_SKILL ? path.join(path.dirname(process.env.AGENTIFY_SKILL), "examples") : null,
+    path.join(ROOT, "..", "agentic-web", "examples"),
+    path.join(ROOT, "..", "factgate-ref", "agentic-web", "examples"),
+  ].filter(Boolean);
+  const found = [];
+  for (const dir of candidates) {
+    try {
+      await access(dir);
+      found.push(dir);
+    } catch {
+      // try next layout
+    }
+  }
+  return [...new Set(found)];
+}
+
+test("C-3: no finding in FactGate's, the demo sites' and the reference examples' published networks", async (t) => {
   const files = [path.join(ROOT, "site/factgate.network.json")];
   for (const peer of ["glossy-stay/glossy_stay.network.json", "verified-stay/verified_stay.network.json", "stay-steward/stay_steward.network.json"]) {
     files.push(path.join(ROOT, "..", "factgate-peers", peer));
   }
-  const examples = path.join(ROOT, "..", "factgate-ref", "agentic-web", "examples");
-  for (const d of await readdir(examples, { withFileTypes: true }).catch(() => [])) {
-    if (d.isDirectory()) {
-      for (const f of await readdir(path.join(examples, d.name))) {
-        if (f.endsWith(".network.json")) {
-          files.push(path.join(examples, d.name, f));
+  const exampleRoots = await referenceExampleDirs();
+  const skillPath = process.env.AGENTIFY_SKILL || path.join(ROOT, "..", "agentic-web", "skills", "agentify-website");
+  const peersPath = path.join(ROOT, "..", "factgate-peers");
+  let skillExists = false;
+  let peersExists = false;
+  try {
+    await access(skillPath);
+    skillExists = true;
+  } catch {
+    // not in sibling layout
+  }
+  try {
+    await access(peersPath);
+    peersExists = true;
+  } catch {
+    // peers optional for this assert's gating
+  }
+  if (!exampleRoots.length) {
+    if (skillExists || peersExists) {
+      assert.fail(
+        `reference example networks not found (looked under ../agentic-web/examples and ../factgate-ref/agentic-web/examples). Clone agentic-web beside factgate or set AGENTIFY_SKILL.`,
+      );
+    }
+    t.skip("reference example networks: no agentic-web sibling and no AGENTIFY_SKILL");
+    return;
+  }
+  for (const examples of exampleRoots) {
+    for (const d of await readdir(examples, { withFileTypes: true })) {
+      if (d.isDirectory()) {
+        for (const f of await readdir(path.join(examples, d.name))) {
+          if (f.endsWith(".network.json")) {
+            files.push(path.join(examples, d.name, f));
+          }
         }
       }
     }

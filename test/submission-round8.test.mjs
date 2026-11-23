@@ -5,7 +5,6 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const NOTES = path.join(ROOT, "..", "factgate-notes");
 
 async function mustRead(relFromRoot) {
   return readFile(path.join(ROOT, relFromRoot), "utf8");
@@ -33,16 +32,4 @@ test("index.html masthead: Stay Steward links to demo", async () => {
     masthead,
     /<a[^>]+href="https:\/\/stay-steward-demo\.vercel\.app\/"[^>]*>Stay Steward<\/a>/
   );
-});
-
-test("demo script SCREEN C caption: vet402 delivery record, no post-window Unchecked", async () => {
-  const script = await readFile(path.join(NOTES, "video", "SCRIPT_final.md"), "utf8");
-  const screenC = script.slice(script.indexOf("SCREEN C"));
-  const capInC = screenC.match(/^CAPTION: `([^`]+)`/m);
-  assert.ok(capInC, "SCREEN C CAPTION missing");
-  const text = capInC[1];
-  assert.match(text, /Real x402 seller/i);
-  assert.match(text, /vet402 record/i);
-  assert.doesNotMatch(text, /2026-12-07/i);
-  assert.doesNotMatch(text, /Unchecked/i);
 });

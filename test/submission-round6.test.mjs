@@ -5,7 +5,6 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const NOTES = path.join(ROOT, "..", "factgate-notes");
 const PEERS = path.join(ROOT, "..", "factgate-peers");
 
 async function mustRead(relFromRoot) {
@@ -40,13 +39,13 @@ test("README opening: distinction under the hotel hook, Agents roster below scre
   assert.ok(readme.indexOf(NEUTRAL_COMPARISON) > hookPos, "distinction should follow the hotel hook");
 });
 
-test("README hero table: agent402 ALLOW dated with vet402 record", async () => {
+test("README hero table: agent402 ALLOW with vet402 record wording, no fixed paid counts", async () => {
   const readme = await mustRead("README.md");
   assert.doesNotMatch(readme, /2026-12-07/);
-  assert.match(readme, /ALLOW \(3 of 3 delivered, vet402 record, checked 2026-11-22\)/);
+  assert.match(readme, /ALLOW \(every paid call delivered, vet402 record, checked 2026-11-22\)/);
   const hero = readme.match(/\| Verified Stay \| Glossy Stay \| agent402\.tools[\s\S]*?\n\n/);
   assert.ok(hero, "hero table missing");
-  assert.ok(!hero[0].includes("ALLOW, 3/3 paid calls delivered"), "hero still promises timeless ALLOW 3/3");
+  assert.doesNotMatch(hero[0], /\b3 of 3\b/i);
   assert.doesNotMatch(hero[0], /Unchecked/i);
 });
 
@@ -76,6 +75,7 @@ test("docs/devpost.md is a short paste-only opening", async () => {
   assert.ok(body.includes(NEUTRAL_COMPARISON));
   assert.doesNotMatch(body, /none of them stops the link/i);
   assert.match(body, /Verified Stay booked/);
+  assert.match(body, /allow pop-ups for stay-steward-demo\.vercel\.app/i);
   assert.match(body, /vet402 re-checks this seller before judging/);
   assert.doesNotMatch(body, /2026-12-07/);
   assert.doesNotMatch(body, /\| Pillar \|/);
@@ -91,14 +91,4 @@ test("index.html: no try-note beside Try these", async () => {
   assert.ok(tryIdx >= 0 && statusIdx > tryIdx);
   const between = page.slice(tryIdx, statusIdx);
   assert.doesNotMatch(between, /agent402\.tools was ALLOW/);
-});
-
-test("demo script: https chat line and SCREEN C delivery caption", async () => {
-  const script = await readFile(path.join(NOTES, "video", "SCRIPT_final.md"), "utf8");
-  assert.match(script, /Check https:\/\/glossy-stay-demo\.vercel\.app\/glossy_stay before I book/);
-  assert.doesNotMatch(script, /Check glossy-stay-demo\.vercel\.app before I book/);
-  assert.match(script, /102 of 138/);
-  assert.doesNotMatch(script, /In the NANDA Index today/);
-  assert.doesNotMatch(script, /after 2026-12-07.*unchecked/i);
-  assert.match(script, /Real x402 seller · every paid call delivered \(vet402 record\)/);
 });

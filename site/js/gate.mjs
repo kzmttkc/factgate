@@ -121,7 +121,16 @@ function isOk(pillar) {
   return Boolean(pillar) && pillar.status === "ok" && pillar.data && typeof pillar.data === "object";
 }
 
+export function declinedHost(error) {
+  const m = /visitor declined (.+)/i.exec(String(error || ""));
+  return m ? m[1].replace(/[.;,\s]+$/, "") : null;
+}
+
 function unavailable(pillar, name, label) {
+  const host = declinedHost(pillar && pillar.error);
+  if (host) {
+    return reason(name, `${name}_unavailable`, "CAUTION", `Not checked: you declined ${host}; not measured.`);
+  }
   const why = pillar && pillar.error ? `: ${String(pillar.error)}` : "";
   return reason(name, `${name}_unavailable`, "CAUTION", `Could not fetch the ${label}${why}. Not measured, not counted as zero.`);
 }
@@ -164,6 +173,10 @@ export function judgeLive(live) {
     return reason("live", code, "BLOCK", parts.join(" "));
   }
   if (d.corsReachable === false) {
+    const declined = declinedHost(d.detail);
+    if (declined) {
+      return reason("live", "live_unavailable", "CAUTION", `Not checked: you declined ${declined}; not measured.`);
+    }
     return reason("live", "live_cors_unreachable", "CAUTION", "The browser cannot reach this counterparty over CORS, so an agentic website cannot connect to it.");
   }
   const unreachable = Array.isArray(d.unreachable) ? d.unreachable : [];

@@ -16,11 +16,11 @@ Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
 |---|---|---|
-| ALLOW → booked VS-0001 — [Stay Steward](https://stay-steward-demo.vercel.app/) | BLOCK → never loaded | ALLOW (3 of 3 delivered, vet402 record, checked 2026-11-22) |
+| ALLOW → booked VS-0001 — [Stay Steward](https://stay-steward-demo.vercel.app/) | BLOCK → never loaded | ALLOW (every paid call delivered, vet402 record, checked 2026-11-22) |
 
 ### Measured on 2026-11-22
 
-On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded 3 of 3 paid calls delivered. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
+On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded every paid call delivered (vet402 record; the card shows the last delivery date). **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
 
 The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. vet402 re-checks this seller before judging; the card shows the last delivery date. Delivery counts today come only from the author's **vet402** and the author's recomputable validator.
 
@@ -78,13 +78,7 @@ The four sites are static (Vercel), each on its own origin. `deploy/build-public
 
 ## Compared with the five tools already listed
 
-| | Agent Atlas | NandaSeal | Agent Customs | Agent Crash Test | Three Numbers | **FactGate** |
-| --- | --- | --- | --- | --- | --- | --- |
-| What it checks | Manifest format | Self-signed facts in the browser | Static prompt-injection scan | Your own site's confirm dialogs | XRPL escrow counts | Live answers vs declarations, on-chain identity vs payee, delivery after payment |
-| Calls the counterparty's endpoints | Manifest only | No | No | Your own site | No | Manifest, network, MCP `tools/list`, x402 terms, paid resource |
-| Reads identity on chain | No | No | No | No | No (reads XRPL escrow counts) | ERC-8004 owner / agentWallet, pinned block |
-| Evidence that paid calls delivered | No | No | No | No | Counts only | vet402 records + trusted ValidationRegistry scores |
-| Verdict before linking or paying | No | No | Static only | No | No | ALLOW / CAUTION / BLOCK, used by a partner site's gate |
+**Agent Atlas** checks manifest format. **NandaSeal** records self-signed facts in the browser. **Agent Customs** runs a static prompt-injection scan. **Agent Crash Test** exercises confirm dialogs on your own site. **Three Numbers** reads XRPL escrow counts. **FactGate** checks live answers against declarations, on-chain identity against the x402 payee, and delivery after payment, then returns ALLOW / CAUTION / BLOCK before a partner site links or pays (used by Stay Steward's page-code gate).
 
 ## Try it
 
@@ -94,7 +88,7 @@ Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`
 
 | Counterparty | Verdict | Why |
 | --- | --- | --- |
-| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW (3 of 3 delivered, vet402 record, checked 2026-11-22) (Link / pay: OK) | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; vet402 delivered 3 of 3 paid calls |
+| agent402.tools/api/weather-forecast (real x402 seller) | ALLOW (every paid call delivered, vet402 record, checked 2026-11-22) (Link / pay: OK) | Answers as declared; payTo = ERC-8004 agent 94639's owner and agentWallet on Base; every paid call delivered (vet402 record; the card shows the last delivery date) |
 | vet402.com (the author's own service) | ALLOW (Link / pay: OK) | No payment asked; the site and its ERC-8004 registration point at each other (rule C-1) |
 | Verified Stay (fictional demo, local) | ALLOW (Link / pay: OK) | payTo = agent 10798's wallet on Base Sepolia; trusted validations passed 79 / below 70 0 (the Delivery Court judge) |
 | Glossy Stay (fictional demo, local) | BLOCK (Do not pay) | payTo is not its own declared wallet nor agent 10799's; the paid resource answers an empty body; trusted validations passed 1 / below 70 1 (a score of 3) |
@@ -102,7 +96,7 @@ Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`
 | Five agentic websites from the contest's list | CAUTION: identity_unknown | Answer as declared; none declares an ERC-8004 registration, so identity is not measured |
 | The contest organizer's widget | CAUTION: unreachable, identity_unknown, no_delivery_record | Its manifest answers without `Access-Control-Allow-Origin`, so a browser cannot read it |
 
-None of these is in the NANDA Index (138 records searched on 2026-11-22T22:04:45Z via `api.nandaindex.org/api/v1/index`, limit 200, offset paging; 102 with `cardValidation` null or missing, 36 with a non-null `cardValidation`). A listed example: `Heron A2A Checker` (`urn:air:heron.ing:catalog:root`) shows "NANDA: listed, card not validated" on the card; its own site did not answer the browser, so it is CAUTION (unreachable, identity_unknown, no_delivery_record).
+None of these is in the NANDA Index (when checked on 2026-11-22: 102 of 138 had no card validation, via `api.nandaindex.org/api/v1/index`, limit 200, offset paging). A listed example: `Heron A2A Checker` (`urn:air:heron.ing:catalog:root`) shows "NANDA: listed, card not validated" on the card; its own site did not answer the browser, so it is CAUTION (unreachable, identity_unknown, no_delivery_record).
 
 ## Run it
 
@@ -203,7 +197,7 @@ Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/f
 | `site/factgate-gate.mjs` | The gate other sites load (policy, page-code check) |
 | `site/js/card.mjs`, `app.js`, `index.html`, `styles.css` | The page |
 | `site/factgate.hocon`, `agent-manifest.json`, `site-actions.js`, `bridge/` | The agentic website (network, manifest, actions, bridge) |
-| `site/runtime/` | The reference runtime, unchanged |
+| `site/runtime/` | Reference runtime with `settingsDefaultClosed` in `ui.js` (AI model settings start closed on the page) |
 | `scripts/probe-live.mjs`, `cors-fetch.mjs` | Live measurement with the browser's CORS rules |
 | `evidence/live/` | Measured results |
 
@@ -230,7 +224,7 @@ node --test "*/tests/*.test.mjs" "tests/*.test.mjs"
 
 | Suite | Expected (2026-11-22) |
 | --- | --- |
-| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 185: 178 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
+| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 183: 176 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
 | `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` (in `factgate-peers`, with `../factgate`) | 55: 55 pass, 0 fail (10 three-site end-to-end tests, 2 of those run the no-model button) |
 
 ## Limits

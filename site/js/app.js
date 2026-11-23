@@ -11,6 +11,30 @@ import { DEFAULT_VALIDATORS, normalizeTrusted } from "./validators.mjs";
 
 export { VET402_MCP } from "./gatecheck.mjs";
 
+/**
+ * Visibly retire the previous verdict card while a new check waits on consent.
+ */
+export function supersedeResultBox(box, doc = typeof document !== "undefined" ? document : null) {
+  if (!box || box.hidden || !doc) {
+    return false;
+  }
+  box.classList.add("result-superseded");
+  box.dataset.superseded = "true";
+  if (!box.querySelector(".result-superseded-note")) {
+    const note = doc.createElement("p");
+    note.className = "result-superseded-note";
+    note.textContent = "Previous check — replaced when this one finishes.";
+    if (typeof box.prepend === "function") {
+      box.prepend(note);
+    } else if (box.firstChild) {
+      box.insertBefore(note, box.firstChild);
+    } else {
+      box.appendChild(note);
+    }
+  }
+  return true;
+}
+
 const VALIDATORS_KEY = "factgate.trustedValidators.v1";
 
 function pageFetch(url, init) {
@@ -263,6 +287,12 @@ class GatePage {
     }
     const card = verdictCard(result);
     box.hidden = false;
+    box.classList.remove("result-superseded");
+    delete box.dataset.superseded;
+    const oldNote = box.querySelector(".result-superseded-note");
+    if (oldNote) {
+      oldNote.remove();
+    }
     box.className = `result result-${card.verdict.toLowerCase()}`;
     // First line: what to do. The verdict word and the target follow.
     document.querySelector("#full-action").textContent = card.action;
@@ -512,6 +542,7 @@ export class App {
       // A URL is checked as is; anything else is a NANDA Index id, orgId or name to look up.
       const target = /^https?:\/\//i.test(typed) ? { url: typed } : { nanda: typed };
       status.textContent = "Waiting for your approval before anything is contacted…";
+      supersedeResultBox(document.querySelector("#full-result"));
       document.querySelector("#run-check").disabled = true;
       try {
         const out = await App.page.gateCheck(agentId ? { ...target, agentId, chainId } : target);

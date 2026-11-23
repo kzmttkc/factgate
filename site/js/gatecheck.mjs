@@ -11,7 +11,7 @@ import { buildAgentFacts } from "./agentfacts.mjs";
 import { withConsent } from "./consent.mjs";
 import { DEFAULT_VALIDATORS } from "./validators.mjs";
 import { CHAINS, bindingOf, decodeDataUriJson, evmPayTos, identityPillar, pickRegistration, readAgent } from "./chain.mjs";
-import { cautionKinds, deliveryFromMcp, evaluateGate } from "./gate.mjs";
+import { cautionKinds, declinedHost, deliveryFromMcp, evaluateGate } from "./gate.mjs";
 import { actionLine } from "./card.mjs";
 import { DEFAULT_TIMEOUT_MS, parseJson, readText, timedFetch } from "./net.mjs";
 import { readValidations } from "./validation.mjs";
@@ -151,7 +151,11 @@ async function gateCheckOnce(target, options) {
       idEvidence.binding = binding;
     }
   }
-  const identity = identityPillar({ payTos, chainRead, binding, noAgentReason, declaredOnlyReason });
+  let identity = identityPillar({ payTos, chainRead, binding, noAgentReason, declaredOnlyReason });
+  const counterpartyDeclined = live.pillar && live.pillar.status === "unavailable" && declinedHost(live.pillar.error);
+  if (counterpartyDeclined) {
+    identity = { status: "unavailable", error: live.pillar.error };
+  }
 
   // Pillar 3. Paid = the counterparty answered with x402 terms. A free one is "not applicable".
   // Unknown (the browser could not read it) is neither.

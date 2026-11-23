@@ -10,6 +10,6 @@ The result that still runs on the live sites through judging is **Verified Stay 
 
 For an agent builder about to load a partner agent site or pay an x402 seller, the card says what to do before the link.
 
-Open Stay Steward, press Check with FactGate, and allow the cards. Verified Stay books VS-0001 in its own window. Glossy Stay stops at Do not pay.
+Open Stay Steward (allow pop-ups for stay-steward-demo.vercel.app when asked), press Check with FactGate, and allow the cards. Verified Stay books VS-0001 in its own window. Glossy Stay stops at Do not pay.
 
 The only BLOCK a judge can repeat through 2027-01-18 is fictional Glossy Stay. Five real contest sites measured on 2026-11-22 were CAUTION (identity unknown), not blocked.

@@ -346,6 +346,11 @@ function liveFromChecksBase(c) {
   const reachable = Boolean((c.target && c.target.reachable) || readable(c.manifest) || readable(c.registration));
   if (!reachable) {
     const why = (c.target && c.target.error) || (c.manifest && c.manifest.error) || "no answer";
+    const host = /visitor declined (.+)/i.exec(String(why));
+    if (host) {
+      const who = host[1].replace(/[.;,\s]+$/, "");
+      return { status: "unavailable", error: `TypeError: not contacted: the visitor declined ${who}` };
+    }
     return { status: "ok", data: { corsReachable: false, answersAsDeclared: null, detail: `the browser could not read the counterparty: ${why}`, unreachable: [] } };
   }
   const mismatch = [];
