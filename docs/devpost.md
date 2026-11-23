@@ -4,6 +4,8 @@ My agent was about to book the nicer hotel. I had built that hotel to fail. Fact
 
 ScopeGate Studio guards calls as they leave, Agent Customs scans prompts, Agent Atlas checks the format; FactGate decides before the link, from measured live answers, on-chain identity and delivery.
 
+Cognizant's 2026-11-19 blog on agent negotiation describes a deterministic Arbiter and private steward negotiating hotel bookings; FactGate runs before that arbitration, checking live answers, on-chain identity and delivery instead of negotiating price.
+
 Try it: https://factgate.vercel.app/ — no key needed.
 
 The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. vet402 re-checks this seller before judging; the card shows the last delivery date.

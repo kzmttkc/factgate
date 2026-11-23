@@ -4,6 +4,8 @@ My agent was about to book the nicer hotel. I had built that hotel to fail. Fact
 
 ScopeGate Studio guards calls as they leave, Agent Customs scans prompts, Agent Atlas checks the format; FactGate decides before the link, from measured live answers, on-chain identity and delivery.
 
+In Cognizant's [2026-11-19 blog](https://www.cognizant.com/us/en/ai-lab/blog/ai-agent-negotiation-open-agentic-web), a deterministic Arbiter negotiates hotel bookings between a private steward and a hotel's agentic website. FactGate sits before that step: it checks whether the hotel answers as declared, whether its ERC-8004 registration matches the payee it names, and whether paid calls returned content—without negotiating price.
+
 Before your agent links to or pays a site, FactGate checks three facts:
 **Live** (does it answer as declared?) · **Identity** (does the ERC-8004 wallet match the x402 payee?) · **Delivery** (did paid calls really return content?).
 Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
@@ -17,6 +19,10 @@ Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
 |---|---|---|
 | ALLOW → booked VS-0001 — [Stay Steward](https://stay-steward-demo.vercel.app/) | BLOCK → never loaded | ALLOW (every paid call delivered, vet402 record, checked 2026-11-22) |
+
+### Measured on 2026-11-23 (third-party ERC-8004, pillars 1–2 without vet402)
+
+On 2026-11-23 FactGate measured **https://agent402.tools/api/weather-forecast** (a public x402 seller, not the author's demo sites): pillar 1 **ALLOW** (`live_as_declared`), pillar 2 **ALLOW** (`identity_match`, ERC-8004 agent 94639 on Base via `eth_call`); overall **CAUTION** only because pillar 3 was not read (`node scripts/measure-pillars-12.mjs https://agent402.tools/api/weather-forecast`).
 
 ### Measured on 2026-11-22
 
@@ -229,7 +235,7 @@ node --test "*/tests/*.test.mjs" "tests/*.test.mjs"
 
 | Suite | Expected (2026-11-22) |
 | --- | --- |
-| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 186: 179 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
+| `node --test "test/*.test.mjs" "site/tests/*.test.mjs"` (in `factgate`) | 192: 185 pass, 0 fail, 7 skipped (template tests for irreversible actions; FactGate has none) |
 | `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"` (in `factgate-peers`, with `../factgate`) | 56: 56 pass, 0 fail (10 three-site end-to-end tests, 2 of those run the no-model button) |
 
 ## Limits
