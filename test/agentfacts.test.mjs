@@ -45,9 +45,9 @@ test("identity fields come from the ERC-8004 registration when there is one", ()
 test("the three pillars and the verdict are carried as evidence under x_factgate_", () => {
   const facts = buildAgentFacts(INPUT);
   assert.equal(facts.x_factgate_verdict.verdict, "ALLOW");
-  assert.equal(facts.x_factgate_evidence.live.http[0].status, 402);
-  assert.equal(facts.x_factgate_evidence.identity.agent.agentId, "94639");
-  assert.equal(facts.x_factgate_evidence.delivery.pillar.data.record_url, "https://vet402.com/r/1");
+  assert.equal(facts.x_factgate_detail.live.http[0].status, 402);
+  assert.equal(facts.x_factgate_detail.identity.agent.agentId, "94639");
+  assert.equal(facts.x_factgate_detail.delivery.pillar.data.record_url, "https://vet402.com/r/1");
   assert.equal(facts.evaluations.lastAudited, "2026-11-22T05:00:00.000Z");
   assert.match(facts.evaluations.auditorID, /FactGate/);
 });
@@ -56,6 +56,7 @@ test("it does not claim a certification or a signature it does not have", () => 
   const facts = buildAgentFacts(INPUT);
   assert.equal(facts.certification, undefined);
   assert.equal(facts.x_factgate_signature.signed, false);
+  assert.ok(Array.isArray(facts.x_factgate_evidence));
 });
 
 test("a target with no registration falls back to the URL and the manifest", () => {

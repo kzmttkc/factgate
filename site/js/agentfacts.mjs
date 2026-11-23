@@ -166,7 +166,8 @@ export function buildAgentFacts(input) {
         ? { status: "listed", source: "https://api.nandaindex.org/api/v1/index", line: input.nanda.record.line, record: clone(input.nanda.record) }
         : { status: input.nanda.status, source: "https://api.nandaindex.org/api/v1/index", error: input.nanda.error, searched: input.nanda.searched })
       : undefined,
-    x_factgate_evidence: {
+    x_factgate_evidence: Array.isArray(input.responseDigests) ? clone(input.responseDigests) : [],
+    x_factgate_detail: {
       target: url,
       checkedAt: input.checkedAt,
       live: clone(live),
@@ -175,7 +176,7 @@ export function buildAgentFacts(input) {
     },
     x_factgate_signature: {
       signed: false,
-      note: "FactGate is not an issuer under the NANDA trust framework and does not sign. Re-run the check to verify; every value has its source URL in x_factgate_evidence.",
+      note: "After a check on the page, FactGate may sign this JSON with a per-session key. Use Verify signature under AgentFacts. Signing does not prove the counterparty is safe.",
     },
     x_factgate_format: {
       source: AGENTFACTS_SOURCE,

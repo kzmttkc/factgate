@@ -16,6 +16,7 @@ import { actionLine } from "./card.mjs";
 import { DEFAULT_TIMEOUT_MS, parseJson, readText, timedFetch } from "./net.mjs";
 import { readValidations } from "./validation.mjs";
 import { lookupNanda } from "./nanda.mjs";
+import { digestsFromHttpLog, mergeResponseDigests } from "./evidence-digest.mjs";
 import { parseRpcBody, probeLive } from "./probe.mjs";
 
 export const VET402_MCP = "https://vet402.com/mcp";
@@ -35,7 +36,9 @@ export async function fetchVet402Delivery(fetchImpl, url, timeoutMs = DEFAULT_TI
   if (got.response.status !== 200) {
     return { pillar: { status: "unavailable", error: `vet402 MCP HTTP ${got.response.status}` }, http };
   }
-  const rpc = parseRpcBody(await readText(got.response));
+  const responseBody = await readText(got.response);
+  http.responseBody = responseBody;
+  const rpc = parseRpcBody(responseBody);
   return { pillar: deliveryFromMcp(rpc), http };
 }
 
@@ -85,7 +88,7 @@ export async function gateCheck(target, options) {
   }
   const { result, consent } = await withConsent((gated) => gateCheckOnce(target, { ...options, fetch: gated }), { fetch: options.fetch, ask: options.ask, remembered: options.remembered });
   result.consent = consent;
-  result.agentFacts.x_factgate_evidence.consent = consent;
+  result.agentFacts.x_factgate_detail.consent = consent;
   return result;
 }
 
@@ -204,7 +207,28 @@ async function gateCheckOnce(target, options) {
     delivery: { pillar: delivery, ...delEvidence },
   };
   evidence.nanda = nanda;
-  const agentFacts = buildAgentFacts({ url, checkedAt, verdict, live: evidence.live, identity: evidence.identity, delivery: evidence.delivery, trustedValidators: trusted, nanda });
+  const rpcHttp = [
+    ...(idEvidence.chainRead && Array.isArray(idEvidence.chainRead.rpc) ? idEvidence.chainRead.rpc : []),
+    ...(validation && validation.status === "ok" && Array.isArray(validation.data && validation.data.evidence)
+      ? validation.data.evidence.flatMap((x) => (x.log && x.log.http ? [x.log.http] : []))
+      : []),
+    ...(delEvidence.http ? [delEvidence.http] : []),
+  ];
+  const responseDigests = await mergeResponseDigests([
+    await digestsFromHttpLog(live.http, checkedAt),
+    await digestsFromHttpLog(rpcHttp, checkedAt),
+  ]);
+  const agentFacts = buildAgentFacts({
+    url,
+    checkedAt,
+    verdict,
+    live: evidence.live,
+    identity: evidence.identity,
+    delivery: evidence.delivery,
+    trustedValidators: trusted,
+    nanda,
+    responseDigests,
+  });
   // The pillar results exactly as page code measured them, so the page can keep this check as a
   // measurement record and judge or save it later by its ID (never from values a model wrote).
   const pillars = { live: live.pillar, identity, delivery, validation, paid };

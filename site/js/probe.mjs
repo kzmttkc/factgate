@@ -444,6 +444,7 @@ async function getJson(fetchImpl, http, url, timeoutMs) {
   }
   const text = await readText(got.response);
   entry.bytes = text.length;
+  entry.responseBody = text;
   if (got.response.status !== 200) {
     return { state: "absent", status: got.response.status, url };
   }
@@ -466,6 +467,7 @@ async function rpcPost(fetchImpl, http, url, body, session, protocol, timeoutMs)
   }
   const text = await readText(got.response);
   entry.bytes = text.length;
+  entry.responseBody = text;
   return { ok: true, status: got.response.status, session: got.response.headers.get("mcp-session-id"), rpc: parseRpcBody(text) };
 }
 
@@ -536,6 +538,7 @@ export async function probeLive(url, { fetch: fetchImpl, timeoutMs = DEFAULT_TIM
   if (targetGot.ok) {
     const body = await readText(targetGot.response);
     targetEntry.bytes = body.length;
+    targetEntry.responseBody = body;
     const header = targetGot.response.headers.get("payment-required");
     targetEntry.paymentRequiredHeader = header ? "readable" : targetGot.response.status === 402 ? "not readable (missing or not exposed)" : undefined;
     const p = parsePaymentRequired({ status: targetGot.response.status, header, bodyText: body });
@@ -629,6 +632,7 @@ export async function probeLive(url, { fetch: fetchImpl, timeoutMs = DEFAULT_TIM
     if (got.ok) {
       const body = await readText(got.response);
       entry.bytes = body.length;
+      entry.responseBody = body;
       checks.resource = { ...resourceCheck({ status: got.response.status, bodyText: body }), url: trust.resourceUrl, status: got.response.status, bytes: body.length };
     } else {
       checks.resource = { state: "unreachable", url: trust.resourceUrl, error: got.error };

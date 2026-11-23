@@ -6,6 +6,7 @@ import { TRY_THESE } from "./examples.mjs";
 import { evaluateGate, gateRules } from "./gate.mjs";
 import { fetchVet402Delivery } from "./gatecheck.mjs";
 import { nandaLine } from "./nanda.mjs";
+import { createSessionSigningKey, signAgentFactsWithSessionKey, verifyAgentFactsSignature } from "./agentfacts-sign.mjs";
 import { gateCheckRead, inspectManifestRead, probeCapabilitiesRead, readIdentityRead } from "./reads.mjs";
 import { DEFAULT_VALIDATORS, normalizeTrusted } from "./validators.mjs";
 
@@ -74,6 +75,20 @@ class GatePage {
     // nothing is contacted (fail closed).
     this.consentHandler = null;
     this.trustedValidators = GatePage.loadTrusted();
+    this.signingKey = null;
+  }
+
+  async ensureSigningKey() {
+    if (!this.signingKey) {
+      this.signingKey = await createSessionSigningKey();
+    }
+    return this.signingKey;
+  }
+
+  async signAgentFacts(facts) {
+    const key = await this.ensureSigningKey();
+    facts.x_factgate_signature = await signAgentFactsWithSessionKey(facts, key);
+    return facts;
   }
 
   /**
@@ -256,6 +271,7 @@ class GatePage {
       return r;
     }
     this.lastResult = r.result;
+    await this.signAgentFacts(this.lastResult.agentFacts);
     const measurementId = this.recordMeasurement({ kind: "gate_check", url: r.result.url, checkedAt: r.result.checkedAt, pillars: r.result.pillars, verdict: r.result.verdict });
     GatePage.renderResult(r.result);
     return { ...r.summary, measurementId };
@@ -564,6 +580,23 @@ export class App {
       a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     });
+    const verifyBtn = document.querySelector("#verify-facts");
+    const verifyStatus = document.querySelector("#verify-facts-status");
+    if (verifyBtn && verifyStatus) {
+      verifyBtn.addEventListener("click", async () => {
+        const facts = App.page.lastResult && App.page.lastResult.agentFacts;
+        if (!facts) {
+          verifyStatus.hidden = false;
+          verifyStatus.textContent = "Run a check first.";
+          return;
+        }
+        const out = await verifyAgentFactsSignature(facts);
+        verifyStatus.hidden = false;
+        verifyStatus.textContent = out.valid
+          ? "Signature OK: this JSON matches what FactGate signed after measurement in this session."
+          : `Signature failed: ${out.reason || "mismatch"}.`;
+      });
+    }
   }
 
   /**

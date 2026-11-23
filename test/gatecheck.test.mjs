@@ -353,7 +353,7 @@ test("consent rounds: the first card names only the counterparty's origin; the s
   assert.deepEqual(cards[2].hosts, ["registry-files.example"]);
   assert.equal(cards.length, 3);
   assert.deepEqual(r.consent.declined, []);
-  assert.equal(r.agentFacts.x_factgate_evidence.consent.cards.length, 3);
+  assert.equal(r.agentFacts.x_factgate_detail.consent.cards.length, 3);
 });
 
 test("consent rounds: declining the chain RPC leaves pillar 2 unmeasured (CAUTION), never ALLOW", async () => {

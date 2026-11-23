@@ -84,8 +84,10 @@
       </details>
       <details>
         <summary>AgentFacts (JSON)</summary>
-        <p class="note">Field names from the AgentFacts paper (arXiv:2507.14263, appendix, V0.3 draft). Fields starting with <code>x_factgate_</code> are FactGate's extensions and carry the evidence. Unsigned.</p>
+        <p class="note">Field names from the AgentFacts paper (arXiv:2507.14263, appendix, V0.3 draft). Fields starting with <code>x_factgate_</code> are FactGate's extensions. <code>x_factgate_evidence</code> lists a SHA-256 digest of each HTTP response body FactGate read. After a check, FactGate signs the JSON with a per-session ECDSA P-256 key: that proves the file was not changed after measurement in this session; it does not prove the counterparty is safe, and the key is not an identity.</p>
         <button id="download-facts" type="button" class="secondary">Download AgentFacts</button>
+        <button id="verify-facts" type="button" class="secondary">Verify signature</button>
+        <p id="verify-facts-status" class="note" hidden></p>
         <pre id="agentfacts" tabindex="0"></pre>
       </details>
     </section>

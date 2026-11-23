@@ -8,7 +8,7 @@
 //   getAgentWallet(uint256) -> address, tokenURI(uint256) -> string. Selectors are checked
 //   against Keccak-256 in test/chain.test.mjs.
 // - Registration file and endpoint-domain verification: ERC8004SPEC.md in the same repo.
-import { DEFAULT_TIMEOUT_MS, sameOrigin, timedFetch } from "./net.mjs";
+import { DEFAULT_TIMEOUT_MS, readText, sameOrigin, timedFetch } from "./net.mjs";
 
 export const IDENTITY_REGISTRY = Object.freeze({
   mainnet: "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
@@ -327,20 +327,21 @@ async function ethCall(fetchImpl, chain, data, timeoutMs, blockTag = "latest") {
   if (got.response.status !== 200) {
     return { ok: false, error: `RPC HTTP ${got.response.status}` };
   }
+  const responseBody = await readText(got.response);
   let json;
   try {
-    json = await got.response.json();
+    json = JSON.parse(responseBody);
   } catch {
-    return { ok: false, error: "RPC answer is not JSON" };
+    return { ok: false, error: "RPC answer is not JSON", responseBody };
   }
   if (json && json.error) {
     const reverted = json.error.code === 3 || /revert/i.test(String(json.error.message));
-    return { ok: true, reverted, error: `${json.error.code}: ${json.error.message}` };
+    return { ok: true, reverted, error: `${json.error.code}: ${json.error.message}`, responseBody };
   }
   if (!json || typeof json.result !== "string") {
-    return { ok: false, error: "RPC answer has no result" };
+    return { ok: false, error: "RPC answer has no result", responseBody };
   }
-  return { ok: true, result: json.result };
+  return { ok: true, result: json.result, responseBody };
 }
 
 /**
@@ -373,7 +374,16 @@ export async function readAgent({ chainId, agentId }, fetchImpl, timeoutMs = DEF
   }
   const block = blockTag === "latest" ? null : parseInt(blockTag, 16);
   const answers = await Promise.all(calls.map(([, data]) => ethCall(fetchImpl, chain, data, timeoutMs, blockTag)));
-  const rpc = calls.map(([fn, data], i) => ({ url: chain.rpc, method: `eth_call ${fn}`, to: chain.registry, data, block: blockTag, ...answers[i] }));
+  const rpc = calls.map(([fn, data], i) => ({
+    url: chain.rpc,
+    method: `eth_call ${fn}`,
+    to: chain.registry,
+    data,
+    block: blockTag,
+    status: answers[i].responseBody ? 200 : undefined,
+    responseBody: answers[i].responseBody,
+    ...answers[i],
+  }));
   const byFn = Object.fromEntries(calls.map(([fn], i) => [fn, answers[i]]));
   const owner = byFn.ownerOf;
   if (!owner.ok) {
