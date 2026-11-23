@@ -8,7 +8,7 @@ Cognizant's 2026-11-19 blog describes a deterministic Arbiter negotiating a hote
 
 Try it: https://factgate.vercel.app/ (no key needed).
 
-The paid seller in this check is https://agent402.tools/api/weather-forecast. On 2026-11-22 vet402 recorded every paid call delivered. Last delivered 2026-11-07, window 30 days. The card shows Last delivered: 2026-11-07 (vet402 window: 30 days). vet402 (my own service) is scheduled to buy that URL once on 2027-01-10 UTC. Between the last delivery date and that purchase, vet402 may answer WARN and the card may read CAUTION until that purchase runs. The agent402.tools ALLOW card needs vet402.com/mcp live after you allow it on the consent card.
+The paid seller in this check is https://agent402.tools/api/weather-forecast. On 2026-11-22 vet402 recorded every paid call delivered. Last delivered 2026-11-07, window 30 days. The card shows Last delivered: 2026-11-07 (vet402 window: 30 days). vet402 (my own service) is scheduled to buy that URL once on 2027-01-10 UTC. On 2026-11-22 the vet402 record for that URL was ALLOW (tier aging, stale after 30 days, evidence/live/agent402_tools_api_weather_forecast.json). The purchase window ends before judging opens, so the 30-day window covers judging. The agent402.tools ALLOW card needs vet402.com/mcp live after you allow it on the consent card.
 
 Delivery counts on the card come from vet402 (my own service) and from validators listed in validators.json.
 
