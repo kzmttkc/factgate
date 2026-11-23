@@ -78,11 +78,11 @@ test("inspectNetwork collects declared MCP servers and peers, and checks the fro
   assert.equal(r.sampleQueries, 1);
 });
 
-test("inspectNetwork flags a missing front agent, a dangling reference and duplicate names", () => {
+test("inspectNetwork flags a missing front agent and duplicate names; an unresolved name is a warning (links.json may bind it)", () => {
   const r = inspectNetwork({ tools: [{ name: "a", tools: ["ghost"] }, { name: "a" }] }, "front");
   assert.equal(r.ok, false);
   assert.ok(r.problems.some((p) => /front agent "front"/.test(p)));
-  assert.ok(r.problems.some((p) => /"ghost"/.test(p)));
+  assert.ok(r.warnings.some((p) => /"ghost"/.test(p)));
   assert.ok(r.problems.some((p) => /duplicate/.test(p)));
   assert.equal(inspectNetwork({}, "a").ok, false);
 });
@@ -264,5 +264,16 @@ test("a name in link_slots is a named peer reference (spec 3.3 links.json), not 
   const { inspectNetwork } = await import("../site/js/probe.mjs");
   const r = inspectNetwork({ link_slots: { factgate: { callers: ["desk"] } }, tools: [{ name: "desk", tools: ["factgate", "ghost"] }] }, "desk");
   assert.deepEqual(r.peers, ["link:factgate"]);
-  assert.deepEqual(r.problems, ['agent "desk" calls "ghost", which is not an agent in the network']);
+  // A bare name can be bound to a partner URL by the site's links.json (spec 3.3), which the
+  // network file does not show, so it is a warning, not a contradiction that blocks the site.
+  assert.deepEqual(r.problems, []);
+  assert.match(r.warnings.join("\n"), /calls "ghost", which this network file does not define/);
+});
+
+test("website_<name> tools are the site's own actions (runtime/runner.js), not missing agents", async () => {
+  const { inspectNetwork } = await import("../site/js/probe.mjs");
+  const r = inspectNetwork({ tools: [{ name: "desk", tools: ["website_create_mandate", "helper"] }, { name: "helper", tools: [] }] }, "desk");
+  assert.deepEqual(r.problems, []);
+  assert.deepEqual(r.siteActions, ["website_create_mandate"]);
+  assert.equal(r.ok, true);
 });

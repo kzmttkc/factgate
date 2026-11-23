@@ -128,7 +128,7 @@ node scripts/probe-live.mjs --public   # as the deployed page: agent402 and the 
 node scripts/ecosystem-snapshot.mjs
 ```
 
-**Ecosystem snapshot 2026-11-23:** 17 sites probed from the public list — 15 answered as declared, 16 manifests CORS-readable, 0 declare ERC-8004 in a readable registration file, 15 instruction scans clean; verdicts ALLOW 0 / CAUTION 16 / BLOCK 1 (`node scripts/ecosystem-snapshot.mjs`).
+**Ecosystem snapshot 2026-11-23:** 17 sites probed from the public list — 16 answered as declared, 16 manifests CORS-readable, 0 declare ERC-8004 in a readable registration file, 15 instruction scans clean; verdicts ALLOW 0 / CAUTION 17 / BLOCK 0 (`node scripts/ecosystem-snapshot.mjs`).
 
 ### Run the three-site demo
 

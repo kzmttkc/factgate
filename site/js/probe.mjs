@@ -128,8 +128,15 @@ export function inspectNetwork(network, frontMan) {
           if (!out.peers.includes(`link:${t}`)) {
             out.peers.push(`link:${t}`);
           }
+        } else if (/^website_/.test(t) && !names.has(t)) {
+          // The reference runtime exposes each registered site action as a website_<name> tool
+          // (agentify-website runtime/runner.js), so it is not defined in the network file.
+          if (!out.siteActions) out.siteActions = [];
+          out.siteActions.push(t);
         } else if (!names.has(t)) {
-          out.problems.push(`agent "${a.name}" calls "${t}", which is not an agent in the network`);
+          // A bare name may be bound to a partner URL by the site's links.json (spec 3.3), which
+          // the network file does not show. Unresolved here is not a contradiction.
+          out.warnings.push(`agent "${a.name}" calls "${t}", which this network file does not define (it may be bound in the site's links.json)`);
         }
       } else if (t && typeof t === "object" && str(t.url)) {
         out.mcp.push({ url: t.url, tools: Array.isArray(t.tools) ? t.tools.filter(str) : [] });
