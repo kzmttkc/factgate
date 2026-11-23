@@ -1,4 +1,4 @@
-# FactGate — facts for graders (2026-11-22, deployed)
+# FactGate: facts for graders (2026-11-22, deployed)
 
 Contest: Open Agentic Web Challenge (Cognizant, Devpost). Theme: "Agentify a website, create a tool that helps agents find or trust each other, or a reusable component the whole community can leverage." Stage 2 = 4 equal criteria: Technological Implementation, Design ("complete, coherent product experience not just a technical proof of concept"), Potential Impact ("credible, specific case for solving a real problem for a real audience"), Quality of the Idea.
 
@@ -11,7 +11,7 @@ Submission Requirements (contest rules, as read 2026-11-21/22; re-read before su
 | A public open agentic website: spec-conforming `.json` files, the browser `runtime`, a working interface | Deployed: https://factgate.vercel.app/ (source: https://github.com/kzmttkc/factgate) |
 | Text description of the features | README.md (English); short Devpost paste in docs/devpost.md |
 | Video under 2 minutes, on YouTube, "must include the Entrant explaining the Project (not AI generated)" | Not recorded yet (author's own voice) |
-| Screenshots | Taken 2026-11-22–23 on deployed Vercel sites at 1440 px and 390 px: `~/factgate/screenshots/` (FactGate ALLOW, BLOCK, consent, Stay Steward CAUTION) and `~/factgate-peers/screenshots/` (Stay Steward booked VS-0001, stopped on Glossy BLOCK); linked at the top of README.md |
+| Screenshots | Taken 2026-11-22–23 on deployed Vercel sites at 1440 px and 390 px: `factgate/screenshots/` (this repo) and `factgate-peers/screenshots/` (sibling repo, Stay Steward booked VS-0001, stopped on Glossy BLOCK); linked at the top of README.md |
 | Free access to the working demo through judging | Deployed on Vercel, no sign-in: FactGate https://factgate.vercel.app/, Stay Steward https://stay-steward-demo.vercel.app/, Verified Stay https://verified-stay-demo.vercel.app/, Glossy Stay https://glossy-stay-demo.vercel.app/ |
 | A project that existed before the period "must have been significantly updated after the start of the Hackathon Submission Period" (2026-11-11) | FactGate was started 2026-11-22 |
 
@@ -31,7 +31,9 @@ MVP spec section 6 (each with the test or screen that shows it; details in READM
 
 An open agentic website that checks a counterparty (an agentic website, a NANDA-indexed agent, or an x402 seller) before an agent links to it or pays it. For a site with no ERC-8004 registration it still shows, before connecting, whether the site answers as declared, whether its agent instructions are safe and whether it can be reached. Runs entirely in the browser (no server code). Every contact goes through a consent card that lists each destination origin and what it gets, allowed or declined row by row; a redirect to another origin is a new destination that needs its own card. Returns a deterministic ALLOW / CAUTION / BLOCK (code decides, the LLM only explains; evaluate_gate and save_check take only the ID of a check page code measured, never pillar values a model wrote). The card's first line is an action (Link / pay: OK, Do not pay, Do not link, Unchecked — do not treat as safe); CAUTION means unchecked and names what was not measured (identity_unknown, unreachable, steering, no_delivery_record, ...) and an AgentFacts JSON (field names from arXiv:2507.14263 appendix; extensions prefixed x_factgate_).
 
-The author scheduled vet402 (the author's own service) to buy `https://agent402.tools/api/weather-forecast` once in the production window 2027-01-10T00:00:00.000Z through 2027-01-10T23:59:59.999Z UTC (`maxPurchases` 1; vet402 cron runs at 12:00 UTC, so the purchase is due 2027-01-10 12:00 UTC). Pillar 3 on the card shows when vet402 last saw content come back (e.g. Last delivered: 2026-11-07 as in evidence dated 2026-11-22). If that purchase does not run, pillar 3 follows vet402's recommendation until a fresh delivery record exists.
+The author scheduled vet402 (the author's own service) to buy `https://agent402.tools/api/weather-forecast` once in the production window 2027-01-10T00:00:00.000Z through 2027-01-10T23:59:59.999Z UTC (`maxPurchases` 1; vet402 cron runs at 12:00 UTC, so the purchase is due 2027-01-10 12:00 UTC). Pillar 3 on the card shows when vet402 last saw content come back (e.g. Last delivered: 2026-11-07 as in evidence dated 2026-11-22). If that purchase does not run, pillar 3 follows vet402's recommendation until a fresh delivery record exists. Pillar 3 calls `https://vet402.com/mcp` (`site/js/gatecheck.mjs`); `evidence/live/SUMMARY.json` (2026-11-22) records POST initialize and tools/list as HTTP 200 after consent.
+
+Between last delivery (2026-11-07) and the 2027-01-10 purchase, vet402 may return recommendation WARN and the card may read CAUTION (`site/js/gate.mjs` maps WARN to CAUTION on pillar 3).
 
 Three pillars:
 1. Live probe: manifest (spec 3.3), network, declared MCP `initialize`→`tools/list`, x402 terms (never paid), paid resource, and a static scan of the instructions a caller would load (steering = CAUTION, asking for keys = BLOCK). Unreachable over CORS is recorded as such (no proxy).
@@ -54,4 +56,4 @@ Community: PR #72 to the official agent list (Open, as of 2026-11-23).
 
 Competitors already listed: Agent Atlas (manifest format check), NandaSeal (browser self-signed facts), Agent Customs (static prompt-injection scan), Agent Crash Test (own-site confirm dialogs), Three Numbers (XRPL escrow counts).
 
-Not yet done: the real-LLM chat run (needs the author's key), video, submission text.
+Not yet done: the real-LLM chat run (needs the author's key), video (YouTube URL on submission day only).

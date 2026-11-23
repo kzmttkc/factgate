@@ -1,4 +1,4 @@
-# FactGate — Devpost paste (short)
+# FactGate: Devpost paste (short)
 
 My agent was about to book the nicer hotel. I had built that hotel to fail. FactGate caught it.
 
@@ -8,7 +8,7 @@ Cognizant's 2026-11-19 blog describes a deterministic Arbiter negotiating a hote
 
 Try it: https://factgate.vercel.app/ (no key needed).
 
-The paid seller in this check is https://agent402.tools/api/weather-forecast. On 2026-11-22 vet402 recorded every paid call delivered. Last delivered 2026-11-07, window 30 days. vet402 (my own service) buys that URL once on 2027-01-10 UTC. The card shows that date.
+The paid seller in this check is https://agent402.tools/api/weather-forecast. On 2026-11-22 vet402 recorded every paid call delivered. Last delivered 2026-11-07, window 30 days. The card shows Last delivered: 2026-11-07 (vet402 window: 30 days). vet402 (my own service) is scheduled to buy that URL once on 2027-01-10 UTC. Between the last delivery date and that purchase, vet402 may answer WARN and the card may read CAUTION until that purchase runs. The agent402.tools ALLOW card needs vet402.com/mcp live after you allow it on the consent card.
 
 Delivery counts on the card come from vet402 (my own service) and from validators listed in validators.json.
 
@@ -20,4 +20,4 @@ Open Stay Steward (allow pop-ups for stay-steward-demo.vercel.app when asked), p
 
 A judge can repeat Glossy Stay's BLOCK through 2027-01-18. Glossy Stay is a fictional demo. On 2026-11-22, five contest sites measured CAUTION for identity unknown.
 
-Cognizant's 2026-11-19 post leaves trust between parties with no prior relationship open. FactGate is that check, and site/factgate-gate.mjs sits on the Stay Steward booking page. On 2026-11-23, 17 public-list sites measured CAUTION and the gate stopped them. When checked on 2026-11-22, 102 of 138 NANDA Index entries had no card validation.
+Cognizant's 2026-11-19 post leaves trust between parties with no prior relationship open. FactGate is that check. site/factgate-gate.mjs is on the Stay Steward booking page. Stay Steward passes a CAUTION that is only identity_unknown. The file default passes no CAUTION. On 2026-11-23, node scripts/ecosystem-snapshot.mjs measured 17 public-list sites as CAUTION (ALLOW 0, BLOCK 0). That command counts verdicts. When checked on 2026-11-22, 102 of 138 NANDA Index entries had no card validation.

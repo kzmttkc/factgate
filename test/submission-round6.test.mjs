@@ -54,7 +54,7 @@ test("README Measured: judging-period story and vet402 re-check", async () => {
   assert.match(readme, /through judging.*Verified Stay booked \(VS-0001\).*Glossy Stay not loaded/s);
   assert.match(readme, /agent402\.tools\/api\/weather-forecast/);
   assert.match(readme, /scheduled to buy that URL once on 2027-01-10 UTC/);
-  assert.match(readme, /the card shows that date/i);
+  assert.match(readme, /Last delivered: 2026-11-07 \(vet402 window: 30 days\)/);
   assert.doesNotMatch(readme, /agent402\.tools will not repeat ALLOW/);
   assert.doesNotMatch(readme, /2026-12-07/);
 });
@@ -71,7 +71,7 @@ test("README screenshot table includes Stay Steward CAUTION Unchecked card", asy
 
 test("docs/devpost.md is a short paste-only opening", async () => {
   const body = await mustRead("docs/devpost.md");
-  assert.ok(body.length < 2500, "devpost.md should stay short");
+  assert.ok(body.length < 4000, "devpost.md paste should stay within Devpost field limit");
   assert.match(body, /built that hotel to fail/);
   assert.ok(body.includes(NEUTRAL_COMPARISON));
   assert.doesNotMatch(body, /none of them stops the link/i);

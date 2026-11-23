@@ -1,4 +1,4 @@
-# FactGate — checks a stranger before your agent pays it
+# FactGate: checks a stranger before your agent pays it
 
 My agent was about to book the nicer hotel. I had built that hotel to fail. FactGate caught it.
 
@@ -22,26 +22,26 @@ Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 
 On 2026-11-23, 17 sites from the public list measured CAUTION. None measured ALLOW or BLOCK (`node scripts/ecosystem-snapshot.mjs`).
 
-### Measured on 2026-11-23 (third-party ERC-8004, pillars 1–2 without vet402)
+### Measured on 2026-11-23 (third-party ERC-8004, pillars 1 and 2 without vet402)
 
-On 2026-11-23 FactGate measured **https://agent402.tools/api/weather-forecast** (a public x402 seller, not the author's demo sites): pillar 1 **ALLOW** (`live_as_declared`), pillar 2 **ALLOW** (`identity_match`, ERC-8004 agent 94639 on Base via `eth_call`); overall **CAUTION** only because pillar 3 was not read (`node scripts/measure-pillars-12.mjs https://agent402.tools/api/weather-forecast`).
+On 2026-11-23 FactGate measured **https://agent402.tools/api/weather-forecast** (a public x402 seller, not the author's demo sites): pillar 1 **ALLOW** (`live_as_declared`), pillar 2 **ALLOW** (`identity_match`, ERC-8004 agent 94639 on Base via `eth_call`). Overall **CAUTION** only because pillar 3 was not read (`node scripts/measure-pillars-12.mjs https://agent402.tools/api/weather-forecast`).
 
 ### Measured on 2026-11-22
 
-On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded every paid call delivered (vet402 record; the card shows the last delivery date). **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown): unchecked, not safe.
+On 2026-11-22 the deployed page measured agent402.tools as **ALLOW** because it answered as declared, `payTo` matched ERC-8004 agent 94639 on Base, and **vet402**, the author's own service, recorded every paid call delivered. The card shows the last delivery date. **Glossy Stay** is a fictional demo and was **BLOCK**, so Stay Steward refused to load it. The same day a local run (`evidence/live/SUMMARY.json`) measured five contest-listed sites as **CAUTION** (identity unknown). Unchecked here means the measurement did not finish.
 
-The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. The paid seller is **https://agent402.tools/api/weather-forecast**. On 2026-11-22 **vet402**, the author's own service, recorded every paid call delivered (last delivered 2026-11-07, 30-day window). vet402 is scheduled to buy that URL once on 2027-01-10 UTC (see GRADER_FACTS.md). The card shows that date. Delivery counts come only from the author's **vet402** and the author's recomputable validator.
+The result that still runs on the live sites through judging is **Verified Stay booked (VS-0001)** and **Glossy Stay not loaded**. The paid seller is **https://agent402.tools/api/weather-forecast**. On 2026-11-22 **vet402**, the author's own service, recorded every paid call delivered (last delivered 2026-11-07, 30-day window). The card shows Last delivered: 2026-11-07 (vet402 window: 30 days). vet402 is scheduled to buy that URL once on 2027-01-10 UTC (see GRADER_FACTS.md). Between the last delivery date and that purchase, vet402 may answer WARN and the card may read CAUTION until that purchase runs. Delivery counts come only from the author's **vet402** and the author's recomputable validator.
 
 **Screenshots** (deployed sites, captured 2026-11-22):
 
 | What | 1440 px | 390 px |
 | --- | --- | --- |
-| FactGate ALLOW — agent402.tools (first line: Link / pay: OK) | [screenshots/allow-agent402-1440.png](screenshots/allow-agent402-1440.png) | [screenshots/allow-agent402-390.png](screenshots/allow-agent402-390.png) |
-| FactGate BLOCK — Glossy Stay demo (first line: Do not pay) | [screenshots/block-glossy-stay-1440.png](screenshots/block-glossy-stay-1440.png) | [screenshots/block-glossy-stay-390.png](screenshots/block-glossy-stay-390.png) |
-| Consent card — two destinations on separate rows | [screenshots/consent-two-destinations-1440.png](screenshots/consent-two-destinations-1440.png) | [screenshots/consent-two-destinations-390.png](screenshots/consent-two-destinations-390.png) |
-| Stay Steward — Verified Stay booked (VS-0001) after FactGate ALLOW | [factgate-peers/screenshots/steward-booked-vs0001-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-1440.png) | [factgate-peers/screenshots/steward-booked-vs0001-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-390.png) |
-| Stay Steward — stopped on Glossy Stay BLOCK (reasons shown) | [factgate-peers/screenshots/steward-stopped-glossy-block-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-1440.png) | [factgate-peers/screenshots/steward-stopped-glossy-block-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-390.png) |
-| FactGate CAUTION — Stay Steward demo (first line: Unchecked — do not treat as safe) | [screenshots/caution-stay-steward-1440.png](screenshots/caution-stay-steward-1440.png) | [screenshots/caution-stay-steward-390.png](screenshots/caution-stay-steward-390.png) |
+| FactGate ALLOW: agent402.tools (first line: Link / pay: OK) | [screenshots/allow-agent402-1440.png](screenshots/allow-agent402-1440.png) | [screenshots/allow-agent402-390.png](screenshots/allow-agent402-390.png) |
+| FactGate BLOCK: Glossy Stay demo (first line: Do not pay) | [screenshots/block-glossy-stay-1440.png](screenshots/block-glossy-stay-1440.png) | [screenshots/block-glossy-stay-390.png](screenshots/block-glossy-stay-390.png) |
+| Consent card: two destinations on separate rows | [screenshots/consent-two-destinations-1440.png](screenshots/consent-two-destinations-1440.png) | [screenshots/consent-two-destinations-390.png](screenshots/consent-two-destinations-390.png) |
+| Stay Steward: Verified Stay booked (VS-0001) after FactGate ALLOW | [factgate-peers/screenshots/steward-booked-vs0001-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-1440.png) | [factgate-peers/screenshots/steward-booked-vs0001-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-booked-vs0001-390.png) |
+| Stay Steward: stopped on Glossy Stay BLOCK (reasons shown) | [factgate-peers/screenshots/steward-stopped-glossy-block-1440.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-1440.png) | [factgate-peers/screenshots/steward-stopped-glossy-block-390.png](https://github.com/kzmttkc/factgate-peers/blob/main/screenshots/steward-stopped-glossy-block-390.png) |
+| FactGate CAUTION: Stay Steward demo (first line: Unchecked — do not treat as safe) | [screenshots/caution-stay-steward-1440.png](screenshots/caution-stay-steward-1440.png) | [screenshots/caution-stay-steward-390.png](screenshots/caution-stay-steward-390.png) |
 
 **Agents:** `gate_coordinator` turns a visitor request into a check and an explanation · `manifest_inspector` reads the counterparty manifest and NANDA listing · `capability_prober` probes live answers and MCP tools · `evidence_verifier` reads ERC-8004 on chain and vet402's delivery record.
 
@@ -63,7 +63,7 @@ The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that c
 
 **Only validators in `site/validators.json` are counted, and today that list holds one: the Delivery Court judge, which is the author's own validator** (its scores can be recomputed from public records; others' scores are shown, never counted). Nothing is paid or signed, and **nothing is contacted before the visitor approves a card that lists each destination origin and what it gets** (spec 3.2 Consent, section 5).
 
-**How FactGate breaks self-declaration:** a site's own manifest, AgentFacts and signature only say who wrote the claims, so FactGate compares every claim with what its endpoints actually answer, what the chain says its registered wallet is, and what **vet402**, the author's own service, recorded when someone paid it — not with numbers the site printed about itself.
+**How FactGate breaks self-declaration:** a site's own manifest, AgentFacts and signature only say who wrote the claims, so FactGate compares every claim with what its endpoints actually answer, what the chain says its registered wallet is, and what **vet402**, the author's own service, recorded when someone paid it. It does not trust numbers the site printed about itself.
 
 ## Try it (deployed)
 
@@ -74,7 +74,7 @@ The verdict is code (`site/js/gate.mjs`): the worst pillar wins, a pillar that c
 | Verified Stay (demo, expected ALLOW) | https://verified-stay-demo.vercel.app/ (`/verified_stay`) | same |
 | Glossy Stay (demo, expected BLOCK) | https://glossy-stay-demo.vercel.app/ (network file `https://glossy-stay-demo.vercel.app/glossy_stay.network.json`) | same |
 
-On Stay Steward, pick a stay and press **Check with FactGate**. No AI key is needed: page code runs the gate. Allow the cards and the windows it opens. Verified Stay ends with a booking made in Verified Stay's own window. Glossy Stay stops at FactGate's BLOCK, and the page shows why. The demo stays are fictional, and no money moves.
+On Stay Steward, pick a stay and press **Check with FactGate**. No AI key is needed: page code runs the gate. Before Check with FactGate, allow pop-ups for stay-steward-demo.vercel.app. FactGate and each stay open in separate windows. Allow the cards and the windows it opens. Verified Stay ends with a booking made in Verified Stay's own window. Glossy Stay stops at FactGate's BLOCK, and the page shows why. The demo stays are fictional, and no money moves.
 
 The four sites are static (Vercel), each on its own origin. `deploy/build-public.mjs` writes `dist/<project>/` with the local demo URLs rewritten to the public ones (`deploy/public-origins.json`) and a `vercel.json` with the CORS and worker headers; then `vercel deploy --prod dist/<project>`. The source keeps the local URLs, so the local run below is unchanged.
 
@@ -90,7 +90,7 @@ The four sites are static (Vercel), each on its own origin. `deploy/build-public
 
 ## Try it
 
-Open the page, press one of **Try these** (agent402.tools, Verified Stay, Glossy Stay) or paste a URL, or a NANDA Index id or name (for example `Heron A2A Checker`), approve the cards row by row, and read the verdict card. Its first line is what to do: **Link / pay: OK**, **Do not pay** (a paid counterparty FactGate blocked), **Do not link** (a free one it blocked) or **Unchecked — do not treat as safe** (CAUTION). Below it: what was measured and what was not; three counts (paid calls and calls that came back with content in vet402's record, and trusted validations as "passed n / below 70 m"; "—" when not measured); three pillars side by side, each with one short sentence (the full reason under Details; pillar 3 may show when vet402 last saw content come back, and says that vet402 is the author's own service); the NANDA Index record if the counterparty is listed ("NANDA: listed, card not validated" when NANDA has not validated its card); and the full request log, the approved origins and the AgentFacts under the fold.
+Open the page, press one of **Try these** (agent402.tools, Verified Stay, Glossy Stay) or paste a URL, or a NANDA Index id or name (for example `Heron A2A Checker`), approve the cards row by row, and read the verdict card. Its first line is what to do: **Link / pay: OK**, **Do not pay** (a paid counterparty FactGate blocked), **Do not link** (a free one it blocked) or **Unchecked — do not treat as safe** (CAUTION). Below it: what was measured and what was not. Three counts show paid calls and calls that came back with content in vet402's record, and trusted validations as "passed n / below 70 m" ("—" when not measured). Three pillars sit side by side, each with one short sentence (the full reason under Details). Pillar 3 may show when vet402 last saw content come back, and says that vet402 is the author's own service. The NANDA Index record appears if the counterparty is listed ("NANDA: listed, card not validated" when NANDA has not validated its card). Under the fold: the full request log, the approved origins and the AgentFacts.
 
 Verdicts measured on 2026-11-22 06:57 UTC (`node scripts/probe-live.mjs --peers`, `evidence/live/SUMMARY.json`). The first word on the card is in brackets:
 
@@ -130,7 +130,7 @@ node scripts/probe-live.mjs --public   # as the deployed page: agent402 and the 
 node scripts/ecosystem-snapshot.mjs
 ```
 
-**Ecosystem snapshot 2026-11-23:** 17 sites probed from the public list — 16 answered as declared, 16 manifests CORS-readable, 0 declare ERC-8004 in a readable registration file, 15 instruction scans clean; verdicts ALLOW 0 / CAUTION 17 / BLOCK 0 (`node scripts/ecosystem-snapshot.mjs`).
+**Ecosystem snapshot 2026-11-23:** 17 sites probed from the public list. 16 answered as declared, 16 manifests CORS-readable, 0 declare ERC-8004 in a readable registration file, 15 instruction scans clean. Verdicts ALLOW 0 / CAUTION 17 / BLOCK 0 (`node scripts/ecosystem-snapshot.mjs`).
 
 ### Run the three-site demo
 
@@ -169,7 +169,7 @@ The tests use a scripted model. To check the same flows with a real LLM, use you
 
 ## How a partner site uses FactGate
 
-FactGate shares two actions through its bridge (`site/bridge/bridge-actions.js`) with every site: `get_gate_state` (pure, in a hidden frame) and `gate_check(url)`. `gate_check` contacts other origins, so it runs in FactGate's own window, where the visitor approves each origin first. The reference runtime opens a partner's window only for actions marked `write`, so `gate_check` is marked `write` with `confirmsInWindow`; it changes nothing. There is no shared `evaluate_gate`: a verdict comes only from a check FactGate measured. `install()` wraps `engine.requestConsent`, `actions.execute` and the trace listener (`site/factgate-gate.mjs`) so a blocked partner is not fetched.
+FactGate shares two actions through its bridge (`site/bridge/bridge-actions.js`) with every site: `get_gate_state` (pure, in a hidden frame) and `gate_check(url)`. `gate_check` contacts other origins, so it runs in FactGate's own window, where the visitor approves each origin first. The reference runtime opens a partner's window only for actions marked `write`, so `gate_check` is marked `write` with `confirmsInWindow`. It changes nothing. There is no shared `evaluate_gate`: a verdict comes only from a check FactGate measured. `install()` wraps `engine.requestConsent`, `actions.execute` and the trace listener (`site/factgate-gate.mjs`) so a blocked partner is not fetched.
 
 ### Put the gate in your own site (three lines)
 
@@ -219,7 +219,7 @@ Stay Steward ([factgate-peers](https://github.com/kzmttkc/factgate-peers)) uses 
 ### Run the tests from a fresh clone
 
 ```shell
-mkdir -p ~/demo && cd ~/demo
+mkdir -p demo && cd demo
 git clone https://github.com/kzmttkc/factgate
 git clone https://github.com/kzmttkc/factgate-peers
 git clone https://github.com/cognizant-ai-labs/agentic-web
@@ -249,3 +249,6 @@ CI smoke in evidence packs: `node --test test/*.test.mjs` only (166 tests as of 
 - The real-model path is not covered by the tests (it needs a key); the steps above check it by hand.
 - The reference runtime applies one private-context allow rule per calling network, so Verified Stay also receives `target_url` (its own URL). Destination-scoped rules are a spec section 5 extension.
 - vet402 records public https sellers only; local demo sites get pillar 3 from validation scores.
+- The agent402.tools ALLOW path calls `https://vet402.com/mcp` (`site/js/gatecheck.mjs`). Allow vet402.com on the consent card when measuring pillar 3.
+- Verified Stay checks need a consent-card row for `https://sepolia.base.org` (Base Sepolia RPC). Public RPCs may rate-limit. If the gate stops with `no_delivery_record`, wait and retry once.
+- agent402.tools is a third-party seller. Pillar 3 for that URL depends on vet402.com/mcp and the validators in `validators.json` (`evidence/public/SUMMARY.json`, measured 2026-11-22).
