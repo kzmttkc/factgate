@@ -12,6 +12,7 @@ import { TraceBus } from "../runtime/trace.js";
 import { StubDocument } from "./stub_document.mjs";
 import { StubElement } from "./stub_element.mjs";
 import { StubOption } from "./stub_option.mjs";
+import { cruseVerdictPresentation } from "../js/cruse-verdict.mjs";
 import { ScriptedModel } from "./scripted_model.mjs";
 
 // FactGate (stage 1, 2026-11-22; stage 2 the same day). FactGate only reads and judges, so it has no
@@ -945,6 +946,47 @@ test("a visitor typing in the page's form keeps focus when a consent card appear
 test("an approved irreversible call stores the record", {skip: NO_IRREVERSIBLE}, AgentifiedSiteTest.testApprovedIrreversibleCall);
 
 // FactGate's own checks through the real runtime.
+test("gate_coordinator renders a CRUSE verdict card after gate_check (scripted model)", async () => {
+  const loaded = await AgentifiedSiteTest.load();
+  const registry = await AgentifiedSiteTest.registry();
+  const { App } = await import("../js/app.js");
+  const realFetch = globalThis.fetch;
+  App.page.remembered.clear();
+  App.page.consentHandler = async () => "once";
+  globalThis.fetch = async () => { throw new TypeError("Failed to fetch"); };
+  const presentation = cruseVerdictPresentation({
+    url: SELLER,
+    checkedAt: "2026-11-23T06:00:00.000Z",
+    verdict: "CAUTION",
+    reasons: [
+      { pillar: "live", effect: "CAUTION", code: "live_cors_unreachable", text: "Unreachable.", short: "Unreachable." },
+      { pillar: "identity", effect: "CAUTION", code: "identity_unavailable", text: "Not measured.", short: "Not measured." },
+      { pillar: "delivery", effect: "CAUTION", code: "delivery_unavailable", text: "Not measured.", short: "Not measured." },
+    ],
+    counts: { paid: null, delivered: null, validationsPassed: null, validationsFailed: null },
+    evidence: { delivery: { paid: true, pillar: { status: "unavailable" } } },
+  });
+  try {
+    const model = new ScriptedModel([
+      { tool: "website_gate_check", arguments: { url: SELLER } },
+      { tool: "render_cruse", arguments: { presentation } },
+      { text: "Verdict card above." },
+    ]);
+    const ctx = AgentifiedSiteTest.context(loaded, registry, model, AgentifiedSiteTest.approve);
+    const out = await runAgent(ctx, ctx.frontMan, `Check ${SELLER}`, null, []);
+    assert.equal(model.toolResults(1)[0].status, "succeeded");
+    assert.equal(model.toolResults(1)[0].result.verdict, "CAUTION");
+    assert.ok(out.presentation, JSON.stringify(out));
+    assert.equal(out.presentation.version, 1);
+    assert.ok(out.presentation.components.some((c) => c.id === "factgate-verdict"));
+    assert.ok(out.presentation.components.some((c) => c.id === "factgate-pillars"));
+    assert.match(out.text, /Verdict card/);
+  } finally {
+    globalThis.fetch = realFetch;
+    App.page.consentHandler = null;
+  }
+});
+
 test("the front agent judges a measurement by its ID and reports the engine's verdict (scripted model, no LLM)", async () => {
   const loaded = await AgentifiedSiteTest.load();
   const registry = await AgentifiedSiteTest.registry();
