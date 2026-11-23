@@ -117,7 +117,12 @@ node $SKILL/scripts/serve_site.mjs site --port 8790 --open-as localhost     # ht
 node scripts/probe-live.mjs            # agent402, the contest's list, vet402.com
 node scripts/probe-live.mjs --peers    # plus the three demo sites (serve them first, see below)
 node scripts/probe-live.mjs --public   # as the deployed page: agent402 and the three deployed demo sites (writes evidence/public/)
+
+# Ecosystem snapshot (contest list, aggregate counts only — writes evidence/ecosystem/SUMMARY.json)
+node scripts/ecosystem-snapshot.mjs
 ```
+
+**Ecosystem snapshot 2026-11-23:** 17 sites probed from the public list — 15 answered as declared, 16 manifests CORS-readable, 0 declare ERC-8004 in a readable registration file, 15 instruction scans clean; verdicts ALLOW 0 / CAUTION 16 / BLOCK 1 (`node scripts/ecosystem-snapshot.mjs`).
 
 ### Run the three-site demo
 
@@ -181,7 +186,7 @@ Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/f
 - **Trusted validators.** A validation score counts only when its validator is on the list for that chain (`site/validators.json`, editable on the page; stored in the visitor's browser). The default lists only validators whose every score anyone can recompute from public records: the Delivery Court judge, which is **the author's own** validator (recompute with `offchain/src/rejudge.mjs` in github.com/kzmttkc/reactive-delivery-court). Other validators' scores are shown with the reason, never counted; self-scores never count. AgentFacts carries `x_factgate_validators`.
 - **Free sites.** A site that asks for no payment passes pillar 2 when pillar 1 passed and the site and its ERC-8004 registration point at each other (the site's `/.well-known/agent-registration.json` names the agentId; the registration's `services` or agentURI names the site). One direction only stays CAUTION.
 - **Instructions scan.** Text that tells the caller's model to ignore its rules, reveal its prompt or context, or go to an undeclared site is CAUTION; text that asks for a key, password or seed phrase is BLOCK. A sentence that forbids the thing ("Never ask for passwords") is not a finding; the published networks of FactGate, the demo sites and the reference examples produce none (`test/rules.test.mjs`). It is a static check and can be evaded by rewording.
-- **AgentFacts.** Field names from arXiv:2507.14263 (appendix, V0.3 draft); FactGate's fields start with `x_factgate_`; unsigned, because FactGate is not an issuer.
+- **AgentFacts.** Field names from arXiv:2507.14263 (appendix, V0.3 draft); FactGate's fields start with `x_factgate_`. `x_factgate_evidence` is a list of `{url, sha256, status, at}` for every HTTP response body FactGate read; pillar detail lives under `x_factgate_detail`. After a check in the browser, FactGate signs the JSON with a per-session ECDSA P-256 key (`x_factgate_signature`): that proves the file was not changed after measurement in that session; it does not prove the counterparty is safe, and the key is not an identity.
 
 ## Files
 

@@ -1,0 +1,16 @@
+{
+  "measuredAt": "2026-11-23T06:28:30.162Z",
+  "pageOrigin": "https://factgate.vercel.app",
+  "listSource": "https://raw.githubusercontent.com/cognizant-ai-labs/agentic-web/main/docs/agentic_websites.md",
+  "sitesListed": 17,
+  "sitesProbed": 17,
+  "answeredAsDeclared": 15,
+  "manifestsCorsReadable": 16,
+  "declareErc8004": 0,
+  "instructionScansClean": 15,
+  "verdicts": {
+    "ALLOW": 0,
+    "CAUTION": 16,
+    "BLOCK": 1
+  }
+}
