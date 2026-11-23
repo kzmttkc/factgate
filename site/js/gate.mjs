@@ -106,8 +106,21 @@ function kindsOf(pillar, code, effect, text) {
   return ["unknown"];
 }
 
+function shortOf(code, effect, text) {
+  const body = String(text || "");
+  const checked = /Not checked: you declined ([^;]+)/i.exec(body);
+  if (checked) {
+    return `Not checked: you declined ${checked[1].trim()}; not measured.`;
+  }
+  const host = declinedHost(body);
+  if (host && (/_unavailable$/.test(code) || (effect === "CAUTION" && /declined/i.test(body)))) {
+    return `Not checked: you declined ${host}; not measured.`;
+  }
+  return SHORT[code] || `${effect}.`;
+}
+
 function reason(pillar, code, effect, text) {
-  return { pillar, code, effect, text, short: SHORT[code] || `${effect}.`, kinds: kindsOf(pillar, code, effect, text) };
+  return { pillar, code, effect, text, short: shortOf(code, effect, text), kinds: kindsOf(pillar, code, effect, text) };
 }
 
 /**

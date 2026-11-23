@@ -31,7 +31,8 @@
   <line x1="450" y1="239" x2="520" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
   <line x1="700" y1="239" x2="620" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
   <line x1="940" y1="239" x2="700" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <line x1="180" y1="321" x2="430" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="280" y1="298" x2="300" y2="584" stroke="#888" stroke-width="1.5" stroke-dasharray="8,6"/>
+  <text x="248" y="448" font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#666" transform="rotate(-78 248 448)">shown on card</text>
   <rect x="420" y="360" width="340" height="72" rx="6" fill="#cfcfcf" stroke="#444" stroke-width="2"/>
   <text x="590" y="392" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#111">site/js/gate.mjs</text>
   <text x="590" y="414" text-anchor="middle" font-size="13" fill="#333">code decides verdict</text>

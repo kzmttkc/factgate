@@ -153,6 +153,7 @@ async function gateCheckOnce(target, options) {
   }
   let identity = identityPillar({ payTos, chainRead, binding, noAgentReason, declaredOnlyReason });
   const counterpartyDeclined = live.pillar && live.pillar.status === "unavailable" && declinedHost(live.pillar.error);
+  const chainDeclined = chainRead && !chainRead.ok && declinedHost(chainRead.error);
   if (counterpartyDeclined) {
     identity = { status: "unavailable", error: live.pillar.error };
   }
@@ -181,6 +182,10 @@ async function gateCheckOnce(target, options) {
   let validation;
   if (paid === false || options.skipDelivery) {
     validation = undefined;
+  } else if (counterpartyDeclined) {
+    validation = { status: "unavailable", error: live.pillar.error };
+  } else if (chainDeclined) {
+    validation = { status: "unavailable", error: chainRead.error };
   } else if (!agent) {
     validation = { status: "unavailable", error: noAgentReason || declaredOnlyReason || "no ERC-8004 agent" };
   } else if (!chainRead || !chainRead.ok || !chainRead.exists) {

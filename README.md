@@ -78,7 +78,7 @@ The four sites are static (Vercel), each on its own origin. `deploy/build-public
 
 ## Compared with the five tools already listed
 
-**Agent Atlas** checks manifest format. **NandaSeal** records self-signed facts in the browser. **Agent Customs** runs a static prompt-injection scan. **Agent Crash Test** exercises confirm dialogs on your own site. **Three Numbers** reads XRPL escrow counts. **FactGate** checks live answers against declarations, on-chain identity against the x402 payee, and delivery after payment, then returns ALLOW / CAUTION / BLOCK before a partner site links or pays (used by Stay Steward's page-code gate).
+**ScopeGate Studio** guards outbound calls as they leave the agent. **Agent Atlas** checks manifest format. **NandaSeal** records self-signed facts in the browser. **Agent Customs** runs a static prompt-injection scan. **Agent Crash Test** exercises confirm dialogs on your own site. **Three Numbers** reads XRPL escrow counts. **FactGate** checks live answers against declarations, on-chain identity against the x402 payee, and delivery after payment, then returns ALLOW / CAUTION / BLOCK before a partner site links or pays (used by Stay Steward's page-code gate).
 
 ## Try it
 
@@ -194,7 +194,7 @@ Stay Steward (`~/factgate-peers`) uses a byte-identical copy (`stay-steward/js/f
 | `site/js/gatecheck.mjs`, `reads.mjs` | One full check, shared by the page, the bridge and the probe script |
 | `site/js/consent.mjs`, `consent-card.mjs` | Consent rounds, redirects as new destinations, and the per-row card |
 | `site/js/nanda.mjs` | NANDA Index lookup |
-| `site/factgate-gate.mjs` | The gate other sites load (policy, page-code check) |
+| `site/factgate-gate.mjs` | The gate other sites load (policy, page-code check); see [docs/GATE.md](docs/GATE.md) |
 | `site/js/card.mjs`, `app.js`, `index.html`, `styles.css` | The page |
 | `site/factgate.hocon`, `agent-manifest.json`, `site-actions.js`, `bridge/` | The agentic website (network, manifest, actions, bridge) |
 | `site/runtime/` | Reference runtime with `settingsDefaultClosed` in `ui.js` (AI model settings start closed on the page) |
