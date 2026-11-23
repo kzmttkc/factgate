@@ -76,7 +76,7 @@ The four sites are static (Vercel), each on its own origin. `deploy/build-public
 - **Agents that pay x402 sellers.** Check the seller's payee against its on-chain identity and its delivery record before the first payment.
 - **People reviewing an agent site.** Paste a URL, get the three pillars, the request log and a downloadable AgentFacts file.
 
-## Compared with the five tools already listed
+## Compared with the tools already listed
 
 **ScopeGate Studio** guards outbound calls as they leave the agent. **Agent Atlas** checks manifest format. **NandaSeal** records self-signed facts in the browser. **Agent Customs** runs a static prompt-injection scan. **Agent Crash Test** exercises confirm dialogs on your own site. **Three Numbers** reads XRPL escrow counts. **FactGate** checks live answers against declarations, on-chain identity against the x402 payee, and delivery after payment, then returns ALLOW / CAUTION / BLOCK before a partner site links or pays (used by Stay Steward's page-code gate).
 

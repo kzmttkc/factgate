@@ -25,7 +25,7 @@ MVP spec section 6 (each with the test or screen that shows it; details in READM
 | 4 | After approval, load an exact named network from a second origin and run it locally | `factgate-peers/tests/three_sites.e2e.test.mjs` "6-4 ALLOW"; on the deployed sites, Stay Steward's "Check with FactGate" (no key) loads factgate.vercel.app/factgate and verified-stay-demo.vercel.app/verified_stay after consent and books in Verified Stay's window |
 | 5 | Key never reaches the second site; it cannot change the router | Same file, `checkKeyStaysHome` (every run) |
 | 6 | Private context absent at the peer unless a named field is allowed | Same file, `checkPrivateContext`; Stay Steward's gate log |
-| 7 | Invalid network, cycle, over budget, denied origin stop visibly | Same file, five "6-7" tests; on the deployed Stay Steward page, **Spec 6-7 self-test (no key)** runs the same five stops from fixtures (gate log lines) |
+| 7 | Invalid network, cycle, over budget, denied origin stop visibly | Same file, five "6-7" tests; on the deployed Stay Steward page, **Spec 6-7 self-test (no key)** replays the five recorded section-6 stop messages through the gate log so you can see each line. The runtime's own stops are proven by `tests/three_sites.e2e.test.mjs`. |
 
 ## What it is
 
@@ -48,7 +48,7 @@ Deployed results (2026-11-22 07:12 UTC, page origin https://factgate.vercel.app,
 
 Local results (2026-11-22 06:57 UTC, `evidence/live/SUMMARY.json`): agent402.tools = ALLOW; vet402.com (author's own) = ALLOW via the mutual-binding rule; Verified Stay = ALLOW (validations passed 79 / below 70 0); Glossy Stay = BLOCK (passed 1 / below 70 1); Stay Steward = CAUTION (identity_unknown); five contest-listed sites = CAUTION (identity_unknown); organizer's widget = CAUTION (unreachable: manifest not CORS-readable). None of them is in the NANDA Index (when checked on 2026-11-22: 102 of 138 had no card validation).
 
-Tests: FactGate 186 (179 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions and README submission round-6/7/8/9 checks — run `node --test "test/*.test.mjs" "site/tests/*.test.mjs"`. Demo sites 55 (55 pass, 0 fail), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button) — run `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"`.
+Tests: FactGate 186 (179 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including the redirect and model-value reproductions and README submission round-6/7/8/9 checks — run `node --test "test/*.test.mjs" "site/tests/*.test.mjs"`. Demo sites 56 (56 pass, 0 fail), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button) — run `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"`.
 
 Competitors already listed: Agent Atlas (manifest format check), NandaSeal (browser self-signed facts), Agent Customs (static prompt-injection scan), Agent Crash Test (own-site confirm dialogs), Three Numbers (XRPL escrow counts).
 

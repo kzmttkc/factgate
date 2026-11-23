@@ -1,6 +1,6 @@
 # factgate-gate.mjs
 
-Versioned reusable gate (`export const VERSION` in the file; pin by hash or tag when copying).
+Versioned reusable gate (`export const VERSION` in the file; pin by commit and verify `sha256` when copying).
 
 ## Install (three lines)
 
@@ -43,5 +43,5 @@ Declined partners are never fetched. Stops (gate, over budget, invalid network, 
 ## Pin the version
 
 - Read `VERSION` from the file you ship (`1.0.0` today).
-- Prefer copying from a release tag or verify `sha256` against FactGate's repo before deploy.
+- Pin by the FactGate repo commit you copied from, then check `sha256` of `site/factgate-gate.mjs` before deploy. Current hash: `d0cb13f0e66b49130c24d95832812414f21eb3369c249e00348f9c959e7d1cf3` (`VERSION` `1.0.0`).
 - Stay Steward's test asserts its copy matches `site/factgate-gate.mjs` byte for byte.
