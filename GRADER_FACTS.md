@@ -10,7 +10,7 @@ Submission Requirements (contest rules, as read 2026-11-21/22; re-read before su
 | --- | --- |
 | A public open agentic website: spec-conforming `.json` files, the browser `runtime`, a working interface | Deployed: https://factgate.vercel.app/ (source: https://github.com/kzmttkc/factgate) |
 | Text description of the features | README.md (English); short Devpost paste in docs/devpost.md |
-| Video under 2 minutes, on YouTube, "must include the Entrant explaining the Project (not AI generated)" | Not recorded yet (author's own voice) |
+| Video under 2 minutes, on YouTube, "must include the Entrant explaining the Project (not AI generated)" | https://youtu.be/-feULvADy_o (1:55, the author's own voice) |
 | Screenshots | Taken 2026-11-22–23 on deployed Vercel sites at 1440 px and 390 px: `factgate/screenshots/` (this repo) and `factgate-peers/screenshots/` (sibling repo, Stay Steward booked VS-0001, stopped on Glossy BLOCK); linked at the top of README.md |
 | Free access to the working demo through judging | Deployed on Vercel, no sign-in: FactGate https://factgate.vercel.app/, Stay Steward https://stay-steward-demo.vercel.app/, Verified Stay https://verified-stay-demo.vercel.app/, Glossy Stay https://glossy-stay-demo.vercel.app/ |
 | A project that existed before the period "must have been significantly updated after the start of the Hackathon Submission Period" (2026-11-11) | FactGate was started 2026-11-22 |
