@@ -14,7 +14,7 @@ Code decides **ALLOW / CAUTION / BLOCK**. The model only explains.
 
 ![Architecture](docs/architecture.png)
 
-▶ Try it: https://factgate.vercel.app/ (no key needed).  ▶ 2-min video: https://youtu.be/-feULvADy_o
+▶ Try it: https://factgate.vercel.app/ (no key needed).  ▶ 2-min video: https://youtu.be/k6qzakJpusI
 
 | Verified Stay | Glossy Stay | agent402.tools (real x402 seller) |
 |---|---|---|
