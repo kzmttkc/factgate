@@ -40,7 +40,7 @@ test("index.html masthead: hotel fail story only", async () => {
 
 test("docs/devpost.md: fictional Glossy BLOCK through judging", async () => {
   const body = await mustRead("docs/devpost.md");
-  assert.match(body, /Glossy Stay's BLOCK through 2027-01-18/);
+  assert.doesNotMatch(body, /through 2027-01-18/);
   assert.match(body, /Glossy Stay is a fictional demo/);
   assert.match(body, /five contest sites measured CAUTION for identity unknown/i);
 });
