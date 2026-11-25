@@ -52,8 +52,10 @@ Local results (2026-11-22 06:57 UTC, `evidence/live/SUMMARY.json`): agent402.too
 
 Tests (counted 2026-11-23): FactGate 193 (186 pass, 0 fail, 7 skipped: irreversible-action template tests, not applicable), including evidence-integrity digests, ecosystem snapshot shape, CRUSE verdict card, redirect and model-value reproductions and README submission round-6/7/8/9 checks — run `node --test "test/*.test.mjs" "site/tests/*.test.mjs"`. CI smoke: `node --test test/*.test.mjs` only (166 pass, 0 fail). Demo sites 56 (56 pass, 0 fail), including 10 three-site end-to-end tests (8 with a scripted model, 2 with the no-model button) — run `node --test "*/tests/*.test.mjs" "tests/*.test.mjs"`.
 
+Sponsor framing: Cognizant's 2026-11-19 blog (https://www.cognizant.com/us/en/ai-lab/blog/ai-agent-negotiation-open-agentic-web) says a functioning agent economy needs "ways to establish trust between parties that may have no prior relationship" (checked 2026-11-25).
+
 Community: PR #72 to the official agent list (Open, as of 2026-11-23).
 
 Competitors already listed: Agent Atlas (manifest format check), NandaSeal (browser self-signed facts), Agent Customs (static prompt-injection scan), Agent Crash Test (own-site confirm dialogs), Three Numbers (XRPL escrow counts).
 
-Not yet done: the real-LLM chat run (needs the author's key), video (YouTube URL on submission day only).
+Not yet done: the real-LLM chat run (needs the author's key).
